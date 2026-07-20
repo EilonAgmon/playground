@@ -50,6 +50,9 @@ body {
   touch-action: none;
   background: #000;
   display: block;
+  outline: 2px solid rgba(255, 255, 255, 0.3);
+  outline-offset: -2px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.08);
 }
 
 .overlay {
