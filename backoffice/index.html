@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pong — Backoffice</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="loginScreen" class="screen">
+    <h1 class="glow">BACKOFFICE</h1>
+    <form id="loginForm">
+      <input type="password" id="password" placeholder="password" autocomplete="current-password" autofocus />
+      <button type="submit">enter</button>
+    </form>
+    <p id="loginError" class="error hidden">wrong password</p>
+    <p class="back"><a href="../">&larr; back to the game</a></p>
+  </div>
+
+  <div id="dashboard" class="screen hidden">
+    <header>
+      <h1 class="glow small">BACKOFFICE</h1>
+      <button id="logoutBtn">log out</button>
+    </header>
+
+    <section class="tiles" id="tiles"></section>
+
+    <section class="panel">
+      <h2>plays / day (last 30 days)</h2>
+      <div id="chart" class="chart"></div>
+    </section>
+
+    <section class="panel">
+      <h2>top countries</h2>
+      <div id="countries" class="bars"></div>
+    </section>
+
+    <section class="panel">
+      <h2>recent plays</h2>
+      <div class="table-wrap">
+        <table id="recentTable">
+          <thead>
+            <tr>
+              <th>when</th>
+              <th>location</th>
+              <th>device</th>
+              <th>browser / os</th>
+              <th>referrer</th>
+              <th>result</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

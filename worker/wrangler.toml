@@ -1,0 +1,8 @@
+name = "pong-backoffice"
+main = "src/index.js"
+compatibility_date = "2024-11-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "pong_backoffice"
+database_id = "7210072a-08a0-4c51-9450-657438d3760e"

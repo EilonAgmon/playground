@@ -7,6 +7,39 @@
   const gameOverScreen = document.getElementById("gameOverScreen");
   const gameOverText = document.getElementById("gameOverText");
 
+  // Backoffice analytics — best-effort only, never blocks or breaks gameplay.
+  const ANALYTICS_BASE = "https://pong-backoffice.agmoneilon.workers.dev";
+  let currentPlayId = null;
+
+  function trackPlayStart() {
+    currentPlayId = null;
+    fetch(`${ANALYTICS_BASE}/api/track`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        referrer: document.referrer,
+        language: navigator.language,
+        screen: { w: window.screen.width, h: window.screen.height },
+      }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data) currentPlayId = data.id;
+      })
+      .catch(() => {});
+  }
+
+  function trackPlayEnd(outcome) {
+    if (currentPlayId == null) return;
+    const id = currentPlayId;
+    currentPlayId = null;
+    fetch(`${ANALYTICS_BASE}/api/track/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ outcome, playerScore, aiScore }),
+    }).catch(() => {});
+  }
+
   // Logical (virtual) resolution the game is drawn in — the canvas backing
   // store is scaled to this so all game logic is resolution-independent.
   const LOGICAL_W = 800;
@@ -156,12 +189,14 @@
       state = "playing";
       titleScreen.classList.add("hidden");
       serve(Math.random() < 0.5 ? -1 : 1);
+      trackPlayStart();
     } else if (state === "gameover") {
       playerScore = 0;
       aiScore = 0;
       state = "playing";
       gameOverScreen.classList.add("hidden");
       serve(Math.random() < 0.5 ? -1 : 1);
+      trackPlayStart();
     }
   }
 
@@ -291,8 +326,10 @@
   function onScore() {
     if (playerScore >= WIN_SCORE || aiScore >= WIN_SCORE) {
       state = "gameover";
-      gameOverText.textContent = playerScore > aiScore ? "YOU WIN" : "YOU LOSE";
+      const playerWon = playerScore > aiScore;
+      gameOverText.textContent = playerWon ? "YOU WIN" : "YOU LOSE";
       gameOverScreen.classList.remove("hidden");
+      trackPlayEnd(playerWon ? "win" : "loss");
     } else {
       serve(ball.vx > 0 ? -1 : 1);
     }
