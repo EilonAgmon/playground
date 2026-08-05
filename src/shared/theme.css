@@ -1,15 +1,15 @@
 @import "@mantine/core/styles.css";
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap");
 
 :root {
-  --fg: #f5f5f5;
-  --fg-dim: rgba(245, 245, 245, 0.55);
-  --fg-faint: rgba(245, 245, 245, 0.3);
-  --accent: #ffb400;
-  --accent-glow: rgba(255, 180, 0, 0.55);
-  --line: rgba(245, 245, 245, 0.2);
-  --font-display: "Press Start 2P", "Courier New", monospace;
-  --font-body: "Courier New", Courier, monospace;
+  --fg: #ede3cf;
+  --fg-dim: rgba(237, 227, 207, 0.6);
+  --fg-faint: rgba(237, 227, 207, 0.32);
+  --accent: #c98a3a;
+  --accent-glow: rgba(201, 138, 58, 0.55);
+  --line: rgba(237, 227, 207, 0.22);
+  --font-display: "Cinzel", "Georgia", serif;
+  --font-body: "EB Garamond", "Georgia", serif;
 }
 
 * {
@@ -26,6 +26,7 @@ html, body {
 
 body {
   font-family: var(--font-body);
+  font-size: 1.08rem;
   color: var(--fg);
   -webkit-user-select: none;
   user-select: none;
@@ -38,7 +39,7 @@ body {
   z-index: 1;
 }
 
-/* CRT screen effect: vignette + scanlines, applied once on top of everything */
+/* Soft aged-page vignette, applied once on top of everything */
 .crt-fx {
   position: fixed;
   inset: 0;
@@ -46,29 +47,15 @@ body {
   z-index: 999;
 }
 
-.crt-fx::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.035) 0px,
-    rgba(255, 255, 255, 0.035) 1px,
-    transparent 1px,
-    transparent 3px
-  );
-  mix-blend-mode: overlay;
-}
-
 .crt-fx::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.6) 100%);
 }
 
 .glow {
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 22px rgba(201, 138, 58, 0.35);
 }
 
 .glow-accent {
@@ -88,5 +75,5 @@ body {
 
 .pixel-icon {
   image-rendering: pixelated;
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
 }

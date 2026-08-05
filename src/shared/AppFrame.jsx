@@ -1,7 +1,7 @@
 import { MantineProvider } from "@mantine/core";
 import { createAppTheme } from "./mantineTheme.js";
 import { useTimeOfDay } from "./useTimeOfDay.js";
-import { RetroHorizon } from "./RetroHorizon.jsx";
+import { Ambiance } from "./Ambiance.jsx";
 import { CrtOverlay } from "./Icons.jsx";
 
 export function AppFrame({ children }) {
@@ -10,7 +10,7 @@ export function AppFrame({ children }) {
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
-      <RetroHorizon />
+      <Ambiance />
       <CrtOverlay />
       {children}
     </MantineProvider>

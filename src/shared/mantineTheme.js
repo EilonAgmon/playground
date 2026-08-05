@@ -7,12 +7,12 @@ export function createAppTheme(period) {
     primaryColor: "brand",
     primaryShade: 4,
     colors: { brand: p.shades },
-    fontFamily: '"Courier New", Courier, monospace',
+    fontFamily: '"EB Garamond", Georgia, serif',
     headings: {
-      fontFamily: '"Press Start 2P", "Courier New", monospace',
-      fontWeight: "400",
+      fontFamily: '"Cinzel", Georgia, serif',
+      fontWeight: "600",
     },
-    defaultRadius: "md",
+    defaultRadius: "sm",
     components: {
       Button: {
         defaultProps: { fw: 400 },

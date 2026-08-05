@@ -1,0 +1,75 @@
+.ambiance {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  background: #000;
+}
+
+.ambiance-sky {
+  position: absolute;
+  inset: 0;
+  transition: background 1.4s ease;
+}
+
+.ambiance-skyglow {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(1px);
+  opacity: 0.85;
+  transition: top 1.4s ease, left 1.4s ease, background 1.4s ease, box-shadow 1.4s ease;
+}
+
+.ambiance-castle {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20vh;
+  min-height: 140px;
+}
+
+.ambiance-torch {
+  position: absolute;
+  bottom: -60px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  filter: blur(40px);
+  opacity: 0.55;
+  animation: torch-flicker 3.2s ease-in-out infinite;
+}
+
+.ambiance-torch-left {
+  left: -60px;
+  animation-delay: 0s;
+}
+
+.ambiance-torch-right {
+  right: -60px;
+  animation-delay: 1.4s;
+}
+
+@keyframes torch-flicker {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  35% {
+    opacity: 0.65;
+    transform: scale(1.05);
+  }
+  60% {
+    opacity: 0.5;
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambiance-torch {
+    animation: none;
+  }
+}
