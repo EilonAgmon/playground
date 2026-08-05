@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eilon Agmon — Pong</title>
+  <meta name="description" content="Eilon Agmon's personal site — a classic game of Pong." />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="stage">
+    <canvas id="game"></canvas>
+
+    <div id="titleScreen" class="overlay">
+      <h1 class="glow">PONG</h1>
+      <p class="byline">a game by <a href="https://github.com/EilonAgmon" target="_blank" rel="noopener">Eilon Agmon</a></p>
+      <p class="prompt" id="startPrompt">tap or click to serve</p>
+      <p class="hint">move your paddle with mouse, touch-drag, or arrow keys · first to 11 wins</p>
+    </div>
+
+    <div id="gameOverScreen" class="overlay hidden">
+      <h1 class="glow" id="gameOverText">YOU WIN</h1>
+      <p class="prompt" id="restartPrompt">tap or click to play again</p>
+    </div>
+
+    <footer id="identity">
+      <a href="https://github.com/EilonAgmon" target="_blank" rel="noopener">github.com/EilonAgmon</a>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
