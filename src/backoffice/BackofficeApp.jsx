@@ -11,6 +11,16 @@ export default function BackofficeApp() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
 
+  async function reloadStats() {
+    const res = await api.stats(token);
+    if (res.status === 401) {
+      localStorage.removeItem(TOKEN_KEY);
+      setToken(null);
+      return;
+    }
+    if (res.ok) setStats(await res.json());
+  }
+
   useEffect(() => {
     if (!token) return;
     let cancelled = false;
@@ -27,6 +37,15 @@ export default function BackofficeApp() {
       cancelled = true;
     };
   }, [token]);
+
+  async function handleFlushPong() {
+    await api.flushPong(token);
+    reloadStats();
+  }
+
+  async function handleFlushTravel() {
+    await api.flushTravel(token);
+  }
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -50,7 +69,14 @@ export default function BackofficeApp() {
   }
 
   if (token && stats) {
-    return <Dashboard stats={stats} onLogout={handleLogout} />;
+    return (
+      <Dashboard
+        stats={stats}
+        onLogout={handleLogout}
+        onFlushPong={handleFlushPong}
+        onFlushTravel={handleFlushTravel}
+      />
+    );
   }
 
   if (token && !stats) {

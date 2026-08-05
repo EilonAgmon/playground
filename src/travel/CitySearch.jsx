@@ -47,7 +47,7 @@ export default function CitySearch({ onSelect }) {
               <li key={`${r.city}-${r.country}`}>
                 <button type="button" onClick={() => onSelect(r)}>
                   <span className="cityName">{r.city}</span>
-                  <span className="countryName">{r.country}</span>
+                  <span className="countryName">{r.country || "country"}</span>
                 </button>
               </li>
             ))}

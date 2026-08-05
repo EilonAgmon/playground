@@ -115,7 +115,19 @@ function RecentTable({ recent }) {
   );
 }
 
-export default function Dashboard({ stats, onLogout }) {
+export default function Dashboard({ stats, onLogout, onFlushPong, onFlushTravel }) {
+  function handleFlushPong() {
+    if (window.confirm("Delete ALL Pong play data? This cannot be undone.")) {
+      onFlushPong();
+    }
+  }
+
+  function handleFlushTravel() {
+    if (window.confirm("Delete ALL saved Travel items for every user? This cannot be undone.")) {
+      onFlushTravel();
+    }
+  }
+
   return (
     <div id="dashboard">
       <header>
@@ -127,6 +139,18 @@ export default function Dashboard({ stats, onLogout }) {
       <DayChart byDay={stats.byDay} />
       <CountryBars byCountry={stats.byCountry} />
       <RecentTable recent={stats.recent} />
+
+      <section className="panel dangerZone">
+        <h2>danger zone</h2>
+        <div className="dangerActions">
+          <button className="dangerBtn" onClick={handleFlushPong}>
+            flush Pong data
+          </button>
+          <button className="dangerBtn" onClick={handleFlushTravel}>
+            flush Travel data
+          </button>
+        </div>
+      </section>
     </div>
   );
 }

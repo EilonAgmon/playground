@@ -204,3 +204,29 @@ tr:hover td {
 .outcome-win { color: #8f8; }
 .outcome-loss { color: #f88; }
 .outcome-none { opacity: 0.4; }
+
+.dangerZone {
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  padding: 1rem;
+}
+
+.dangerZone h2 {
+  color: #ff6b6b;
+  opacity: 0.8;
+}
+
+.dangerActions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.dangerBtn {
+  border-color: rgba(255, 107, 107, 0.4);
+  color: #ff6b6b;
+}
+
+.dangerBtn:hover {
+  background: rgba(255, 107, 107, 0.1);
+  border-color: #ff6b6b;
+}

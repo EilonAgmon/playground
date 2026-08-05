@@ -163,6 +163,20 @@ async function handleLogout(request, env, origin) {
   return json({ ok: true }, 200, origin);
 }
 
+async function handleFlushPong(request, env, origin) {
+  const token = await getSessionToken(request, env);
+  if (!token) return json({ error: "Unauthorized" }, 401, origin);
+  await env.DB.prepare("DELETE FROM plays").run();
+  return json({ ok: true }, 200, origin);
+}
+
+async function handleFlushTravel(request, env, origin) {
+  const token = await getSessionToken(request, env);
+  if (!token) return json({ error: "Unauthorized" }, 401, origin);
+  await env.DB.prepare("DELETE FROM travel_items").run();
+  return json({ ok: true }, 200, origin);
+}
+
 async function handleStats(request, env, origin) {
   const token = await getSessionToken(request, env);
   if (!token) return json({ error: "Unauthorized" }, 401, origin);
@@ -218,22 +232,27 @@ async function handleCitySearch(env, origin, url) {
   const q = (url.searchParams.get("q") || "").trim();
   if (q.length < 2) return json({ results: [] }, 200, origin);
 
-  const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&q=${encodeURIComponent(q)}`;
+  const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=10&accept-language=en&q=${encodeURIComponent(q)}`;
   const res = await fetch(nomUrl, { headers: { "User-Agent": TRAVEL_UA } });
   if (!res.ok) return json({ results: [] }, 200, origin);
   const data = await res.json();
 
+  // Only real administrative places/settlements (excludes shops, restaurants,
+  // landuse areas, etc. that happen to share a name with the query).
   const seen = new Set();
   const results = [];
   for (const place of data) {
+    if (place.category !== "boundary" && place.category !== "place") continue;
     const addr = place.address || {};
-    const city = addr.city || addr.town || addr.village || addr.municipality || addr.county;
-    const country = addr.country;
-    if (!city || !country) continue;
-    const key = `${city}|${country}`;
+    const name = place.name;
+    if (!name || !addr.country) continue;
+
+    const isCountry = place.addresstype === "country";
+    const country = isCountry ? null : addr.country;
+    const key = isCountry ? `country:${name}` : `${name}|${addr.country}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    results.push({ city, country });
+    results.push({ city: name, country });
   }
 
   return json({ results }, 200, origin);
@@ -378,6 +397,14 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/api/stats") {
         return await handleStats(request, env, origin);
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/admin/flush-pong") {
+        return await handleFlushPong(request, env, origin);
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/admin/flush-travel") {
+        return await handleFlushTravel(request, env, origin);
       }
 
       if (request.method === "GET" && url.pathname === "/api/travel/cities") {

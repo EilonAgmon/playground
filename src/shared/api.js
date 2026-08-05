@@ -23,6 +23,12 @@ export const api = {
   logout(token) {
     return request("/api/logout", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
   },
+  flushPong(token) {
+    return request("/api/admin/flush-pong", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+  },
+  flushTravel(token) {
+    return request("/api/admin/flush-travel", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+  },
   stats(token) {
     return request("/api/stats", { headers: { Authorization: `Bearer ${token}` } });
   },
