@@ -72,8 +72,15 @@ body {
 }
 
 .tile .icon {
-  font-size: 2.6rem;
   line-height: 1;
+}
+
+.pixel-icon {
+  width: 48px;
+  height: 48px;
+  color: #fff;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
 }
 
 .tile .label {
