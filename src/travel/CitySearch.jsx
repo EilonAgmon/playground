@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { Stack, Title, Text, TextInput, Anchor } from "@mantine/core";
 import { api } from "../shared/api.js";
 import { useDebouncedValue } from "./useDebouncedValue.js";
 
-export default function CitySearch({ onSelect }) {
+export default function CitySearch({ onSelect, onBack }) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,19 +29,20 @@ export default function CitySearch({ onSelect }) {
   }, [debouncedQuery]);
 
   return (
-    <div id="citySearchScreen" className="searchScreen">
-      <h1 className="glow display-font">TRAVEL</h1>
-      <p className="hint">search for a city or country to start your list</p>
+    <Stack id="citySearchScreen" className="searchScreen" align="center" justify="center" gap="md">
+      <Title order={1} className="glow">
+        TRAVEL
+      </Title>
+      <Text className="hint">search for a city or country to start a list</Text>
 
       <div className="searchBox">
-        <input
-          type="text"
+        <TextInput
           placeholder="e.g. Amsterdam"
           autoFocus
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        {loading && <p className="searching">searching&hellip;</p>}
+        {loading && <Text className="searching">searching&hellip;</Text>}
         {results.length > 0 && (
           <ul className="dropdown">
             {results.map((r) => (
@@ -55,9 +57,9 @@ export default function CitySearch({ onSelect }) {
         )}
       </div>
 
-      <p className="back">
-        <a href="../">&larr; back to the portal</a>
-      </p>
-    </div>
+      <Anchor component="button" type="button" onClick={onBack} className="back" underline="hover">
+        &larr; back to my lists
+      </Anchor>
+    </Stack>
   );
 }

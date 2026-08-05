@@ -313,6 +313,22 @@ async function handleAttractionSearch(env, origin, url) {
   return json({ results: results.filter(Boolean) }, 200, origin);
 }
 
+async function handleTravelCitiesSummary(env, origin, url) {
+  const username = validUsername(url.searchParams.get("username"));
+  if (!username) return json({ error: "username required" }, 400, origin);
+
+  const result = await env.DB.prepare(
+    `SELECT city, country, COUNT(*) AS count, MAX(created_at) AS last_added
+     FROM travel_items WHERE username = ?
+     GROUP BY city, country
+     ORDER BY last_added DESC`
+  )
+    .bind(username)
+    .all();
+
+  return json({ cities: result.results }, 200, origin);
+}
+
 async function handleTravelItemsList(env, origin, url) {
   const username = validUsername(url.searchParams.get("username"));
   if (!username) return json({ error: "username required" }, 400, origin);
@@ -413,6 +429,10 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/api/travel/attractions") {
         return await handleAttractionSearch(env, origin, url);
+      }
+
+      if (request.method === "GET" && url.pathname === "/api/travel/cities-summary") {
+        return await handleTravelCitiesSummary(env, origin, url);
       }
 
       if (request.method === "GET" && url.pathname === "/api/travel/items") {

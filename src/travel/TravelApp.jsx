@@ -1,41 +1,52 @@
 import { useEffect, useState } from "react";
 import { api } from "../shared/api.js";
 import LoginGate from "./LoginGate.jsx";
+import CityDashboard from "./CityDashboard.jsx";
 import CitySearch from "./CitySearch.jsx";
-import AttractionSearch from "./AttractionSearch.jsx";
-import SavedList from "./SavedList.jsx";
+import CityScreen from "./CityScreen.jsx";
 import "./travel.css";
 
 const USERNAME_KEY = "travel_username";
 
-function lastCityKey(username) {
-  return `travel_last_city_${username}`;
-}
-
 export default function TravelApp() {
   const [username, setUsername] = useState(() => localStorage.getItem(USERNAME_KEY));
-  const [city, setCity] = useState(() => {
-    if (!username) return null;
-    const raw = localStorage.getItem(lastCityKey(username));
-    return raw ? JSON.parse(raw) : null;
-  });
+  const [view, setView] = useState("dashboard"); // "dashboard" | "search" | "city"
+  const [city, setCity] = useState(null);
+
+  const [cities, setCities] = useState([]);
+  const [citiesLoading, setCitiesLoading] = useState(false);
+
   const [items, setItems] = useState([]);
-  const [loadingItems, setLoadingItems] = useState(false);
+  const [itemsLoading, setItemsLoading] = useState(false);
+
+  function loadCitiesSummary() {
+    if (!username) return;
+    setCitiesLoading(true);
+    api.travelCitiesSummary(username).then((data) => {
+      setCities(data.cities || []);
+      setCitiesLoading(false);
+    });
+  }
 
   useEffect(() => {
-    if (!username || !city) return;
+    if (username && view === "dashboard") loadCitiesSummary();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [username, view]);
+
+  useEffect(() => {
+    if (!username || view !== "city" || !city) return;
     let cancelled = false;
-    setLoadingItems(true);
+    setItemsLoading(true);
     api.listTravelItems(username, city.city).then((data) => {
       if (!cancelled) {
         setItems(data.items || []);
-        setLoadingItems(false);
+        setItemsLoading(false);
       }
     });
     return () => {
       cancelled = true;
     };
-  }, [username, city]);
+  }, [username, view, city]);
 
   function handleLogin(name) {
     localStorage.setItem(USERNAME_KEY, name);
@@ -45,18 +56,30 @@ export default function TravelApp() {
   function handleSwitchUser() {
     localStorage.removeItem(USERNAME_KEY);
     setUsername(null);
+    setView("dashboard");
     setCity(null);
+    setCities([]);
     setItems([]);
   }
 
-  function handleSelectCity(selected) {
-    localStorage.setItem(lastCityKey(username), JSON.stringify(selected));
+  function handleOpenCity(selected) {
     setCity(selected);
+    setView("city");
   }
 
-  function handleChangeCity() {
+  function handleAddNew() {
+    setView("search");
+  }
+
+  function handleSelectNewCity(selected) {
+    setCity(selected);
+    setView("city");
+  }
+
+  function handleBackToDashboard() {
     setCity(null);
     setItems([]);
+    setView("dashboard");
   }
 
   async function handleAddAttraction(result) {
@@ -93,39 +116,31 @@ export default function TravelApp() {
     return <LoginGate onLogin={handleLogin} />;
   }
 
-  if (!city) {
-    return <CitySearch onSelect={handleSelectCity} />;
+  if (view === "search") {
+    return <CitySearch onSelect={handleSelectNewCity} onBack={handleBackToDashboard} />;
+  }
+
+  if (view === "city" && city) {
+    return (
+      <CityScreen
+        city={city}
+        items={items}
+        loading={itemsLoading}
+        onAdd={handleAddAttraction}
+        onDelete={handleDeleteAttraction}
+        onBackToDashboard={handleBackToDashboard}
+      />
+    );
   }
 
   return (
-    <div id="cityScreen">
-      <header className="cityHeader">
-        <div>
-          <h1 className="glow display-font small">
-            {city.city}
-            <span className="countryTag">{city.country}</span>
-          </h1>
-        </div>
-        <div className="headerActions">
-          <button type="button" onClick={handleChangeCity}>
-            change city
-          </button>
-          <button type="button" onClick={handleSwitchUser}>
-            not {username}?
-          </button>
-        </div>
-      </header>
-
-      <AttractionSearch city={city.city} onAdd={handleAddAttraction} />
-
-      <section className="savedSection">
-        <h2>{username}&rsquo;s list</h2>
-        {loadingItems ? <p className="searching">loading&hellip;</p> : <SavedList items={items} onDelete={handleDeleteAttraction} />}
-      </section>
-
-      <p className="back">
-        <a href="../">&larr; back to the portal</a>
-      </p>
-    </div>
+    <CityDashboard
+      username={username}
+      cities={cities}
+      loading={citiesLoading}
+      onOpenCity={handleOpenCity}
+      onAddNew={handleAddNew}
+      onSwitchUser={handleSwitchUser}
+    />
   );
 }

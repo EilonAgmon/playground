@@ -1,3 +1,19 @@
+import {
+  Stack,
+  Group,
+  Title,
+  Text,
+  Button,
+  Card,
+  SimpleGrid,
+  RingProgress,
+  Center,
+  Table,
+  ScrollArea,
+  Alert,
+  Badge,
+} from "@mantine/core";
+
 function StatTiles({ totals }) {
   const tiles = [
     { label: "total plays", value: totals.total_plays || 0 },
@@ -5,15 +21,38 @@ function StatTiles({ totals }) {
     { label: "losses", value: totals.losses || 0 },
     { label: "abandoned", value: totals.abandoned || 0 },
   ];
+  const wins = totals.wins || 0;
+  const losses = totals.losses || 0;
+  const decided = wins + losses;
+  const winRate = decided ? Math.round((wins / decided) * 100) : 0;
+
   return (
-    <section className="tiles">
+    <SimpleGrid cols={{ base: 2, sm: 5 }} spacing="md" mb="xl">
       {tiles.map((t) => (
-        <div className="tile" key={t.label}>
-          <div className="value">{t.value}</div>
-          <div className="label">{t.label}</div>
-        </div>
+        <Card key={t.label} className="tile" withBorder padding="md">
+          <Text className="tile-value">{t.value}</Text>
+          <Text className="tile-label">{t.label}</Text>
+        </Card>
       ))}
-    </section>
+      <Card className="tile" withBorder padding="md">
+        <Center>
+          <RingProgress
+            size={70}
+            thickness={6}
+            roundCaps
+            sections={[{ value: winRate, color: "brand.4" }]}
+            label={
+              <Text ta="center" size="xs" fw={700}>
+                {decided ? `${winRate}%` : "—"}
+              </Text>
+            }
+          />
+        </Center>
+        <Text className="tile-label" ta="center" mt={4}>
+          win rate
+        </Text>
+      </Card>
+    </SimpleGrid>
   );
 }
 
@@ -29,8 +68,8 @@ function DayChart({ byDay }) {
   const max = Math.max(1, ...days.map((d) => counts[d] || 0));
 
   return (
-    <section className="panel">
-      <h2>plays / day (last 30 days)</h2>
+    <Card className="panel" withBorder mb="lg">
+      <Text className="panel-title">plays / day (last 30 days)</Text>
       <div className="chart">
         {days.map((day) => {
           const count = counts[day] || 0;
@@ -44,16 +83,16 @@ function DayChart({ byDay }) {
           );
         })}
       </div>
-    </section>
+    </Card>
   );
 }
 
 function CountryBars({ byCountry }) {
   const max = Math.max(1, ...byCountry.map((r) => r.count));
   return (
-    <section className="panel">
-      <h2>top countries</h2>
-      <div className="bars">
+    <Card className="panel" withBorder mb="lg">
+      <Text className="panel-title">top countries</Text>
+      <Stack gap="xs">
         {byCountry.map((r) => (
           <div className="row" key={r.country}>
             <span>{r.country}</span>
@@ -63,32 +102,31 @@ function CountryBars({ byCountry }) {
             <span className="count">{r.count}</span>
           </div>
         ))}
-      </div>
-    </section>
+      </Stack>
+    </Card>
   );
 }
 
 function RecentTable({ recent }) {
   return (
-    <section className="panel">
-      <h2>recent plays</h2>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>when</th>
-              <th>location</th>
-              <th>device</th>
-              <th>browser / os</th>
-              <th>referrer</th>
-              <th>result</th>
-            </tr>
-          </thead>
-          <tbody>
+    <Card className="panel" withBorder mb="lg">
+      <Text className="panel-title">recent plays</Text>
+      <ScrollArea>
+        <Table verticalSpacing="xs" fz="xs">
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th>when</Table.Th>
+              <Table.Th>location</Table.Th>
+              <Table.Th>device</Table.Th>
+              <Table.Th>browser / os</Table.Th>
+              <Table.Th>referrer</Table.Th>
+              <Table.Th>result</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
             {recent.map((p) => {
               const location = [p.city, p.region, p.country].filter(Boolean).join(", ") || "Unknown";
-              const outcomeClass =
-                p.outcome === "win" ? "outcome-win" : p.outcome === "loss" ? "outcome-loss" : "outcome-none";
+              const outcomeColor = p.outcome === "win" ? "teal" : p.outcome === "loss" ? "red" : "gray";
               const outcomeText =
                 p.outcome === "win"
                   ? `win (${p.player_score}–${p.ai_score})`
@@ -96,22 +134,26 @@ function RecentTable({ recent }) {
                   ? `loss (${p.player_score}–${p.ai_score})`
                   : "in progress";
               return (
-                <tr key={p.id}>
-                  <td>{new Date(`${p.created_at}Z`).toLocaleString()}</td>
-                  <td>{location}</td>
-                  <td>{p.device_type || "?"}</td>
-                  <td>
+                <Table.Tr key={p.id}>
+                  <Table.Td>{new Date(`${p.created_at}Z`).toLocaleString()}</Table.Td>
+                  <Table.Td>{location}</Table.Td>
+                  <Table.Td>{p.device_type || "?"}</Table.Td>
+                  <Table.Td>
                     {p.browser || "?"} / {p.os || "?"}
-                  </td>
-                  <td>{p.referrer ? p.referrer.slice(0, 40) : "direct"}</td>
-                  <td className={outcomeClass}>{outcomeText}</td>
-                </tr>
+                  </Table.Td>
+                  <Table.Td>{p.referrer ? p.referrer.slice(0, 40) : "direct"}</Table.Td>
+                  <Table.Td>
+                    <Badge color={outcomeColor} variant="light" size="sm">
+                      {outcomeText}
+                    </Badge>
+                  </Table.Td>
+                </Table.Tr>
               );
             })}
-          </tbody>
-        </table>
-      </div>
-    </section>
+          </Table.Tbody>
+        </Table>
+      </ScrollArea>
+    </Card>
   );
 }
 
@@ -130,27 +172,30 @@ export default function Dashboard({ stats, onLogout, onFlushPong, onFlushTravel 
 
   return (
     <div id="dashboard">
-      <header>
-        <h1 className="glow small display-font">BACKOFFICE</h1>
-        <button onClick={onLogout}>log out</button>
-      </header>
+      <Group justify="space-between" className="dashboard-header" mb="xl">
+        <Title order={1} className="glow small">
+          BACKOFFICE
+        </Title>
+        <Button variant="outline" onClick={onLogout}>
+          log out
+        </Button>
+      </Group>
 
       <StatTiles totals={stats.totals} />
       <DayChart byDay={stats.byDay} />
       <CountryBars byCountry={stats.byCountry} />
       <RecentTable recent={stats.recent} />
 
-      <section className="panel dangerZone">
-        <h2>danger zone</h2>
-        <div className="dangerActions">
-          <button className="dangerBtn" onClick={handleFlushPong}>
+      <Alert color="red" variant="outline" title="danger zone" mt="xl">
+        <Group>
+          <Button color="red" variant="outline" onClick={handleFlushPong}>
             flush Pong data
-          </button>
-          <button className="dangerBtn" onClick={handleFlushTravel}>
+          </Button>
+          <Button color="red" variant="outline" onClick={handleFlushTravel}>
             flush Travel data
-          </button>
-        </div>
-      </section>
+          </Button>
+        </Group>
+      </Alert>
     </div>
   );
 }

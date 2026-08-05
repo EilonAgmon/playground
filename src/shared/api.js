@@ -39,6 +39,10 @@ export const api = {
     const params = new URLSearchParams({ q, city: city || "" });
     return request(`/api/travel/attractions?${params}`).then((r) => (r.ok ? r.json() : { results: [] }));
   },
+  travelCitiesSummary(username) {
+    const params = new URLSearchParams({ username });
+    return request(`/api/travel/cities-summary?${params}`).then((r) => (r.ok ? r.json() : { cities: [] }));
+  },
   listTravelItems(username, city) {
     const params = new URLSearchParams({ username, city: city || "" });
     return request(`/api/travel/items?${params}`).then((r) => (r.ok ? r.json() : { items: [] }));

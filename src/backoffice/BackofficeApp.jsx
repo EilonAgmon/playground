@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Stack, Title, PasswordInput, Button, Text, Anchor } from "@mantine/core";
 import { api } from "../shared/api.js";
 import Dashboard from "./Dashboard.jsx";
 import "./backoffice.css";
@@ -84,23 +85,28 @@ export default function BackofficeApp() {
   }
 
   return (
-    <div id="loginScreen">
-      <h1 className="glow display-font">BACKOFFICE</h1>
+    <Stack id="loginScreen" align="center" justify="center" gap="md">
+      <Title order={1} className="glow">
+        BACKOFFICE
+      </Title>
       <form onSubmit={handleLogin}>
-        <input
-          type="password"
-          placeholder="password"
-          autoComplete="current-password"
-          autoFocus
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit">enter</button>
+        <Stack gap="xs" align="center">
+          <PasswordInput
+            placeholder="password"
+            autoComplete="current-password"
+            autoFocus
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button type="submit" fullWidth>
+            enter
+          </Button>
+        </Stack>
       </form>
-      {error && <p className="error">wrong password</p>}
-      <p className="back">
-        <a href="../">&larr; back to the portal</a>
-      </p>
-    </div>
+      {error && <Text c="red">wrong password</Text>}
+      <Anchor href="../" className="back" underline="hover">
+        &larr; back to the portal
+      </Anchor>
+    </Stack>
   );
 }

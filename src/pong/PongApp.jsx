@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { Stack, Title, Text, Anchor } from "@mantine/core";
 import { createPongEngine } from "./engine.js";
 import "./pong.css";
 
@@ -28,31 +29,44 @@ export default function PongApp() {
       <canvas id="game" ref={canvasRef} />
 
       {gameState === "title" && (
-        <div className="overlay" onClick={handleStart}>
-          <h1 className="glow display-font">PONG</h1>
-          <p className="byline">
+        <Stack className="overlay" align="center" justify="center" gap="sm" onClick={handleStart}>
+          <Title order={1} className="glow">
+            PONG
+          </Title>
+          <Text className="byline">
             a game by{" "}
-            <a href="https://github.com/EilonAgmon" target="_blank" rel="noopener" onClick={(e) => e.stopPropagation()}>
+            <Anchor
+              href="https://github.com/EilonAgmon"
+              target="_blank"
+              rel="noopener"
+              onClick={(e) => e.stopPropagation()}
+            >
               Eilon Agmon
-            </a>
-          </p>
-          <p className="prompt">tap or click to serve</p>
-          <p className="hint">move your paddle with mouse, touch-drag, or arrow keys &middot; first to 11 wins</p>
-        </div>
+            </Anchor>
+          </Text>
+          <Text className="prompt">tap or click to serve</Text>
+          <Text className="hint">move your paddle with mouse, touch-drag, or arrow keys &middot; first to 11 wins</Text>
+        </Stack>
       )}
 
       {gameState === "gameover" && (
-        <div className="overlay" onClick={handleStart}>
-          <h1 className="glow display-font">{gameOverText}</h1>
-          <p className="prompt">tap or click to play again</p>
-        </div>
+        <Stack className="overlay" align="center" justify="center" gap="sm" onClick={handleStart}>
+          <Title order={1} className="glow">
+            {gameOverText}
+          </Title>
+          <Text className="prompt">tap or click to play again</Text>
+        </Stack>
       )}
 
-      <footer id="identity">
-        <a href="https://github.com/EilonAgmon" target="_blank" rel="noopener">
-          github.com/EilonAgmon
-        </a>
-      </footer>
+      <Anchor
+        href="https://github.com/EilonAgmon"
+        target="_blank"
+        rel="noopener"
+        id="identity"
+        underline="hover"
+      >
+        github.com/EilonAgmon
+      </Anchor>
     </div>
   );
 }

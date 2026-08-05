@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Stack, Title, TextInput, Button, Text, Anchor } from "@mantine/core";
 
 const MAX_LEN = 20;
 
@@ -18,24 +19,29 @@ export default function LoginGate({ onLogin }) {
   }
 
   return (
-    <div id="loginScreen">
-      <h1 className="glow display-font">TRAVEL</h1>
+    <Stack id="loginScreen" align="center" justify="center" gap="md">
+      <Title order={1} className="glow">
+        TRAVEL
+      </Title>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="your name"
-          maxLength={MAX_LEN}
-          autoComplete="off"
-          autoFocus
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <button type="submit">enter</button>
+        <Stack gap="xs" align="center">
+          <TextInput
+            placeholder="your name"
+            maxLength={MAX_LEN}
+            autoComplete="off"
+            autoFocus
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Button type="submit" fullWidth>
+            enter
+          </Button>
+        </Stack>
       </form>
-      {error && <p className="error">enter a name first</p>}
-      <p className="back">
-        <a href="../">&larr; back to the portal</a>
-      </p>
-    </div>
+      {error && <Text c="red">enter a name first</Text>}
+      <Anchor href="../" className="back" underline="hover">
+        &larr; back to the portal
+      </Anchor>
+    </Stack>
   );
 }

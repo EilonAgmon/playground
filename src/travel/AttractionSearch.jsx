@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { TextInput, Text } from "@mantine/core";
 import { api } from "../shared/api.js";
 import { useDebouncedValue } from "./useDebouncedValue.js";
 
@@ -38,13 +39,12 @@ export default function AttractionSearch({ city, onAdd }) {
 
   return (
     <div className="attractionSearch">
-      <input
-        type="text"
+      <TextInput
         placeholder='search an attraction, e.g. "Van Gogh Museum"'
         value={query}
         onChange={(e) => setQuery(e.target.value)}
       />
-      {loading && <p className="searching">searching&hellip;</p>}
+      {loading && <Text className="searching">searching&hellip;</Text>}
       {results.length > 0 && (
         <ul className="dropdown attractionDropdown">
           {results.map((r) => (
