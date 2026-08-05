@@ -14,7 +14,7 @@ function isAllowedOrigin(origin) {
 
 function corsHeaders(origin) {
   const headers = {
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
   if (isAllowedOrigin(origin)) {
@@ -204,6 +204,151 @@ async function handleStats(request, env, origin) {
   );
 }
 
+// ---------- Travel: city + attraction search (free, keyless sources) ----------
+
+const TRAVEL_UA = "agmoneilon-travel-app/1.0 (https://agmoneilon.com; agmoneilon@gmail.com)";
+
+function validUsername(u) {
+  if (typeof u !== "string") return null;
+  const trimmed = u.trim().slice(0, 20);
+  return trimmed.length ? trimmed : null;
+}
+
+async function handleCitySearch(env, origin, url) {
+  const q = (url.searchParams.get("q") || "").trim();
+  if (q.length < 2) return json({ results: [] }, 200, origin);
+
+  const nomUrl = `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&limit=8&q=${encodeURIComponent(q)}`;
+  const res = await fetch(nomUrl, { headers: { "User-Agent": TRAVEL_UA } });
+  if (!res.ok) return json({ results: [] }, 200, origin);
+  const data = await res.json();
+
+  const seen = new Set();
+  const results = [];
+  for (const place of data) {
+    const addr = place.address || {};
+    const city = addr.city || addr.town || addr.village || addr.municipality || addr.county;
+    const country = addr.country;
+    if (!city || !country) continue;
+    const key = `${city}|${country}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    results.push({ city, country });
+  }
+
+  return json({ results }, 200, origin);
+}
+
+async function wikipediaSearch(query) {
+  const searchUrl = `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(
+    query
+  )}&srlimit=5&format=json`;
+  const res = await fetch(searchUrl, { headers: { "User-Agent": TRAVEL_UA } });
+  if (!res.ok) return [];
+  const data = await res.json();
+  return (data.query && data.query.search) || [];
+}
+
+async function wikipediaSummary(title) {
+  const url = `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title)}`;
+  const res = await fetch(url, { headers: { "User-Agent": TRAVEL_UA } });
+  if (!res.ok) return null;
+  return res.json();
+}
+
+async function wikidataOfficialSite(qid) {
+  if (!qid) return null;
+  const url = `https://www.wikidata.org/wiki/Special:EntityData/${qid}.json`;
+  const res = await fetch(url, { headers: { "User-Agent": TRAVEL_UA } });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const entity = data.entities && data.entities[qid];
+  const claims = entity && entity.claims && entity.claims.P856;
+  if (!claims || !claims.length) return null;
+  const value = claims[0].mainsnak && claims[0].mainsnak.datavalue && claims[0].mainsnak.datavalue.value;
+  return typeof value === "string" ? value : null;
+}
+
+async function handleAttractionSearch(env, origin, url) {
+  const q = (url.searchParams.get("q") || "").trim();
+  const city = (url.searchParams.get("city") || "").trim();
+  if (q.length < 2) return json({ results: [] }, 200, origin);
+
+  const searchResults = await wikipediaSearch(city ? `${q} ${city}` : q);
+  const summaries = await Promise.all(searchResults.slice(0, 5).map((r) => wikipediaSummary(r.title)));
+
+  const results = await Promise.all(
+    summaries.map(async (s) => {
+      if (!s || s.type === "disambiguation") return null;
+      const officialUrl = await wikidataOfficialSite(s.wikibase_item);
+      return {
+        title: s.title,
+        extract: s.extract || null,
+        image: s.thumbnail ? s.thumbnail.source : null,
+        officialUrl: officialUrl || null,
+        wikipediaUrl: s.content_urls && s.content_urls.desktop ? s.content_urls.desktop.page : null,
+      };
+    })
+  );
+
+  return json({ results: results.filter(Boolean) }, 200, origin);
+}
+
+async function handleTravelItemsList(env, origin, url) {
+  const username = validUsername(url.searchParams.get("username"));
+  if (!username) return json({ error: "username required" }, 400, origin);
+  const city = url.searchParams.get("city");
+
+  let query = "SELECT * FROM travel_items WHERE username = ?";
+  const binds = [username];
+  if (city) {
+    query += " AND city = ?";
+    binds.push(city);
+  }
+  query += " ORDER BY created_at DESC";
+
+  const result = await env.DB.prepare(query)
+    .bind(...binds)
+    .all();
+  return json({ items: result.results }, 200, origin);
+}
+
+async function handleTravelItemAdd(request, env, origin) {
+  const body = await request.json().catch(() => ({}));
+  const username = validUsername(body.username);
+  const city = (body.city || "").slice(0, 200);
+  const title = (body.title || "").slice(0, 300);
+  if (!username || !city || !title) {
+    return json({ error: "username, city and title required" }, 400, origin);
+  }
+
+  const result = await env.DB.prepare(
+    `INSERT INTO travel_items (username, city, country, title, extract, image_url, official_url, wikipedia_url)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+  )
+    .bind(
+      username,
+      city,
+      (body.country || "").slice(0, 200) || null,
+      title,
+      (body.extract || "").slice(0, 2000) || null,
+      body.image || null,
+      body.officialUrl || null,
+      body.wikipediaUrl || null
+    )
+    .run();
+
+  return json({ id: result.meta.last_row_id }, 201, origin);
+}
+
+async function handleTravelItemDelete(env, origin, id, url) {
+  const username = validUsername(url.searchParams.get("username"));
+  if (!username) return json({ error: "username required" }, 400, origin);
+
+  await env.DB.prepare("DELETE FROM travel_items WHERE id = ? AND username = ?").bind(id, username).run();
+  return json({ ok: true }, 200, origin);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -233,6 +378,27 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/api/stats") {
         return await handleStats(request, env, origin);
+      }
+
+      if (request.method === "GET" && url.pathname === "/api/travel/cities") {
+        return await handleCitySearch(env, origin, url);
+      }
+
+      if (request.method === "GET" && url.pathname === "/api/travel/attractions") {
+        return await handleAttractionSearch(env, origin, url);
+      }
+
+      if (request.method === "GET" && url.pathname === "/api/travel/items") {
+        return await handleTravelItemsList(env, origin, url);
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/travel/items") {
+        return await handleTravelItemAdd(request, env, origin);
+      }
+
+      const travelDeleteMatch = url.pathname.match(/^\/api\/travel\/items\/(\d+)$/);
+      if (request.method === "DELETE" && travelDeleteMatch) {
+        return await handleTravelItemDelete(env, origin, travelDeleteMatch[1], url);
       }
 
       return json({ error: "Not found" }, 404, origin);

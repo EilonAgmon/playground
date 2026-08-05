@@ -28,3 +28,18 @@ CREATE TABLE IF NOT EXISTS sessions (
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   expires_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS travel_items (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  username TEXT NOT NULL,
+  city TEXT NOT NULL,
+  country TEXT,
+  title TEXT NOT NULL,
+  extract TEXT,
+  image_url TEXT,
+  official_url TEXT,
+  wikipedia_url TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_travel_items_username_city ON travel_items (username, city);

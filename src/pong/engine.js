@@ -1,47 +1,33 @@
-(() => {
-  "use strict";
+import { api } from "../shared/api.js";
 
-  const canvas = document.getElementById("game");
+// Ported near-verbatim from the original vanilla game.js. The only real change
+// is that title/game-over screen visibility is reported via onState() instead
+// of directly toggling DOM elements, so React can render the overlays.
+export function createPongEngine(canvas, { onState }) {
   const ctx = canvas.getContext("2d");
-  const titleScreen = document.getElementById("titleScreen");
-  const gameOverScreen = document.getElementById("gameOverScreen");
-  const gameOverText = document.getElementById("gameOverText");
 
-  // Backoffice analytics — best-effort only, never blocks or breaks gameplay.
-  const ANALYTICS_BASE = "https://pong-backoffice.agmoneilon.workers.dev";
   let currentPlayId = null;
 
   function trackPlayStart() {
     currentPlayId = null;
-    fetch(`${ANALYTICS_BASE}/api/track`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    api
+      .trackStart({
         referrer: document.referrer,
         language: navigator.language,
         screen: { w: window.screen.width, h: window.screen.height },
-      }),
-    })
-      .then((r) => (r.ok ? r.json() : null))
+      })
       .then((data) => {
         if (data) currentPlayId = data.id;
-      })
-      .catch(() => {});
+      });
   }
 
   function trackPlayEnd(outcome) {
     if (currentPlayId == null) return;
     const id = currentPlayId;
     currentPlayId = null;
-    fetch(`${ANALYTICS_BASE}/api/track/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ outcome, playerScore, aiScore }),
-    }).catch(() => {});
+    api.trackEnd(id, { outcome, playerScore, aiScore }).catch(() => {});
   }
 
-  // Logical (virtual) resolution the game is drawn in — the canvas backing
-  // store is scaled to this so all game logic is resolution-independent.
   const LOGICAL_W = 800;
   const LOGICAL_H = 500;
   const ASPECT = LOGICAL_W / LOGICAL_H;
@@ -52,13 +38,13 @@
   const BALL_SIZE = 12;
   const WIN_SCORE = 11;
 
-  const BASE_BALL_SPEED = 320; // px/s (logical)
+  const BASE_BALL_SPEED = 320;
   const MAX_BALL_SPEED = 620;
   const BALL_SPEEDUP = 1.06;
   const MAX_BOUNCE_ANGLE = (55 * Math.PI) / 180;
 
-  const AI_MAX_SPEED = 330; // px/s
-  const AI_REACTION_SLACK = 18; // px dead-zone so AI isn't a perfect wall
+  const AI_MAX_SPEED = 330;
+  const AI_REACTION_SLACK = 18;
 
   let scale = 1;
 
@@ -68,7 +54,7 @@
 
   let playerScore = 0;
   let aiScore = 0;
-  let state = "title"; // "title" | "playing" | "gameover"
+  let state = "title";
   let serveTimer = 0;
   let serveDirection = 1;
 
@@ -77,7 +63,11 @@
   ai.x = LOGICAL_W - PADDLE_MARGIN - PADDLE_W;
   ai.y = LOGICAL_H / 2 - PADDLE_H / 2;
 
-  // ---------- Sizing ----------
+  function setState(next, extra) {
+    state = next;
+    onState(next, extra);
+  }
+
   function resize() {
     let cssW = window.innerWidth;
     let cssH = window.innerHeight;
@@ -99,11 +89,10 @@
     ctx.imageSmoothingEnabled = false;
   }
 
+  resize();
   window.addEventListener("resize", resize);
   window.addEventListener("orientationchange", resize);
-  resize();
 
-  // ---------- Audio ----------
   let audioCtx = null;
 
   function ensureAudio() {
@@ -135,7 +124,6 @@
     score: () => beep(140, 0.35),
   };
 
-  // ---------- Input ----------
   function clientToLogical(clientX, clientY) {
     const rect = canvas.getBoundingClientRect();
     return {
@@ -149,77 +137,47 @@
     player.targetY = p.y;
   }
 
-  window.addEventListener("mousemove", (e) => {
+  function onMouseMove(e) {
     setPlayerTarget(e.clientX, e.clientY);
-  });
+  }
 
-  canvas.addEventListener(
-    "touchstart",
-    (e) => {
-      e.preventDefault();
-      const t = e.touches[0];
-      if (t) setPlayerTarget(t.clientX, t.clientY);
-    },
-    { passive: false }
-  );
+  function onTouchMove(e) {
+    e.preventDefault();
+    const t = e.touches[0];
+    if (t) setPlayerTarget(t.clientX, t.clientY);
+  }
 
-  canvas.addEventListener(
-    "touchmove",
-    (e) => {
-      e.preventDefault();
-      const t = e.touches[0];
-      if (t) setPlayerTarget(t.clientX, t.clientY);
-    },
-    { passive: false }
-  );
+  window.addEventListener("mousemove", onMouseMove);
+  canvas.addEventListener("touchstart", onTouchMove, { passive: false });
+  canvas.addEventListener("touchmove", onTouchMove, { passive: false });
 
   const keys = { up: false, down: false };
-  window.addEventListener("keydown", (e) => {
+  function onKeyDown(e) {
     if (e.key === "ArrowUp") keys.up = true;
     if (e.key === "ArrowDown") keys.down = true;
-  });
-  window.addEventListener("keyup", (e) => {
+  }
+  function onKeyUp(e) {
     if (e.key === "ArrowUp") keys.up = false;
     if (e.key === "ArrowDown") keys.down = false;
-  });
+  }
+  window.addEventListener("keydown", onKeyDown);
+  window.addEventListener("keyup", onKeyUp);
 
   function startOrRestart() {
     ensureAudio();
     if (state === "title") {
-      state = "playing";
-      titleScreen.classList.add("hidden");
+      setState("playing");
       serve(Math.random() < 0.5 ? -1 : 1);
       trackPlayStart();
     } else if (state === "gameover") {
       playerScore = 0;
       aiScore = 0;
-      state = "playing";
-      gameOverScreen.classList.add("hidden");
+      setState("playing");
       serve(Math.random() < 0.5 ? -1 : 1);
       trackPlayStart();
     }
   }
 
-  titleScreen.addEventListener("click", startOrRestart);
-  titleScreen.addEventListener(
-    "touchend",
-    (e) => {
-      e.preventDefault();
-      startOrRestart();
-    },
-    { passive: false }
-  );
-  gameOverScreen.addEventListener("click", startOrRestart);
-  gameOverScreen.addEventListener(
-    "touchend",
-    (e) => {
-      e.preventDefault();
-      startOrRestart();
-    },
-    { passive: false }
-  );
-
-  // ---------- Game logic ----------
   function serve(direction) {
     serveDirection = direction;
     ball.x = LOGICAL_W / 2;
@@ -231,7 +189,7 @@
   }
 
   function launchBall() {
-    const angle = (Math.random() * 2 - 1) * (30 * Math.PI / 180);
+    const angle = (Math.random() * 2 - 1) * ((30 * Math.PI) / 180);
     ball.vx = Math.cos(angle) * ball.speed * serveDirection;
     ball.vy = Math.sin(angle) * ball.speed;
   }
@@ -325,17 +283,14 @@
 
   function onScore() {
     if (playerScore >= WIN_SCORE || aiScore >= WIN_SCORE) {
-      state = "gameover";
       const playerWon = playerScore > aiScore;
-      gameOverText.textContent = playerWon ? "YOU WIN" : "YOU LOSE";
-      gameOverScreen.classList.remove("hidden");
+      setState("gameover", { text: playerWon ? "YOU WIN" : "YOU LOSE" });
       trackPlayEnd(playerWon ? "win" : "loss");
     } else {
       serve(ball.vx > 0 ? -1 : 1);
     }
   }
 
-  // ---------- Rendering ----------
   function draw() {
     ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
     ctx.fillStyle = "#000";
@@ -354,9 +309,7 @@
     ctx.fillRect(player.x, player.y, player.w, player.h);
     ctx.fillRect(ai.x, ai.y, ai.w, ai.h);
 
-    if (state === "playing" && serveTimer <= 0) {
-      ctx.fillRect(ball.x - BALL_SIZE / 2, ball.y - BALL_SIZE / 2, BALL_SIZE, BALL_SIZE);
-    } else if (state !== "title") {
+    if (state !== "title") {
       ctx.fillRect(ball.x - BALL_SIZE / 2, ball.y - BALL_SIZE / 2, BALL_SIZE, BALL_SIZE);
     }
 
@@ -367,8 +320,8 @@
     ctx.fillText(String(aiScore), LOGICAL_W * 0.75, 64);
   }
 
-  // ---------- Main loop ----------
   let lastTime = performance.now();
+  let rafId = null;
 
   function frame(now) {
     let dt = (now - lastTime) / 1000;
@@ -381,12 +334,27 @@
     }
 
     draw();
-    requestAnimationFrame(frame);
+    rafId = requestAnimationFrame(frame);
   }
 
-  document.addEventListener("visibilitychange", () => {
+  function onVisibilityChange() {
     if (!document.hidden) lastTime = performance.now();
-  });
+  }
+  document.addEventListener("visibilitychange", onVisibilityChange);
 
-  requestAnimationFrame(frame);
-})();
+  rafId = requestAnimationFrame(frame);
+
+  function destroy() {
+    cancelAnimationFrame(rafId);
+    window.removeEventListener("resize", resize);
+    window.removeEventListener("orientationchange", resize);
+    window.removeEventListener("mousemove", onMouseMove);
+    canvas.removeEventListener("touchstart", onTouchMove);
+    canvas.removeEventListener("touchmove", onTouchMove);
+    window.removeEventListener("keydown", onKeyDown);
+    window.removeEventListener("keyup", onKeyUp);
+    document.removeEventListener("visibilitychange", onVisibilityChange);
+  }
+
+  return { startOrRestart, destroy };
+}

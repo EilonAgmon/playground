@@ -1,0 +1,131 @@
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+:root {
+  --bg: #050505;
+  --fg: #f5f5f5;
+  --fg-dim: rgba(245, 245, 245, 0.55);
+  --fg-faint: rgba(245, 245, 245, 0.3);
+  --accent: #ffb400;
+  --accent-glow: rgba(255, 180, 0, 0.55);
+  --line: rgba(245, 245, 245, 0.2);
+  --font-display: "Press Start 2P", "Courier New", monospace;
+  --font-body: "Courier New", Courier, monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: var(--bg);
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--fg);
+  -webkit-user-select: none;
+  user-select: none;
+  position: relative;
+}
+
+#root {
+  position: relative;
+  min-height: 100vh;
+}
+
+/* CRT screen effect: vignette + scanlines, applied once behind everything */
+.crt-fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+}
+
+.crt-fx::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+}
+
+.crt-fx::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+.glow {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.glow-accent {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent-glow), 0 0 22px var(--accent-glow);
+}
+
+.display-font {
+  font-family: var(--font-display);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--accent);
+}
+
+a:hover {
+  text-shadow: 0 0 8px var(--accent-glow);
+}
+
+input, button, select {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  background: #000;
+  color: var(--fg);
+  border: 1px solid var(--line);
+  padding: 0.6em 0.8em;
+}
+
+input:focus, button:focus, select:focus {
+  outline: 1px solid var(--accent);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+
+button {
+  cursor: pointer;
+  transition: background-color 0.15s, box-shadow 0.15s;
+}
+
+button:hover {
+  background: rgba(255, 180, 0, 0.1);
+  border-color: var(--accent);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.hidden {
+  display: none !important;
+}
+
+::selection {
+  background: var(--accent);
+  color: #000;
+}
+
+.pixel-icon {
+  image-rendering: pixelated;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+}
