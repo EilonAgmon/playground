@@ -1,0 +1,260 @@
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#wheels, .pickerScreen {
+  height: 100vh;
+  height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.35rem, 1.5vh, 0.6rem);
+  padding: 0.5rem 0.75rem;
+  overflow: hidden;
+  text-align: center;
+}
+
+.hint {
+  opacity: 0.55;
+  font-size: clamp(0.65rem, 2vw, 0.82rem);
+}
+
+/* ---------- Hero picker ---------- */
+
+.pickerCols {
+  display: flex;
+  gap: 0.6rem;
+  width: 100%;
+  max-width: 480px;
+  justify-content: center;
+}
+
+.pickerColumn {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.pickerColLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.6;
+}
+
+.pickerCard {
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.4) !important;
+  border-color: var(--line) !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.pickerCard:hover {
+  border-color: var(--mantine-color-brand-4) !important;
+}
+
+.pickerCard.picked {
+  border-color: var(--mantine-color-brand-4) !important;
+  box-shadow: 0 0 10px var(--mantine-color-brand-4);
+}
+
+.pickerCardLabel {
+  font-size: 0.55rem;
+  letter-spacing: 0.02em;
+}
+
+/* ---------- Game screen ---------- */
+
+.sidePanels {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 460px;
+}
+
+.sidePanel {
+  flex: 1 1 0;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--line);
+  padding: 0.35rem 0.5rem;
+  transition: border-color 0.2s ease;
+}
+
+.sidePanel.activeTurn {
+  border-color: var(--mantine-color-brand-4);
+  box-shadow: 0 0 10px var(--mantine-color-brand-4);
+}
+
+.sidePanelHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  justify-content: center;
+}
+
+.crownHp {
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+
+.sideName {
+  font-size: 0.65rem;
+  opacity: 0.6;
+  margin-left: auto;
+}
+
+.wallRow {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: 0.25rem 0;
+}
+
+.wallLabel {
+  font-size: 0.55rem;
+  opacity: 0.5;
+  text-transform: uppercase;
+}
+
+.wallBar {
+  flex: 1;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.wallFill {
+  height: 100%;
+  background: var(--mantine-color-brand-5);
+  transition: width 0.3s ease;
+}
+
+.wallValue {
+  font-size: 0.6rem;
+  opacity: 0.7;
+  min-width: 1em;
+}
+
+.fighterRow {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0;
+}
+
+.fighterLevel {
+  font-size: 0.55rem;
+  opacity: 0.6;
+  width: 1em;
+}
+
+.rodPips {
+  display: flex;
+  gap: 2px;
+}
+
+.rodPip {
+  width: 7px;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid var(--line);
+  border-radius: 1px;
+}
+
+.rodPip.filled {
+  background: var(--mantine-color-brand-4);
+}
+
+.wheelRow {
+  display: flex;
+  gap: clamp(3px, 1.2vw, 8px);
+}
+
+.wheelTile {
+  position: relative;
+  width: clamp(38px, 11vw, 56px);
+  height: clamp(38px, 11vw, 56px);
+  background: #171210;
+  border: 2px solid rgba(237, 227, 207, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wheelTile.interactive {
+  cursor: pointer;
+}
+
+.wheelTile.locked {
+  border-color: var(--mantine-color-brand-4);
+  box-shadow: 0 0 8px var(--mantine-color-brand-4);
+}
+
+.wheelInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: wheel-pop 0.25s ease;
+}
+
+@keyframes wheel-pop {
+  from {
+    transform: scale(0.4);
+    opacity: 0.2;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.wheelBlank {
+  opacity: 0.3;
+  font-size: 1.2rem;
+}
+
+.lockBadge {
+  position: absolute;
+  bottom: 1px;
+  right: 3px;
+  font-size: 0.5rem;
+  color: var(--mantine-color-brand-4);
+}
+
+.wheelActions {
+  flex-shrink: 0;
+}
+
+.wheelsLog {
+  min-height: 1.6em;
+  font-style: italic;
+  opacity: 0.75;
+  font-size: clamp(0.6rem, 2vw, 0.78rem);
+  max-width: 420px;
+}
+
+.wheelsOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  z-index: 10;
+}
+
+.back {
+  flex-shrink: 0;
+  color: rgba(237, 227, 207, 0.5);
+  font-size: clamp(0.6rem, 2vw, 0.78rem);
+  text-decoration: none;
+}
+
+.back:hover {
+  color: var(--mantine-color-brand-4);
+}
+
+@media (max-height: 560px) {
+  .hint {
+    display: none;
+  }
+}

@@ -1,11 +1,12 @@
 import { Stack, Title, Text, SimpleGrid, Card, Anchor } from "@mantine/core";
-import { PongIcon, TravelIcon, PcaIcon, AboutIcon } from "../shared/Icons.jsx";
+import { PongIcon, TravelIcon, PcaIcon, AboutIcon, WheelsIcon } from "../shared/Icons.jsx";
 import "./portal.css";
 
 const APPS = [
   { href: "pong/", label: "Pong", Icon: PongIcon },
   { href: "travel/", label: "Travel", Icon: TravelIcon },
   { href: "pca/", label: "PCA", Icon: PcaIcon },
+  { href: "wheels/", label: "Wheels", Icon: WheelsIcon },
   { href: "about/", label: "About", Icon: AboutIcon },
 ];
 
@@ -19,7 +20,7 @@ export default function Portal() {
         <Text className="tagline">pick an app</Text>
       </Stack>
 
-      <SimpleGrid cols={{ base: 2 }} spacing="lg">
+      <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="lg">
         {APPS.map(({ href, label, Icon }) => (
           <Card key={href} component="a" href={href} className="tile" withBorder padding="lg">
             <Stack align="center" gap="sm">

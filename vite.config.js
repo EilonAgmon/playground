@@ -13,6 +13,7 @@ export default defineConfig({
         backoffice: resolve(__dirname, "backoffice/index.html"),
         pca: resolve(__dirname, "pca/index.html"),
         about: resolve(__dirname, "about/index.html"),
+        wheels: resolve(__dirname, "wheels/index.html"),
       },
     },
   },

@@ -70,6 +70,22 @@ export function PcaIcon({ size = 48 }) {
   );
 }
 
+export function WheelsIcon({ size = 48 }) {
+  return (
+    <svg
+      className="pixel-icon"
+      width={size}
+      height={size}
+      viewBox="0 0 12 10"
+      shapeRendering="crispEdges"
+      aria-hidden="true"
+    >
+      <polygon points="1,9 1,4 3.5,6 6,2 8.5,6 11,4 11,9" fill="currentColor" />
+      <rect x="1" y="8.5" width="10" height="1" fill="currentColor" />
+    </svg>
+  );
+}
+
 export function CrtOverlay() {
   return <div className="crt-fx" />;
 }
