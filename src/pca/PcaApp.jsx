@@ -17,7 +17,7 @@ export default function PcaApp() {
 
   return (
     <Stack id="pca" align="center" gap="md">
-      <Stack align="center" gap={2}>
+      <Stack align="center" gap={2} className="pcaHeader">
         <Title order={1} className="glow">
           PCA
         </Title>
