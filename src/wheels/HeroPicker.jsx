@@ -18,7 +18,7 @@ function PickerColumn({ label, heroes, selected, onSelect, exclude }) {
             style={{ opacity: exclude === h.key ? 0.3 : 1, pointerEvents: exclude === h.key ? "none" : "auto" }}
           >
             <Stack align="center" gap={2}>
-              <HeroGlyph heroKey={h.key} size={26} />
+              <HeroGlyph heroKey={h.key} size={34} />
               <Text className="pickerCardLabel">{h.name}</Text>
             </Stack>
           </Card>
@@ -34,7 +34,7 @@ export default function HeroPicker({ onConfirm }) {
 
   return (
     <Stack align="center" gap="md" className="pickerScreen">
-      <Title order={1} className="glow">
+      <Title order={1} className="wheelsTitle">
         WHEELS
       </Title>
       <Text className="hint">choose your left hero (Squares) and right hero (Diamonds)</Text>
@@ -44,7 +44,7 @@ export default function HeroPicker({ onConfirm }) {
         <PickerColumn label="right — diamonds" heroes={HERO_LIST} selected={right} onSelect={setRight} exclude={left} />
       </div>
 
-      <Button disabled={!left || !right} onClick={() => onConfirm(left, right)}>
+      <Button className="wheelsBtn" disabled={!left || !right} onClick={() => onConfirm(left, right)}>
         begin
       </Button>
 

@@ -1,7 +1,6 @@
 import { Stack, Group, Title, Text, Button } from "@mantine/core";
 import { HEROES, LEVEL_NAMES } from "./heroes.js";
-import { MAX_WALL } from "./engine.js";
-import { SquareSymbol, DiamondSymbol, HammerSymbol, CrownIcon, HeroGlyph } from "./WheelIcons.jsx";
+import { SquareSymbol, DiamondSymbol, HammerSymbol, BlankSymbol, CrownIcon, WallBrick, HeroGlyph } from "./WheelIcons.jsx";
 
 function RodPips({ rod, rodSize }) {
   const filled = rodSize - rod;
@@ -18,9 +17,11 @@ function FighterRow({ fighter }) {
   const heroDef = HEROES[fighter.heroKey];
   return (
     <div className="fighterRow">
-      <HeroGlyph heroKey={fighter.heroKey} size={20} />
-      <span className="fighterLevel">{LEVEL_NAMES[fighter.level - 1][0]}</span>
-      <RodPips rod={fighter.rod} rodSize={heroDef.rodSize} />
+      <HeroGlyph heroKey={fighter.heroKey} size={26} />
+      <div className="fighterMeta">
+        <span className="fighterLevel">{LEVEL_NAMES[fighter.level - 1]}</span>
+        <RodPips rod={fighter.rod} rodSize={heroDef.rodSize} />
+      </div>
     </div>
   );
 }
@@ -29,16 +30,17 @@ function SidePanel({ side, name, isTurn }) {
   return (
     <div className={`sidePanel ${isTurn ? "activeTurn" : ""}`}>
       <div className="sidePanelHeader">
-        <CrownIcon size={18} color="var(--mantine-color-brand-4)" />
+        <CrownIcon size={26} />
         <span className="crownHp">{side.crownHp}</span>
         <span className="sideName">{name}</span>
       </div>
       <div className="wallRow">
         <span className="wallLabel">wall</span>
-        <div className="wallBar">
-          <div className="wallFill" style={{ width: `${(side.wallHeight / MAX_WALL) * 100}%` }} />
+        <div className="wallBricks">
+          {Array.from({ length: side.wallHeight }).map((_, i) => (
+            <WallBrick key={i} size={10} />
+          ))}
         </div>
-        <span className="wallValue">{side.wallHeight}</span>
       </div>
       <FighterRow fighter={side.left} />
       <FighterRow fighter={side.right} />
@@ -55,11 +57,12 @@ function WheelTile({ wheel, index, onClick, interactive, spinGen }) {
     >
       <div className="wheelInner" key={spinGen}>
         {symbol === null && <span className="wheelBlank">?</span>}
-        {symbol === "square" && <SquareSymbol size={30} />}
-        {symbol === "diamond" && <DiamondSymbol size={30} />}
-        {symbol === "hammer" && <HammerSymbol size={30} />}
-        {symbol === "square_xp" && <SquareSymbol size={30} xp />}
-        {symbol === "diamond_xp" && <DiamondSymbol size={30} xp />}
+        {symbol === "blank" && <BlankSymbol size={28} />}
+        {symbol === "square" && <SquareSymbol size={28} />}
+        {symbol === "diamond" && <DiamondSymbol size={28} />}
+        {symbol === "hammer" && <HammerSymbol size={28} />}
+        {symbol === "square_xp" && <SquareSymbol size={28} xp />}
+        {symbol === "diamond_xp" && <DiamondSymbol size={28} xp />}
       </div>
       {wheel.locked && <span className="lockBadge">&#9679;</span>}
     </div>
@@ -74,54 +77,58 @@ export default function WheelsGame({ state, onSpin, onToggleLock, onResolve, onR
   const spinGen = `${state.phase}-${state.spinsLeft}`;
 
   return (
-    <Stack id="wheels" align="center" gap="sm">
-      <Title order={1} className="glow small">
-        WHEELS
-      </Title>
+    <div id="wheels">
+      <div className="wheelsTable">
+        <Title order={1} className="wheelsTitle">
+          WHEELS
+        </Title>
 
-      <div className="sidePanels">
-        <SidePanel side={state.player} name="You" isTurn={isPlayerTurn && !state.winner} />
-        <SidePanel side={state.ai} name="Stranger" isTurn={!isPlayerTurn && !state.winner} />
-      </div>
+        <div className="sidePanels">
+          <SidePanel side={state.player} name="You" isTurn={isPlayerTurn && !state.winner} />
+          <SidePanel side={state.ai} name="Stranger" isTurn={!isPlayerTurn && !state.winner} />
+        </div>
 
-      <div className="wheelRow">
-        {state.wheels.map((w, i) => (
-          <WheelTile
-            key={i}
-            wheel={w}
-            index={i}
-            onClick={onToggleLock}
-            interactive={isPlayerTurn && state.spinsLeft > 0 && w.symbol != null}
-            spinGen={`${spinGen}`}
-          />
-        ))}
-      </div>
+        <div className="wheelRow">
+          {state.wheels.map((w, i) => (
+            <WheelTile
+              key={i}
+              wheel={w}
+              index={i}
+              onClick={onToggleLock}
+              interactive={isPlayerTurn && state.spinsLeft > 0 && w.symbol != null}
+              spinGen={spinGen}
+            />
+          ))}
+        </div>
 
-      <Group gap="xs" className="wheelActions">
-        <Button size="xs" disabled={!canSpin} onClick={onSpin}>
-          spin ({state.spinsLeft} left)
-        </Button>
-        <Button size="xs" variant="outline" disabled={!canResolveNow} onClick={onResolve}>
-          bank it
-        </Button>
-      </Group>
+        <Group gap="xs" className="wheelActions">
+          <Button size="xs" className="wheelsBtn" disabled={!canSpin} onClick={onSpin}>
+            spin ({state.spinsLeft} left)
+          </Button>
+          <Button size="xs" variant="outline" className="wheelsBtnOutline" disabled={!canResolveNow} onClick={onResolve}>
+            bank it
+          </Button>
+        </Group>
 
-      <div className="wheelsLog">
-        <Text size="xs">{state.log[state.log.length - 1]}</Text>
+        <div className="wheelsLog">
+          <Text size="xs">{state.log[state.log.length - 1]}</Text>
+        </div>
       </div>
 
       {state.winner && (
         <Stack className="wheelsOverlay" align="center" justify="center" gap="sm">
-          <Title order={1} className="glow">
+          <Title order={1} className="wheelsTitle">
             {state.winner === "player" ? "YOU WIN" : "YOU LOSE"}
           </Title>
-          <Button onClick={onRestart}>play again</Button>
+          <Button className="wheelsBtn" onClick={onRestart}>
+            play again
+          </Button>
         </Stack>
       )}
 
       <a href="../" className="back">
         &larr; back to the portal
       </a>
-    </Stack>
+    </div>
   );
 }

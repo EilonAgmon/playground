@@ -3,6 +3,10 @@ html, body {
   overscroll-behavior: none;
 }
 
+/* Wheels gets its own fixed tavern-table identity, independent of the
+   site's time-of-day theme — same principle as Pong's canvas staying
+   black/white regardless of the shared chrome around it. */
+
 #wheels, .pickerScreen {
   height: 100vh;
   height: 100dvh;
@@ -11,15 +15,45 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.35rem, 1.5vh, 0.6rem);
-  padding: 0.5rem 0.75rem;
+  gap: clamp(0.3rem, 1.4vh, 0.55rem);
+  padding: 0.5rem 0.6rem;
   overflow: hidden;
   text-align: center;
+  background: radial-gradient(ellipse at center, #4a3018 0%, #241407 100%);
+  color: #f5e6c8;
+  font-family: "EB Garamond", Georgia, serif;
+}
+
+.wheelsTable {
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.3rem, 1.4vh, 0.55rem);
+  background:
+    repeating-linear-gradient(100deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 6px),
+    linear-gradient(160deg, #6b4326 0%, #4a2f18 55%, #33200e 100%);
+  border: 3px solid #241407;
+  outline: 2px solid #b8862f;
+  outline-offset: -6px;
+  border-radius: 10px;
+  padding: 0.6rem 0.7rem;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+.wheelsTitle {
+  font-family: "Cinzel", Georgia, serif !important;
+  color: #f0c443 !important;
+  font-size: clamp(1.1rem, 4.5vw, 1.6rem) !important;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 10px rgba(240, 196, 67, 0.5), 0 2px 2px rgba(0, 0, 0, 0.8);
 }
 
 .hint {
-  opacity: 0.55;
+  opacity: 0.7;
   font-size: clamp(0.65rem, 2vw, 0.82rem);
+  color: #e0c9a0;
 }
 
 /* ---------- Hero picker ---------- */
@@ -41,28 +75,31 @@ html, body {
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  opacity: 0.6;
+  opacity: 0.75;
+  color: #e0c9a0;
 }
 
 .pickerCard {
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.4) !important;
-  border-color: var(--line) !important;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  background: linear-gradient(160deg, #5a3a20, #3a2512) !important;
+  border-color: #7a5230 !important;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
 
 .pickerCard:hover {
-  border-color: var(--mantine-color-brand-4) !important;
+  border-color: #f0c443 !important;
+  transform: translateY(-2px);
 }
 
 .pickerCard.picked {
-  border-color: var(--mantine-color-brand-4) !important;
-  box-shadow: 0 0 10px var(--mantine-color-brand-4);
+  border-color: #f0c443 !important;
+  box-shadow: 0 0 12px #f0c443;
 }
 
 .pickerCardLabel {
   font-size: 0.55rem;
   letter-spacing: 0.02em;
+  color: #f5e6c8;
 }
 
 /* ---------- Game screen ---------- */
@@ -71,21 +108,21 @@ html, body {
   display: flex;
   gap: 0.5rem;
   width: 100%;
-  max-width: 460px;
 }
 
 .sidePanel {
   flex: 1 1 0;
   min-width: 0;
-  background: rgba(0, 0, 0, 0.45);
-  border: 1px solid var(--line);
-  padding: 0.35rem 0.5rem;
-  transition: border-color 0.2s ease;
+  background: rgba(0, 0, 0, 0.28);
+  border: 2px solid #4a2f18;
+  border-radius: 6px;
+  padding: 0.3rem 0.4rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .sidePanel.activeTurn {
-  border-color: var(--mantine-color-brand-4);
-  box-shadow: 0 0 10px var(--mantine-color-brand-4);
+  border-color: #f0c443;
+  box-shadow: 0 0 12px rgba(240, 196, 67, 0.6);
 }
 
 .sidePanelHeader {
@@ -97,13 +134,16 @@ html, body {
 
 .crownHp {
   font-weight: bold;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
+  color: #f0c443;
 }
 
 .sideName {
-  font-size: 0.65rem;
-  opacity: 0.6;
+  font-size: 0.62rem;
+  opacity: 0.75;
   margin-left: auto;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
 }
 
 .wallRow {
@@ -111,43 +151,41 @@ html, body {
   align-items: center;
   gap: 0.3rem;
   margin: 0.25rem 0;
+  min-height: 14px;
 }
 
 .wallLabel {
-  font-size: 0.55rem;
-  opacity: 0.5;
+  font-size: 0.5rem;
+  opacity: 0.6;
   text-transform: uppercase;
 }
 
-.wallBar {
+.wallBricks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1px;
   flex: 1;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.wallFill {
-  height: 100%;
-  background: var(--mantine-color-brand-5);
-  transition: width 0.3s ease;
-}
-
-.wallValue {
-  font-size: 0.6rem;
-  opacity: 0.7;
-  min-width: 1em;
 }
 
 .fighterRow {
   display: flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.1rem 0;
+  gap: 0.35rem;
+  padding: 0.15rem 0;
+}
+
+.fighterMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
 }
 
 .fighterLevel {
-  font-size: 0.55rem;
-  opacity: 0.6;
-  width: 1em;
+  font-size: 0.5rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  color: #e0c9a0;
 }
 
 .rodPips {
@@ -156,31 +194,38 @@ html, body {
 }
 
 .rodPip {
-  width: 7px;
-  height: 7px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid var(--line);
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid #4a2f18;
   border-radius: 1px;
 }
 
 .rodPip.filled {
-  background: var(--mantine-color-brand-4);
+  background: #f0c443;
+  box-shadow: 0 0 4px #f0c443;
 }
 
 .wheelRow {
   display: flex;
-  gap: clamp(3px, 1.2vw, 8px);
+  gap: clamp(3px, 1vw, 6px);
+  background: linear-gradient(160deg, #1a4d3a, #0d2e21);
+  border: 2px solid #0a1f16;
+  border-radius: 6px;
+  padding: clamp(4px, 1.2vw, 7px);
 }
 
 .wheelTile {
   position: relative;
-  width: clamp(38px, 11vw, 56px);
-  height: clamp(38px, 11vw, 56px);
-  background: #171210;
-  border: 2px solid rgba(237, 227, 207, 0.25);
+  width: clamp(34px, 10vw, 50px);
+  height: clamp(34px, 10vw, 50px);
+  background: radial-gradient(circle at 35% 30%, #2a1a0e, #150c05);
+  border: 2px solid #6b4a28;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .wheelTile.interactive {
@@ -188,8 +233,8 @@ html, body {
 }
 
 .wheelTile.locked {
-  border-color: var(--mantine-color-brand-4);
-  box-shadow: 0 0 8px var(--mantine-color-brand-4);
+  border-color: #f0c443;
+  box-shadow: 0 0 8px #f0c443, inset 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .wheelInner {
@@ -201,18 +246,19 @@ html, body {
 
 @keyframes wheel-pop {
   from {
-    transform: scale(0.4);
-    opacity: 0.2;
+    transform: scale(0.3) translateY(-8px);
+    opacity: 0.1;
   }
   to {
-    transform: scale(1);
+    transform: scale(1) translateY(0);
     opacity: 1;
   }
 }
 
 .wheelBlank {
-  opacity: 0.3;
-  font-size: 1.2rem;
+  opacity: 0.4;
+  font-size: 1.1rem;
+  color: #e0c9a0;
 }
 
 .lockBadge {
@@ -220,41 +266,67 @@ html, body {
   bottom: 1px;
   right: 3px;
   font-size: 0.5rem;
-  color: var(--mantine-color-brand-4);
+  color: #f0c443;
 }
 
 .wheelActions {
   flex-shrink: 0;
 }
 
+.wheelsBtn, .wheelsBtn:hover {
+  background: linear-gradient(160deg, #f0c443, #b8862f) !important;
+  color: #241407 !important;
+  border: 1px solid #7a5210 !important;
+  font-weight: bold;
+}
+
+.wheelsBtn:disabled {
+  background: #6b6355 !important;
+  color: #3a3527 !important;
+  opacity: 0.6;
+}
+
+.wheelsBtnOutline {
+  border-color: #f0c443 !important;
+  color: #f0c443 !important;
+  background: transparent !important;
+}
+
+.wheelsBtnOutline:hover {
+  background: rgba(240, 196, 67, 0.15) !important;
+}
+
 .wheelsLog {
-  min-height: 1.6em;
+  min-height: 1.5em;
   font-style: italic;
-  opacity: 0.75;
-  font-size: clamp(0.6rem, 2vw, 0.78rem);
-  max-width: 420px;
+  opacity: 0.85;
+  font-size: clamp(0.6rem, 1.9vw, 0.76rem);
+  color: #e0c9a0;
 }
 
 .wheelsOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(10, 6, 2, 0.85);
   z-index: 10;
 }
 
 .back {
   flex-shrink: 0;
-  color: rgba(237, 227, 207, 0.5);
-  font-size: clamp(0.6rem, 2vw, 0.78rem);
+  color: rgba(245, 230, 200, 0.55);
+  font-size: clamp(0.6rem, 1.9vw, 0.76rem);
   text-decoration: none;
 }
 
 .back:hover {
-  color: var(--mantine-color-brand-4);
+  color: #f0c443;
 }
 
-@media (max-height: 560px) {
+@media (max-height: 600px) {
   .hint {
     display: none;
+  }
+  .wheelsTable {
+    padding: 0.4rem 0.5rem;
   }
 }

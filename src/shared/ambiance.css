@@ -2,7 +2,13 @@
   position: fixed;
   inset: 0;
   overflow: hidden;
-  z-index: 0;
+  /* Negative, not 0: a positioned element with z-index:0 still paints
+     ABOVE static (non-positioned) content in the same stacking context,
+     regardless of DOM order — verified this was silently winning over
+     every page's own background, just unnoticed elsewhere since it's
+     dark everywhere. Negative z-index is what actually sits behind
+     normal in-flow content. */
+  z-index: -1;
   background: #000;
 }
 
