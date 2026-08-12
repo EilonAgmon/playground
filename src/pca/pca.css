@@ -1,0 +1,155 @@
+#pca {
+  padding: 2rem 1.25rem 4rem;
+  width: 100%;
+}
+
+.hint {
+  opacity: 0.55;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.pcaScene {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  aspect-ratio: 16 / 10;
+  background: linear-gradient(to bottom, #2a2320 0%, #211a17 55%, #171210 100%);
+  border: 2px solid rgba(237, 227, 207, 0.25);
+  outline: 1px solid rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.pcaProp {
+  position: absolute;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.pcaProp:hover, .pcaProp.active {
+  filter: drop-shadow(0 0 10px var(--mantine-color-brand-4));
+}
+
+.propLabel {
+  position: absolute;
+  bottom: -1.4em;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  opacity: 0;
+  white-space: nowrap;
+  color: var(--mantine-color-brand-3);
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+
+.pcaProp:hover .propLabel {
+  opacity: 0.9;
+}
+
+.pcaBookshelf {
+  background: linear-gradient(#4a3524, #3a2a1c);
+  border: 2px solid #241a11;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 6% 8%;
+}
+
+.shelfRow {
+  height: 14%;
+  background: repeating-linear-gradient(
+    90deg,
+    #8a5a2f 0%,
+    #8a5a2f 12%,
+    #6b3f26 12%,
+    #6b3f26 24%,
+    #a06b35 24%,
+    #a06b35 36%
+  );
+  border-bottom: 3px solid #241a11;
+}
+
+.pcaWindow {
+  background: linear-gradient(to bottom, #3a5f7a 0%, #6f97a8 100%);
+  border: 3px solid #241a11;
+}
+
+.windowCross {
+  position: absolute;
+  inset: 0;
+}
+
+.windowCross::before,
+.windowCross::after {
+  content: "";
+  position: absolute;
+  background: #241a11;
+}
+
+.windowCross::before {
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  transform: translateX(-50%);
+}
+
+.windowCross::after {
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  transform: translateY(-50%);
+}
+
+.pcaDoor {
+  background: linear-gradient(#5c4028, #402c1a);
+  border: 3px solid #241a11;
+  border-radius: 40% 40% 4px 4px / 12% 12% 4px 4px;
+}
+
+.doorKnob {
+  position: absolute;
+  right: 12%;
+  top: 50%;
+  width: 10%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--mantine-color-brand-4);
+  box-shadow: 0 0 6px var(--mantine-color-brand-4);
+}
+
+.descriptionBar {
+  width: 100%;
+  max-width: 760px;
+  min-height: 3.2em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6em 1em;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+.descriptionText {
+  font-style: italic;
+  opacity: 0.9;
+}
+
+.inventoryBar {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.inventorySlot {
+  width: 42px;
+  height: 42px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--line);
+}

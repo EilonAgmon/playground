@@ -1,0 +1,55 @@
+#about {
+  padding: 3rem 1.25rem 4rem;
+}
+
+.aboutHeader {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.aboutHeader .mantine-Title-root {
+  font-size: clamp(1.2rem, 5vw, 1.8rem);
+}
+
+.avatar {
+  background: var(--mantine-color-brand-6) !important;
+  border: 2px solid var(--mantine-color-brand-3);
+  box-shadow: 0 0 20px var(--mantine-color-brand-4);
+  color: #100b06 !important;
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+
+.roleTagline {
+  opacity: 0.75;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+}
+
+.contactRow {
+  opacity: 0.7;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.summary {
+  line-height: 1.7;
+  opacity: 0.9;
+}
+
+.bullet {
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+.back {
+  display: block;
+  text-align: center;
+  margin-top: 2rem;
+  color: rgba(237, 227, 207, 0.5) !important;
+  font-size: 0.85rem;
+}
+
+.back:hover {
+  color: var(--mantine-color-brand-4) !important;
+}
