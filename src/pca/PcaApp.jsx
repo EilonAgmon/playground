@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Stack, Title, Text, Anchor } from "@mantine/core";
-import { HOTSPOTS } from "./hotspots.js";
+import { HOTSPOTS, SCENE_IMAGE, SCENE_LABEL } from "./hotspots.js";
 import "./pca.css";
 
 const DEFAULT_TEXT = "Click around the scene to examine things.";
@@ -21,26 +21,20 @@ export default function PcaApp() {
         <Title order={1} className="glow">
           PCA
         </Title>
-        <Text className="hint">a point &amp; click adventure &mdash; chapter one, in progress</Text>
+        <Text className="hint">{SCENE_LABEL} &mdash; chapter one, in progress</Text>
       </Stack>
 
-      <div className="pcaScene">
-        <div className={`pcaProp pcaBookshelf ${activeId === "bookshelf" ? "active" : ""}`} style={HOTSPOTS[0].style} onClick={() => handleExamine(HOTSPOTS[0])}>
-          <div className="shelfRow" />
-          <div className="shelfRow" />
-          <div className="shelfRow" />
-          <span className="propLabel">{HOTSPOTS[0].label}</span>
-        </div>
-
-        <div className={`pcaProp pcaWindow ${activeId === "window" ? "active" : ""}`} style={HOTSPOTS[1].style} onClick={() => handleExamine(HOTSPOTS[1])}>
-          <div className="windowCross" />
-          <span className="propLabel">{HOTSPOTS[1].label}</span>
-        </div>
-
-        <div className={`pcaProp pcaDoor ${activeId === "door" ? "active" : ""}`} style={HOTSPOTS[2].style} onClick={() => handleExamine(HOTSPOTS[2])}>
-          <div className="doorKnob" />
-          <span className="propLabel">{HOTSPOTS[2].label}</span>
-        </div>
+      <div className="pcaScene" style={{ backgroundImage: `url(${SCENE_IMAGE})` }}>
+        {HOTSPOTS.map((hotspot) => (
+          <div
+            key={hotspot.id}
+            className={`pcaHotspot ${activeId === hotspot.id ? "active" : ""}`}
+            style={hotspot.style}
+            onClick={() => handleExamine(hotspot)}
+          >
+            <span className="propLabel">{hotspot.label}</span>
+          </div>
+        ))}
       </div>
 
       <div className="descriptionBar">
