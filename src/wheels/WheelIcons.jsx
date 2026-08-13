@@ -1,5 +1,6 @@
 const YELLOW = "#f0c443";
 const TEAL = "#4fd3c4";
+export const ORANGE = "#e0682a";
 
 function Sparkle({ x, y, size = 2.4, color = "#fff" }) {
   return (
@@ -52,29 +53,24 @@ export function BlankSymbol({ size = 36 }) {
   );
 }
 
-export function CrownIcon({ size = 40, color = "#f0c443" }) {
+export function ChargeIcon({ size = 12, color = "#f0c443" }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 16 13" shapeRendering="crispEdges" aria-hidden="true">
-      <polygon points="1,12 1,5 4.5,8 8,2 11.5,8 15,5 15,12" fill={color} stroke="#7a4a10" strokeWidth="0.6" />
-      <rect x="1" y="11.2" width="14" height="1.6" fill={color} stroke="#7a4a10" strokeWidth="0.4" />
-      <circle cx="8" cy="4.2" r="1" fill="#e0455a" />
-      <circle cx="4.5" cy="6.8" r="0.8" fill="#4fd3c4" />
-      <circle cx="11.5" cy="6.8" r="0.8" fill="#4fd3c4" />
+    <svg width={size} height={size} viewBox="0 0 12 12" shapeRendering="crispEdges" aria-hidden="true">
+      <rect x="5.2" y="1" width="1.6" height="6.4" fill={color} stroke="#7a4a10" strokeWidth="0.3" />
+      <polygon points="3,7 9,7 6,11.2" fill={color} stroke="#7a4a10" strokeWidth="0.3" />
+      <rect x="3.6" y="7" width="4.8" height="1.1" fill="#8a5a2f" />
     </svg>
   );
 }
 
-export function WallBrick({ size = 14 }) {
+export function TowerIcon({ size = 12, color = "#f0c443" }) {
   return (
-    <div
-      style={{
-        width: size,
-        height: size * 0.62,
-        background: "linear-gradient(#a9764a, #7a4f2c)",
-        border: "1px solid #4a2f18",
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.25)",
-      }}
-    />
+    <svg width={size} height={size} viewBox="0 0 12 12" shapeRendering="crispEdges" aria-hidden="true">
+      <rect x="5.1" y="0.8" width="1.8" height="2.4" fill={color} />
+      <polygon points="2,5.4 6,3 10,5.4 10,7 2,7" fill={color} stroke="#7a4a10" strokeWidth="0.3" />
+      <rect x="1.2" y="7" width="9.6" height="1.6" fill={color} stroke="#7a4a10" strokeWidth="0.3" />
+      <rect x="2.4" y="9" width="7.2" height="2.2" fill="none" stroke={color} strokeWidth="0.9" opacity="0.85" />
+    </svg>
   );
 }
 

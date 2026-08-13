@@ -1,49 +1,40 @@
 import { Stack, Group, Title, Text, Button } from "@mantine/core";
-import { HEROES, LEVEL_NAMES } from "./heroes.js";
-import { SquareSymbol, DiamondSymbol, HammerSymbol, BlankSymbol, CrownIcon, WallBrick, HeroGlyph } from "./WheelIcons.jsx";
+import { LEVEL_NAMES } from "./heroes.js";
+import { SquareSymbol, DiamondSymbol, HammerSymbol, BlankSymbol, ChargeIcon, TowerIcon, HeroGlyph } from "./WheelIcons.jsx";
 
-function RodPips({ rod, rodSize }) {
-  const filled = rodSize - rod;
+function StatBox({ icon, value }) {
   return (
-    <span className="rodPips">
-      {Array.from({ length: rodSize }).map((_, i) => (
-        <span key={i} className={`rodPip ${i < filled ? "filled" : ""}`} />
-      ))}
+    <span className="statBox">
+      {icon}
+      {value}
     </span>
   );
 }
 
-function FighterRow({ fighter }) {
-  const heroDef = HEROES[fighter.heroKey];
+function HeroPortal({ fighter, wallHeight, position, active }) {
+  const gem = position.endsWith("left") ? "orange" : "teal";
   return (
-    <div className="fighterRow">
-      <HeroGlyph heroKey={fighter.heroKey} size={26} />
-      <div className="fighterMeta">
-        <span className="fighterLevel">{LEVEL_NAMES[fighter.level - 1]}</span>
-        <RodPips rod={fighter.rod} rodSize={heroDef.rodSize} />
+    <div className={`heroPortal ${position} ${active ? "active" : ""}`}>
+      <span className={`portalGem gem-${gem}`} />
+      <div className="portalDais">
+        <HeroGlyph heroKey={fighter.heroKey} size={38} />
+      </div>
+      <span className="portalLevel">{LEVEL_NAMES[fighter.level - 1]}</span>
+      <div className="portalStats">
+        <StatBox icon={<ChargeIcon size={11} />} value={fighter.rod} />
+        <StatBox icon={<TowerIcon size={11} />} value={wallHeight} />
       </div>
     </div>
   );
 }
 
-function SidePanel({ side, name, isTurn }) {
+function CrownBadge({ value, active }) {
   return (
-    <div className={`sidePanel ${isTurn ? "activeTurn" : ""}`}>
-      <div className="sidePanelHeader">
-        <CrownIcon size={26} />
-        <span className="crownHp">{side.crownHp}</span>
-        <span className="sideName">{name}</span>
+    <div className="crownBadgeWrap">
+      <span className="crownBadgeGem" />
+      <div className={`crownBadge ${active ? "active" : ""}`}>
+        <span className="crownBadgeValue">{String(value).padStart(2, "0")}</span>
       </div>
-      <div className="wallRow">
-        <span className="wallLabel">wall</span>
-        <div className="wallBricks">
-          {Array.from({ length: side.wallHeight }).map((_, i) => (
-            <WallBrick key={i} size={10} />
-          ))}
-        </div>
-      </div>
-      <FighterRow fighter={side.left} />
-      <FighterRow fighter={side.right} />
     </div>
   );
 }
@@ -57,12 +48,12 @@ function WheelTile({ wheel, index, onClick, interactive, spinGen }) {
     >
       <div className="wheelInner" key={spinGen}>
         {symbol === null && <span className="wheelBlank">?</span>}
-        {symbol === "blank" && <BlankSymbol size={28} />}
-        {symbol === "square" && <SquareSymbol size={28} />}
-        {symbol === "diamond" && <DiamondSymbol size={28} />}
-        {symbol === "hammer" && <HammerSymbol size={28} />}
-        {symbol === "square_xp" && <SquareSymbol size={28} xp />}
-        {symbol === "diamond_xp" && <DiamondSymbol size={28} xp />}
+        {symbol === "blank" && <BlankSymbol size={26} />}
+        {symbol === "square" && <SquareSymbol size={26} />}
+        {symbol === "diamond" && <DiamondSymbol size={26} />}
+        {symbol === "hammer" && <HammerSymbol size={26} />}
+        {symbol === "square_xp" && <SquareSymbol size={26} xp />}
+        {symbol === "diamond_xp" && <DiamondSymbol size={26} xp />}
       </div>
       {wheel.locked && <span className="lockBadge">&#9679;</span>}
     </div>
@@ -83,22 +74,49 @@ export default function WheelsGame({ state, onSpin, onToggleLock, onResolve, onR
           WHEELS
         </Title>
 
-        <div className="sidePanels">
-          <SidePanel side={state.player} name="You" isTurn={isPlayerTurn && !state.winner} />
-          <SidePanel side={state.ai} name="Stranger" isTurn={!isPlayerTurn && !state.winner} />
-        </div>
+        <div className="boardGrid">
+          <HeroPortal
+            fighter={state.ai.left}
+            wallHeight={state.ai.wallHeight}
+            position="top-left"
+            active={!isPlayerTurn && !state.winner}
+          />
+          <div className={`centerColumn ${!isPlayerTurn && !state.winner ? "activeTurn" : ""}`}>
+            <CrownBadge value={state.ai.crownHp} active={!isPlayerTurn && !state.winner} />
+            <div className="wheelRow">
+              {state.wheels.map((w, i) => (
+                <WheelTile
+                  key={i}
+                  wheel={w}
+                  index={i}
+                  onClick={onToggleLock}
+                  interactive={isPlayerTurn && state.spinsLeft > 0 && w.symbol != null}
+                  spinGen={spinGen}
+                />
+              ))}
+            </div>
+            <CrownBadge value={state.player.crownHp} active={isPlayerTurn && !state.winner} />
+          </div>
+          <HeroPortal
+            fighter={state.ai.right}
+            wallHeight={state.ai.wallHeight}
+            position="top-right"
+            active={!isPlayerTurn && !state.winner}
+          />
 
-        <div className="wheelRow">
-          {state.wheels.map((w, i) => (
-            <WheelTile
-              key={i}
-              wheel={w}
-              index={i}
-              onClick={onToggleLock}
-              interactive={isPlayerTurn && state.spinsLeft > 0 && w.symbol != null}
-              spinGen={spinGen}
-            />
-          ))}
+          <HeroPortal
+            fighter={state.player.left}
+            wallHeight={state.player.wallHeight}
+            position="bottom-left"
+            active={isPlayerTurn && !state.winner}
+          />
+          <div className="centerSpacer" />
+          <HeroPortal
+            fighter={state.player.right}
+            wallHeight={state.player.wallHeight}
+            position="bottom-right"
+            active={isPlayerTurn && !state.winner}
+          />
         </div>
 
         <Group gap="xs" className="wheelActions">

@@ -19,27 +19,27 @@ html, body {
   padding: 0.5rem 0.6rem;
   overflow: hidden;
   text-align: center;
-  background: radial-gradient(ellipse at center, #4a3018 0%, #241407 100%);
+  background: radial-gradient(ellipse at center, #3a1210 0%, #120504 100%);
   color: #f5e6c8;
   font-family: "EB Garamond", Georgia, serif;
 }
 
 .wheelsTable {
   width: 100%;
-  max-width: 460px;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: clamp(0.3rem, 1.4vh, 0.55rem);
+  gap: clamp(0.3rem, 1.4vh, 0.6rem);
   background:
-    repeating-linear-gradient(100deg, rgba(0,0,0,0.08) 0 2px, transparent 2px 6px),
-    linear-gradient(160deg, #6b4326 0%, #4a2f18 55%, #33200e 100%);
-  border: 3px solid #241407;
-  outline: 2px solid #b8862f;
-  outline-offset: -6px;
-  border-radius: 10px;
-  padding: 0.6rem 0.7rem;
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5), 0 8px 24px rgba(0, 0, 0, 0.6);
+    repeating-linear-gradient(100deg, rgba(0,0,0,0.12) 0 2px, transparent 2px 6px),
+    radial-gradient(ellipse at 50% 0%, #5c1c17 0%, #3a1310 45%, #200a08 100%);
+  border: 3px solid #1a0705;
+  outline: 2px solid #a8631f;
+  outline-offset: -7px;
+  border-radius: 34px;
+  padding: 0.7rem 0.9rem;
+  box-shadow: inset 0 0 34px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.7);
 }
 
 .wheelsTitle {
@@ -104,128 +104,211 @@ html, body {
 
 /* ---------- Game screen ---------- */
 
-.sidePanels {
-  display: flex;
-  gap: 0.5rem;
+.boardGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: center;
+  justify-items: center;
+  column-gap: clamp(0.3rem, 2vw, 0.9rem);
+  row-gap: clamp(0.35rem, 1.4vh, 0.6rem);
   width: 100%;
 }
 
-.sidePanel {
-  flex: 1 1 0;
-  min-width: 0;
-  background: rgba(0, 0, 0, 0.28);
-  border: 2px solid #4a2f18;
-  border-radius: 6px;
-  padding: 0.3rem 0.4rem;
+.centerColumn {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.25rem, 1vh, 0.45rem);
+  padding: 0.3rem clamp(0.2rem, 1.5vw, 0.5rem);
+  border-radius: 16px;
+  transition: box-shadow 0.2s ease;
+}
+
+.centerColumn.activeTurn {
+  box-shadow: 0 0 22px rgba(240, 196, 67, 0.25);
+}
+
+.centerSpacer {
+  display: none;
+}
+
+/* ---------- Hero portals ---------- */
+
+.heroPortal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  width: clamp(64px, 20vw, 96px);
+}
+
+.heroPortal.top-left { grid-column: 1; grid-row: 1; }
+.heroPortal.top-right { grid-column: 3; grid-row: 1; }
+.heroPortal.bottom-left { grid-column: 1; grid-row: 2; }
+.heroPortal.bottom-right { grid-column: 3; grid-row: 2; }
+
+.portalGem {
+  position: absolute;
+  top: 8%;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  box-shadow: 0 0 6px currentColor, inset 0 1px 2px rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+.heroPortal.top-left .portalGem,
+.heroPortal.bottom-left .portalGem {
+  right: -6px;
+}
+
+.heroPortal.top-right .portalGem,
+.heroPortal.bottom-right .portalGem {
+  left: -6px;
+}
+
+.portalGem.gem-orange {
+  background: #e0682a;
+  color: #e0682a;
+}
+
+.portalGem.gem-teal {
+  background: #4fd3c4;
+  color: #4fd3c4;
+}
+
+.portalDais {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 38%, #6b3018 0%, #431c0e 55%, #2a1009 100%);
+  border: 3px solid #8a4a1e;
+  outline: 1px solid #3a1508;
+  outline-offset: -6px;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.65), inset 0 -3px 8px rgba(0, 0, 0, 0.5), 0 3px 8px rgba(0, 0, 0, 0.5);
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.sidePanel.activeTurn {
+.heroPortal.active .portalDais {
   border-color: #f0c443;
-  box-shadow: 0 0 12px rgba(240, 196, 67, 0.6);
+  box-shadow: 0 0 12px rgba(240, 196, 67, 0.6), inset 0 3px 6px rgba(0, 0, 0, 0.65);
 }
 
-.sidePanelHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  justify-content: center;
-}
-
-.crownHp {
-  font-weight: bold;
-  font-size: 0.9rem;
-  color: #f0c443;
-}
-
-.sideName {
-  font-size: 0.62rem;
+.portalLevel {
+  font-size: 0.5rem;
   opacity: 0.75;
-  margin-left: auto;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.wallRow {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  margin: 0.25rem 0;
-  min-height: 14px;
-}
-
-.wallLabel {
-  font-size: 0.5rem;
-  opacity: 0.6;
-  text-transform: uppercase;
-}
-
-.wallBricks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1px;
-  flex: 1;
-}
-
-.fighterRow {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.15rem 0;
-}
-
-.fighterMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  align-items: flex-start;
-}
-
-.fighterLevel {
-  font-size: 0.5rem;
-  opacity: 0.7;
-  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: #e0c9a0;
 }
 
-.rodPips {
+.portalStats {
   display: flex;
-  gap: 2px;
+  gap: 3px;
 }
 
-.rodPip {
+.statBox {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid #6b3a20;
+  border-radius: 3px;
+  padding: 1px 4px;
+  font-size: 0.58rem;
+  font-weight: bold;
+  color: #f0c443;
+}
+
+/* ---------- Crown badge ---------- */
+
+.crownBadgeWrap {
+  position: relative;
+  display: flex;
+}
+
+.crownBadge {
+  position: relative;
+  width: 52px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(160deg, #f0c443, #935e18);
+  clip-path: polygon(0% 32%, 14% 16%, 25% 32%, 37.5% 4%, 50% 24%, 62.5% 4%, 75% 32%, 86% 16%, 100% 32%, 100% 100%, 0% 100%);
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.6));
+  flex-shrink: 0;
+}
+
+.crownBadge::after {
+  content: "";
+  position: absolute;
+  inset: 3px 3px 3px 3px;
+  top: 30%;
+  background: radial-gradient(circle at 50% 30%, #3a1210, #170604);
+  clip-path: polygon(0% 8%, 100% 8%, 100% 100%, 0% 100%);
+  border-radius: 0 0 3px 3px;
+}
+
+.crownBadge.active {
+  filter: drop-shadow(0 0 8px rgba(240, 196, 67, 0.8)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.6));
+}
+
+.crownBadgeGem {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
   width: 6px;
   height: 6px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid #4a2f18;
-  border-radius: 1px;
+  border-radius: 50%;
+  background: #e0455a;
+  box-shadow: 0 0 4px #e0455a;
+  z-index: 2;
 }
 
-.rodPip.filled {
-  background: #f0c443;
-  box-shadow: 0 0 4px #f0c443;
+.crownBadgeValue {
+  position: relative;
+  z-index: 1;
+  margin-top: 42%;
+  font-family: "Cinzel", Georgia, serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: #f5e6c8;
+  text-shadow: 0 0 6px rgba(240, 196, 67, 0.5);
 }
 
 .wheelRow {
   display: flex;
   gap: clamp(3px, 1vw, 6px);
-  background: linear-gradient(160deg, #1a4d3a, #0d2e21);
-  border: 2px solid #0a1f16;
-  border-radius: 6px;
+  background: linear-gradient(160deg, #8a5a2f 0%, #5c3a1c 55%, #3a230f 100%);
+  border: 2px solid #2a1509;
+  outline: 1px solid #c98a3a;
+  outline-offset: -3px;
+  border-radius: 8px;
   padding: clamp(4px, 1.2vw, 7px);
 }
 
 .wheelTile {
   position: relative;
-  width: clamp(34px, 10vw, 50px);
-  height: clamp(34px, 10vw, 50px);
-  background: radial-gradient(circle at 35% 30%, #2a1a0e, #150c05);
-  border: 2px solid #6b4a28;
-  border-radius: 4px;
+  width: clamp(32px, 9vw, 46px);
+  height: clamp(32px, 9vw, 46px);
+  background: radial-gradient(circle at 35% 28%, #351d10, #160b05);
+  border: 2px solid #c98a3a;
+  border-radius: 50% 50% 6px 6px / 60% 60% 6px 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.75);
 }
 
 .wheelTile.interactive {
