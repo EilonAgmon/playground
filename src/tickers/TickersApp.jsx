@@ -121,8 +121,8 @@ export default function TickersApp() {
         </div>
 
         <p className="tickers-note">
-          Categorized by matching keywords in each company's name — a heuristic, not official sector data. Powered by
-          Financial Modeling Prep.
+          Categorized by matching keywords in each company's name — a heuristic, not official sector data. Leveraged
+          and single-stock ETFs are excluded. Powered by Financial Modeling Prep.
         </p>
       </div>
     </>

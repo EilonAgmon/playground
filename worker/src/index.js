@@ -245,6 +245,17 @@ function categorize(name) {
   return "Other";
 }
 
+// Single-stock/leveraged ETFs (e.g. "Daily Target 2X Long HIMS ETF") ride
+// an underlying stock's move by design, not because the business is
+// actually declining — they crowd out real "losers" with pure noise.
+const LEVERAGED_WORDS = ["leveraged", "inverse", "daily target", "ultrashort", "direxion", "graniteshares", "single stock"];
+const LEVERAGED_MULTIPLIER = /\b\d+(\.\d+)?x\b/;
+
+function isLeveragedProduct(name) {
+  const lower = (name || "").toLowerCase();
+  return LEVERAGED_MULTIPLIER.test(lower) || LEVERAGED_WORDS.some((w) => lower.includes(w));
+}
+
 const TICKER_CACHE_TTL_MS = 12000;
 
 async function fetchLosersFromFmp(apiKey) {
@@ -252,7 +263,7 @@ async function fetchLosersFromFmp(apiKey) {
   if (!res.ok) throw new Error(`FMP responded ${res.status}`);
   const data = await res.json();
   return data
-    .filter((row) => row.exchange === "NYSE" || row.exchange === "NASDAQ")
+    .filter((row) => (row.exchange === "NYSE" || row.exchange === "NASDAQ") && !isLeveragedProduct(row.name))
     .sort((a, b) => a.changesPercentage - b.changesPercentage)
     .slice(0, 20)
     .map((row) => ({
