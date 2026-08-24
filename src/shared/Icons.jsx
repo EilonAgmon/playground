@@ -120,6 +120,16 @@ export function TickersIcon({ size = 24 }) {
   );
 }
 
+export function JobsIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <rect x="3.5" y="7.5" width="17" height="12" rx="2" />
+      <path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5" />
+      <path d="M3.5 12.5h17" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

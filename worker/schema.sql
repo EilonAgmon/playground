@@ -53,3 +53,12 @@ CREATE TABLE IF NOT EXISTS ticker_cache (
   payload TEXT NOT NULL,
   fetched_at INTEGER NOT NULL
 );
+
+-- Same stale-while-revalidate pattern for /api/jobs. Job postings don't
+-- need minute-by-minute freshness, so this one refreshes on a much longer
+-- TTL (see JOB_CACHE_TTL_MS) than the ticker cache.
+CREATE TABLE IF NOT EXISTS job_cache (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  payload TEXT NOT NULL,
+  fetched_at INTEGER NOT NULL
+);

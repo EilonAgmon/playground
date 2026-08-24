@@ -59,4 +59,7 @@ export const api = {
   tickers() {
     return request("/api/tickers").then((r) => (r.ok ? r.json() : { tickers: [] }));
   },
+  jobs() {
+    return request("/api/jobs").then((r) => (r.ok ? r.json() : { jobs: [] }));
+  },
 };

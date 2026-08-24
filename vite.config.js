@@ -20,6 +20,7 @@ export default defineConfig({
         globe: resolve(__dirname, "globe/index.html"),
         terminal: resolve(__dirname, "terminal/index.html"),
         tickers: resolve(__dirname, "tickers/index.html"),
+        jobs: resolve(__dirname, "jobs/index.html"),
       },
     },
   },

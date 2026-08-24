@@ -305,6 +305,123 @@ async function handleTickers(env, origin) {
   }
 }
 
+// ---------- Jobs: Director/VP of Engineering & CTO roles at known gaming companies ----------
+
+// Adzuna only indexes 12 countries (US, GB, DE, FR, AU, NZ, CA, IN, PL, BR,
+// AT, ZA) and Israel isn't one of them — there is no way to scope a search
+// by "based in Israel" through this provider, so this list can only ever
+// surface roles at recognizable gaming companies. Scoped to "us" only (not
+// also "gb") to keep upstream call volume comfortably inside Adzuna's free
+// 1,000/month, alongside a long cache TTL below.
+const JOB_SEARCHES = [
+  { term: "Director of Engineering", category: "Director of Engineering" },
+  { term: "VP of Engineering", category: "VP of Engineering" },
+  { term: "Vice President of Engineering", category: "VP of Engineering" },
+  { term: "CTO", category: "CTO" },
+  { term: "Chief Technology Officer", category: "CTO" },
+];
+
+const GAMING_COMPANIES = [
+  "nintendo", "sony", "playstation", "xbox", "electronic arts",
+  "activision", "blizzard", "ubisoft", "take-two", "take two interactive",
+  "rockstar games", "2k games", "epic games", "riot games", "valve corporation",
+  "sega", "bandai namco", "square enix", "capcom", "konami",
+  "cd projekt", "warner bros. games", "warner bros games",
+  "netease", "tencent", "mihoyo", "hoyoverse",
+  "zynga", "king digital", "supercell", "playtika", "moon active",
+  "plarium", "sciplay", "product madness", "scopely", "rovio entertainment",
+  "niantic", "jam city", "voodoo", "playrix", "wooga",
+  "unity technologies", "roblox", "gameloft", "wargaming",
+  "krafton", "netmarble", "nexon", "devolver digital",
+];
+
+function isKnownGamingCompany(name) {
+  const lower = (name || "").toLowerCase();
+  return GAMING_COMPANIES.some((c) => lower.includes(c));
+}
+
+const JOB_CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours — postings don't need minute-level freshness
+
+async function fetchJobsForSearch(appId, appKey, term) {
+  // Adzuna's `title_only` param doesn't restrict matching to the title the
+  // way its name implies (verified against live responses — it returns
+  // titles that don't contain the search phrase at all, and combined with
+  // max_days_old the intersection was empty even on a normal news day).
+  // `what_phrase` alone correctly phrase-matches but searches the full job
+  // body, so the actual title-only restriction is enforced below instead.
+  const params = new URLSearchParams({
+    app_id: appId,
+    app_key: appKey,
+    what_phrase: term,
+    max_days_old: "1",
+    results_per_page: "50",
+    sort_by: "date",
+  });
+  const res = await fetch(`https://api.adzuna.com/v1/api/jobs/us/search/1?${params}`);
+  if (!res.ok) throw new Error(`Adzuna responded ${res.status} for "${term}"`);
+  const data = await res.json();
+  const lowerTerm = term.toLowerCase();
+  return (data.results || []).filter((job) => (job.title || "").toLowerCase().includes(lowerTerm));
+}
+
+async function fetchJobs(appId, appKey) {
+  const settled = await Promise.allSettled(
+    JOB_SEARCHES.map((search) =>
+      fetchJobsForSearch(appId, appKey, search.term).then((results) => ({ results, category: search.category }))
+    )
+  );
+
+  const seen = new Set();
+  const jobs = [];
+  for (const outcome of settled) {
+    if (outcome.status !== "fulfilled") continue;
+    const { results, category } = outcome.value;
+    for (const job of results) {
+      if (!isKnownGamingCompany(job.company && job.company.display_name)) continue;
+      if (seen.has(job.id)) continue;
+      seen.add(job.id);
+      jobs.push({
+        id: job.id,
+        title: (job.title || "").replace(/<[^>]+>/g, ""),
+        company: (job.company && job.company.display_name) || "Unknown company",
+        location: (job.location && job.location.display_name) || "",
+        url: job.redirect_url,
+        created: job.created,
+        category,
+      });
+    }
+  }
+  jobs.sort((a, b) => new Date(b.created) - new Date(a.created));
+  return jobs;
+}
+
+async function handleJobs(env, origin) {
+  if (!env.ADZUNA_APP_ID || !env.ADZUNA_APP_KEY) return json({ error: "Jobs feed not configured" }, 500, origin);
+
+  const cached = await env.DB.prepare("SELECT payload, fetched_at FROM job_cache WHERE id = 1").first();
+  const now = Date.now();
+  const isFresh = cached && now - cached.fetched_at < JOB_CACHE_TTL_MS;
+
+  if (isFresh) {
+    return json({ jobs: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: false }, 200, origin);
+  }
+
+  try {
+    const jobs = await fetchJobs(env.ADZUNA_APP_ID, env.ADZUNA_APP_KEY);
+    await env.DB.prepare(
+      "INSERT INTO job_cache (id, payload, fetched_at) VALUES (1, ?, ?) ON CONFLICT(id) DO UPDATE SET payload = excluded.payload, fetched_at = excluded.fetched_at"
+    )
+      .bind(JSON.stringify(jobs), now)
+      .run();
+    return json({ jobs, fetchedAt: now, stale: false }, 200, origin);
+  } catch (err) {
+    if (cached) {
+      return json({ jobs: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: true }, 200, origin);
+    }
+    return json({ error: "Jobs feed unavailable", detail: String(err) }, 502, origin);
+  }
+}
+
 // ---------- Travel: city + attraction search (free, keyless sources) ----------
 
 const TRAVEL_UA = "agmoneilon-travel-app/1.0 (https://agmoneilon.com; agmoneilon@gmail.com)";
@@ -504,6 +621,10 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/api/tickers") {
         return await handleTickers(env, origin);
+      }
+
+      if (request.method === "GET" && url.pathname === "/api/jobs") {
+        return await handleJobs(env, origin);
       }
 
       if (request.method === "POST" && url.pathname === "/api/admin/flush-pong") {
