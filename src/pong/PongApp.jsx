@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Stack, Title, Text, Anchor } from "@mantine/core";
 import { createPongEngine } from "./engine.js";
+import { Header } from "../shared/Header.jsx";
 import "./pong.css";
 
 export default function PongApp() {
@@ -26,6 +27,7 @@ export default function PongApp() {
 
   return (
     <div id="stage">
+      <Header floating />
       <canvas id="game" ref={canvasRef} />
 
       {gameState === "title" && (

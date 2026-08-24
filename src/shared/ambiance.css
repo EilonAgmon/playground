@@ -9,73 +9,59 @@
      dark everywhere. Negative z-index is what actually sits behind
      normal in-flow content. */
   z-index: -1;
-  background: #000;
+  background: var(--bg);
 }
 
-.ambiance-sky {
+.ambiance-blob {
   position: absolute;
-  inset: 0;
+  width: 62vmax;
+  height: 62vmax;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.32;
+  will-change: transform;
+}
+
+.ambiance-blob-gold {
+  top: -14%;
+  left: -12%;
+  animation: drift-a 46s ease-in-out infinite;
   transition: background 1.4s ease;
 }
 
-.ambiance-skyglow {
-  position: absolute;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  filter: blur(1px);
-  opacity: 0.85;
-  transition: top 1.4s ease, left 1.4s ease, background 1.4s ease, box-shadow 1.4s ease;
+.ambiance-blob-plum {
+  bottom: -22%;
+  right: -14%;
+  opacity: 0.26;
+  background: radial-gradient(circle, #6b3fa0 0%, transparent 70%);
+  animation: drift-b 58s ease-in-out infinite;
 }
 
-.ambiance-castle {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 20vh;
-  min-height: 140px;
+.ambiance-blob-sage {
+  top: 32%;
+  right: 12%;
+  width: 42vmax;
+  height: 42vmax;
+  opacity: 0.16;
+  background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+  animation: drift-c 64s ease-in-out infinite;
 }
 
-.ambiance-torch {
-  position: absolute;
-  bottom: -60px;
-  width: 260px;
-  height: 260px;
-  border-radius: 50%;
-  filter: blur(40px);
-  opacity: 0.55;
-  animation: torch-flicker 3.2s ease-in-out infinite;
+@keyframes drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6%, 5%) scale(1.08); }
 }
 
-.ambiance-torch-left {
-  left: -60px;
-  animation-delay: 0s;
+@keyframes drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-5%, -7%) scale(1.05); }
 }
 
-.ambiance-torch-right {
-  right: -60px;
-  animation-delay: 1.4s;
-}
-
-@keyframes torch-flicker {
-  0%, 100% {
-    opacity: 0.45;
-    transform: scale(1);
-  }
-  35% {
-    opacity: 0.65;
-    transform: scale(1.05);
-  }
-  60% {
-    opacity: 0.5;
-    transform: scale(0.98);
-  }
+@keyframes drift-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-6%, 4%) scale(1.1); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ambiance-torch {
-    animation: none;
-  }
+  .ambiance-blob { animation: none; }
 }

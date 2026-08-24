@@ -114,16 +114,6 @@ html, body {
   flex-shrink: 0;
 }
 
-.back {
-  flex-shrink: 0;
-  color: rgba(237, 227, 207, 0.5) !important;
-  font-size: clamp(0.65rem, 2vw, 0.85rem);
-}
-
-.back:hover {
-  color: var(--mantine-color-brand-4) !important;
-}
-
 @media (max-height: 560px) {
   .hint {
     display: none;

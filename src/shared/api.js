@@ -56,4 +56,7 @@ export const api = {
     const params = new URLSearchParams({ username });
     return request(`/api/travel/items/${id}?${params}`, { method: "DELETE" });
   },
+  tickers() {
+    return request("/api/tickers").then((r) => (r.ok ? r.json() : { tickers: [] }));
+  },
 };

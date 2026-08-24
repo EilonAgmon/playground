@@ -1,35 +1,54 @@
-import { Stack, Title, Text, SimpleGrid, Card, Anchor } from "@mantine/core";
-import { PongIcon, TravelIcon, PcaIcon, AboutIcon, WheelsIcon } from "../shared/Icons.jsx";
+import { Anchor, Text, Title } from "@mantine/core";
+import {
+  HqIcon,
+  WheelsIcon,
+  ReelsIcon,
+  PongIcon,
+  PlotIcon,
+  GlobeIcon,
+  TravelIcon,
+  TerminalIcon,
+  TickersIcon,
+  PcaIcon,
+  AboutIcon,
+} from "../shared/Icons.jsx";
 import "./portal.css";
 
 const APPS = [
-  { href: "pong/", label: "Pong", Icon: PongIcon },
-  { href: "travel/", label: "Travel", Icon: TravelIcon },
-  { href: "pca/", label: "PCA", Icon: PcaIcon },
-  { href: "wheels/", label: "Wheels", Icon: WheelsIcon },
-  { href: "about/", label: "About", Icon: AboutIcon },
+  { href: "hq/", label: "HQ", desc: "Run your own engineering org.", Icon: HqIcon },
+  { href: "wheels/", label: "Wheels", desc: "A tavern dice game, Sea of Stars style.", Icon: WheelsIcon },
+  { href: "reels/", label: "Reels", desc: "An original harvest-themed slot machine.", Icon: ReelsIcon },
+  { href: "pong/", label: "Pong", desc: "The original arcade classic.", Icon: PongIcon },
+  { href: "plot/", label: "Plot", desc: "Plan a companion-planted garden bed.", Icon: PlotIcon },
+  { href: "globe/", label: "Globe", desc: "Track the countries you've visited.", Icon: GlobeIcon },
+  { href: "travel/", label: "Travel", desc: "Save the places worth remembering.", Icon: TravelIcon },
+  { href: "tickers/", label: "Tickers", desc: "Today's biggest NYSE & NASDAQ decliners, live.", Icon: TickersIcon },
+  { href: "terminal/", label: "Terminal", desc: "Explore the resume from a shell prompt.", Icon: TerminalIcon },
+  { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
+  { href: "about/", label: "About", desc: "Experience, education, background.", Icon: AboutIcon },
 ];
 
 export default function Portal() {
   return (
-    <Stack id="portal" align="center" justify="center" gap="xl">
-      <Stack align="center" gap={4}>
-        <Title order={1} className="glow portal-title">
-          EILON AGMON
+    <div id="portal">
+      <div className="portal-hero fade-up">
+        <Title order={1} className="display-font portal-title">
+          Eilon Agmon
         </Title>
-        <Text className="tagline">pick an app</Text>
-      </Stack>
+        <Text className="portal-tagline">
+          Engineering leader. Occasional game developer. Full-time playground builder.
+        </Text>
+      </div>
 
-      <SimpleGrid cols={{ base: 2, sm: 3 }} spacing="lg">
-        {APPS.map(({ href, label, Icon }) => (
-          <Card key={href} component="a" href={href} className="tile" withBorder padding="lg">
-            <Stack align="center" gap="sm">
-              <Icon size={44} />
-              <Text className="label">{label}</Text>
-            </Stack>
-          </Card>
+      <div className="portal-grid">
+        {APPS.map(({ href, label, desc, Icon }, i) => (
+          <a key={href} href={href} className="portal-card fade-up" style={{ animationDelay: `${i * 40}ms` }}>
+            <Icon size={26} />
+            <span className="portal-card-label">{label}</span>
+            <span className="portal-card-desc">{desc}</span>
+          </a>
         ))}
-      </SimpleGrid>
+      </div>
 
       <Anchor
         href="https://github.com/EilonAgmon"
@@ -40,6 +59,6 @@ export default function Portal() {
       >
         github.com/EilonAgmon
       </Anchor>
-    </Stack>
+    </div>
   );
 }

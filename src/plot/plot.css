@@ -1,0 +1,201 @@
+#plot {
+  min-height: calc(100vh - 52px);
+  min-height: calc(100dvh - 52px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.3rem;
+  padding: clamp(1.3rem, 4vh, 2.2rem) 1.1rem 3rem;
+  max-width: 56rem;
+  margin: 0 auto;
+}
+
+.plot-hero {
+  text-align: center;
+  max-width: 32rem;
+}
+
+.plot-title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 600;
+}
+
+.plot-sub {
+  color: var(--fg-dim);
+  font-size: 0.86rem;
+  margin-top: 0.4rem;
+}
+
+.plot-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.plot-bedsizes, .plot-hemi {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.plot-chip {
+  min-height: 40px;
+  padding: 0 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--fg-dim);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.plot-chip.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(217, 163, 92, 0.1);
+}
+
+.plot-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 720px) {
+  .plot-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+}
+
+.plot-grid {
+  display: grid;
+  gap: clamp(4px, 1.2vw, 8px);
+  padding: clamp(0.7rem, 2.5vw, 1.1rem);
+  flex: 1;
+  min-width: 0;
+}
+
+.plot-cell {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  min-height: 36px;
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.plot-cell:hover {
+  transform: scale(1.05);
+}
+
+.plot-cell.status-good {
+  box-shadow: 0 0 0 2px var(--accent-2) inset, 0 0 12px var(--accent-2-glow);
+}
+
+.plot-cell.status-bad {
+  box-shadow: 0 0 0 2px #c0392b inset, 0 0 12px rgba(192, 57, 43, 0.45);
+}
+
+.plot-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  width: 100%;
+}
+
+@media (min-width: 720px) {
+  .plot-side {
+    width: 15rem;
+    flex-shrink: 0;
+  }
+}
+
+.plot-info {
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.plot-info-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.plot-info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+}
+
+.plot-info-companions {
+  font-size: 0.76rem;
+  margin-top: 0.3rem;
+}
+
+.plot-info-companions.good {
+  color: var(--accent-2);
+}
+
+.plot-info-companions.bad {
+  color: #e07a6d;
+}
+
+.plot-clear {
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--line-strong);
+  background: transparent;
+  color: var(--fg-dim);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.plot-clear:hover {
+  border-color: #e07a6d;
+  color: #e07a6d;
+}
+
+.plot-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.plot-swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 40px;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--fg-dim);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.plot-swatch.active {
+  border-color: var(--swatch-color);
+  color: var(--fg);
+  box-shadow: 0 0 0 1px var(--swatch-color) inset;
+}
+
+.plot-swatch-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}

@@ -1,0 +1,58 @@
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#terminal {
+  height: calc(100vh - 52px);
+  height: calc(100dvh - 52px);
+  background: #08090a;
+  color: var(--fg);
+  font-family: "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.88rem;
+  padding: 1rem 1.1rem;
+  cursor: text;
+}
+
+.terminal-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.terminal-line {
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.55;
+  color: var(--fg-dim);
+}
+
+.terminal-inputRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-bottom: 1.4rem;
+}
+
+.terminal-prompt {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.terminal-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: 16px;
+  caret-color: var(--accent);
+}
+
+@media (min-width: 640px) {
+  .terminal-input {
+    font-size: 0.88rem;
+  }
+}

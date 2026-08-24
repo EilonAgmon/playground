@@ -1,0 +1,175 @@
+#reels {
+  min-height: calc(100vh - 52px);
+  min-height: calc(100dvh - 52px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: clamp(1.4rem, 5vh, 2.5rem) 1.1rem 3rem;
+}
+
+.reels-hero {
+  text-align: center;
+  max-width: 30rem;
+}
+
+.reels-title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.reels-sub {
+  color: var(--fg-dim);
+  font-size: 0.88rem;
+  margin-top: 0.4rem;
+}
+
+.reels-machine {
+  width: 100%;
+  max-width: 26rem;
+  padding: clamp(1.1rem, 4vw, 1.6rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.reels-credits {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  color: var(--fg-dim);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.reels-credits strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--accent);
+  letter-spacing: 0;
+}
+
+.reels-window {
+  display: flex;
+  gap: clamp(6px, 2vw, 12px);
+  background: #0d0d10;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: clamp(8px, 2.5vw, 14px);
+  width: 100%;
+}
+
+.reel-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(6px, 2vw, 10px);
+  min-width: 0;
+}
+
+.reel-cell {
+  aspect-ratio: 1;
+  border-radius: 10px;
+  padding: 4px;
+  opacity: 0.55;
+  transform: scale(0.92);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.reel-cell.payline {
+  opacity: 1;
+  transform: scale(1);
+  box-shadow: 0 0 0 1px var(--accent-glow) inset;
+  border-radius: 10px;
+}
+
+.reel-col.spinning .reel-cell {
+  filter: blur(0.5px);
+}
+
+.reels-message {
+  min-height: 1.4em;
+  color: var(--fg-dim);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.reels-actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.reels-btn {
+  min-height: 44px;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(155deg, var(--accent), #a9763a);
+  color: #1a1408;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.reels-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -8px var(--accent-glow);
+}
+
+.reels-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.reels-btn-outline {
+  background: transparent;
+  border-color: var(--line-strong);
+  color: var(--fg);
+}
+
+.reels-paytable {
+  width: 100%;
+  max-width: 26rem;
+  padding: clamp(1rem, 3.5vw, 1.4rem);
+}
+
+.reels-paytable-title {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+
+.reels-paytable-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.reels-paytable-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+  color: var(--fg-dim);
+}
+
+.reels-paytable-icon {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.reels-paytable-mult {
+  margin-left: auto;
+  color: var(--fg);
+  font-weight: 600;
+}

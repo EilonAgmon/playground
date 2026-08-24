@@ -43,3 +43,13 @@ CREATE TABLE IF NOT EXISTS travel_items (
 );
 
 CREATE INDEX IF NOT EXISTS idx_travel_items_username_city ON travel_items (username, city);
+
+-- Single-row stale-while-revalidate cache for the /api/tickers endpoint.
+-- Keeps FMP's free-tier 250 req/day comfortably out of reach: the Worker
+-- only calls upstream when this row is older than the TTL, so usage scales
+-- with real site traffic instead of wall-clock time.
+CREATE TABLE IF NOT EXISTS ticker_cache (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  payload TEXT NOT NULL,
+  fetched_at INTEGER NOT NULL
+);

@@ -1,0 +1,168 @@
+#tickers {
+  min-height: calc(100vh - 52px);
+  min-height: calc(100dvh - 52px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  padding: clamp(1.3rem, 4vh, 2.2rem) 1.1rem 3rem;
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.tickers-hero {
+  text-align: center;
+  max-width: 32rem;
+}
+
+.tickers-title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 600;
+}
+
+.tickers-sub {
+  color: var(--fg-dim);
+  font-size: 0.86rem;
+  margin-top: 0.4rem;
+}
+
+.tickers-freshness {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+  font-size: 0.72rem;
+  color: var(--fg-faint);
+}
+
+.tickers-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4fae6a;
+  box-shadow: 0 0 6px #4fae6a;
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+.tickers-dot.stale {
+  background: #e0a03c;
+  box-shadow: 0 0 6px #e0a03c;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.tickers-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.tickers-chip {
+  min-height: 38px;
+  padding: 0 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+  color: var(--fg-dim);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.tickers-chip.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(217, 163, 92, 0.1);
+}
+
+.tickers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.7rem;
+  width: 100%;
+}
+
+.tickers-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--fg-faint);
+  font-size: 0.85rem;
+  padding: 2.5rem 1rem;
+}
+
+.tickers-card {
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+
+.tickers-card.flash {
+  border-color: #e07a6d;
+  background: rgba(224, 122, 109, 0.08);
+}
+
+.tickers-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.tickers-symbol {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--fg);
+}
+
+.tickers-category {
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+}
+
+.tickers-name {
+  font-size: 0.76rem;
+  color: var(--fg-dim);
+  margin-top: 0.35rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tickers-card-bottom {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 0.6rem;
+}
+
+.tickers-price {
+  font-size: 0.9rem;
+  color: var(--fg);
+}
+
+.tickers-change {
+  font-size: 0.8rem;
+  color: #e07a6d;
+  font-weight: 600;
+}
+
+.tickers-note {
+  font-size: 0.68rem;
+  color: var(--fg-faint);
+  text-align: center;
+  max-width: 30rem;
+  margin-top: 0.5rem;
+}

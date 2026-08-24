@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Stack, Title, Text, Anchor } from "@mantine/core";
+import { Stack, Title, Text } from "@mantine/core";
 import { HOTSPOTS, SCENE_IMAGE, SCENE_LABEL } from "./hotspots.js";
+import { Header } from "../shared/Header.jsx";
 import "./pca.css";
 
 const DEFAULT_TEXT = "Click around the scene to examine things.";
@@ -17,6 +18,7 @@ export default function PcaApp() {
 
   return (
     <Stack id="pca" align="center" gap="md">
+      <Header floating />
       <Stack align="center" gap={2} className="pcaHeader">
         <Title order={1} className="glow">
           PCA
@@ -46,10 +48,6 @@ export default function PcaApp() {
           <div key={i} className="inventorySlot" />
         ))}
       </div>
-
-      <Anchor href="../" className="back" underline="hover">
-        &larr; back to the portal
-      </Anchor>
     </Stack>
   );
 }

@@ -218,6 +218,82 @@ async function handleStats(request, env, origin) {
   );
 }
 
+// ---------- Tickers: NYSE + NASDAQ biggest-losers, categorized by name keywords ----------
+
+// FMP's free-tier movers endpoint doesn't return a sector field (confirmed
+// against a live response), and a static ticker→category map would mostly
+// miss anyway — the daily "biggest losers" list skews toward obscure small
+// caps, not household names. Matching keywords in the company name instead
+// generalizes to whatever shows up on a given day. Order matters: first
+// match wins, so more specific categories are listed before generic ones.
+const CATEGORY_KEYWORDS = [
+  { category: "Health", words: ["therapeutic", "pharma", "bio", "health", "medical", "medicine", "oncology", "diagnostic", "clinical", "life sciences"] },
+  { category: "Gaming", words: ["gaming", "games", "esports", "entertainment", "casino", "interactive"] },
+  { category: "Tech", words: ["software", "technolog", "robotic", "cyber", "data", "digital", "semiconductor", "artificial intelligence", " ai ", "cloud", "network", "wireless", "internet"] },
+  { category: "Energy", words: ["energy", "oil", "gas", "solar", "power", "petroleum", "renewable"] },
+  { category: "Finance", words: ["bank", "capital", "financial", "insurance", "holdings", "credit", "investment"] },
+  { category: "Materials", words: ["mining", "metals", "minerals", "resources", "chemical"] },
+  { category: "Consumer", words: ["retail", "foods", "beverage", "brands", "restaurant", "apparel", "consumer"] },
+  { category: "Industrial", words: ["industrial", "manufactur", "aerospace", "defense", "systems", "engineering"] },
+];
+
+function categorize(name) {
+  const lower = ` ${(name || "").toLowerCase()} `;
+  for (const { category, words } of CATEGORY_KEYWORDS) {
+    if (words.some((w) => lower.includes(w))) return category;
+  }
+  return "Other";
+}
+
+const TICKER_CACHE_TTL_MS = 12000;
+
+async function fetchLosersFromFmp(apiKey) {
+  const res = await fetch(`https://financialmodelingprep.com/stable/biggest-losers?apikey=${apiKey}`);
+  if (!res.ok) throw new Error(`FMP responded ${res.status}`);
+  const data = await res.json();
+  return data
+    .filter((row) => row.exchange === "NYSE" || row.exchange === "NASDAQ")
+    .sort((a, b) => a.changesPercentage - b.changesPercentage)
+    .slice(0, 20)
+    .map((row) => ({
+      symbol: row.symbol,
+      name: row.name,
+      price: row.price,
+      change: row.change,
+      changesPercentage: row.changesPercentage,
+      category: categorize(row.name),
+    }));
+}
+
+async function handleTickers(env, origin) {
+  if (!env.FMP_API_KEY) return json({ error: "Ticker feed not configured" }, 500, origin);
+
+  const cached = await env.DB.prepare("SELECT payload, fetched_at FROM ticker_cache WHERE id = 1").first();
+  const now = Date.now();
+  const isFresh = cached && now - cached.fetched_at < TICKER_CACHE_TTL_MS;
+
+  if (isFresh) {
+    return json({ tickers: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: false }, 200, origin);
+  }
+
+  try {
+    const tickers = await fetchLosersFromFmp(env.FMP_API_KEY);
+    await env.DB.prepare(
+      "INSERT INTO ticker_cache (id, payload, fetched_at) VALUES (1, ?, ?) ON CONFLICT(id) DO UPDATE SET payload = excluded.payload, fetched_at = excluded.fetched_at"
+    )
+      .bind(JSON.stringify(tickers), now)
+      .run();
+    return json({ tickers, fetchedAt: now, stale: false }, 200, origin);
+  } catch (err) {
+    // Upstream hiccup or quota hit — serve the last known-good snapshot
+    // rather than a hard failure, if one exists.
+    if (cached) {
+      return json({ tickers: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: true }, 200, origin);
+    }
+    return json({ error: "Ticker feed unavailable", detail: String(err) }, 502, origin);
+  }
+}
+
 // ---------- Travel: city + attraction search (free, keyless sources) ----------
 
 const TRAVEL_UA = "agmoneilon-travel-app/1.0 (https://agmoneilon.com; agmoneilon@gmail.com)";
@@ -413,6 +489,10 @@ export default {
 
       if (request.method === "GET" && url.pathname === "/api/stats") {
         return await handleStats(request, env, origin);
+      }
+
+      if (request.method === "GET" && url.pathname === "/api/tickers") {
+        return await handleTickers(env, origin);
       }
 
       if (request.method === "POST" && url.pathname === "/api/admin/flush-pong") {

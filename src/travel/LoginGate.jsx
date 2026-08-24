@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Stack, Title, TextInput, Button, Text, Anchor } from "@mantine/core";
+import { Stack, Title, TextInput, Button, Text } from "@mantine/core";
+import { Header } from "../shared/Header.jsx";
 
 const MAX_LEN = 20;
 
@@ -19,29 +20,29 @@ export default function LoginGate({ onLogin }) {
   }
 
   return (
-    <Stack id="loginScreen" align="center" justify="center" gap="md">
-      <Title order={1} className="glow">
-        TRAVEL
-      </Title>
-      <form onSubmit={handleSubmit}>
-        <Stack gap="xs" align="center">
-          <TextInput
-            placeholder="your name"
-            maxLength={MAX_LEN}
-            autoComplete="off"
-            autoFocus
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Button type="submit" fullWidth>
-            enter
-          </Button>
-        </Stack>
-      </form>
-      {error && <Text c="red">enter a name first</Text>}
-      <Anchor href="../" className="back" underline="hover">
-        &larr; back to the portal
-      </Anchor>
-    </Stack>
+    <>
+      <Header title="Travel" />
+      <Stack id="loginScreen" align="center" justify="center" gap="md">
+        <Title order={1} className="display-font">
+          Travel
+        </Title>
+        <form onSubmit={handleSubmit}>
+          <Stack gap="xs" align="center">
+            <TextInput
+              placeholder="your name"
+              maxLength={MAX_LEN}
+              autoComplete="off"
+              autoFocus
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            <Button type="submit" fullWidth>
+              enter
+            </Button>
+          </Stack>
+        </form>
+        {error && <Text c="red">enter a name first</Text>}
+      </Stack>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import { Stack, Group, Title, Text, Button } from "@mantine/core";
 import { LEVEL_NAMES } from "./heroes.js";
 import { SquareSymbol, DiamondSymbol, HammerSymbol, BlankSymbol, ChargeIcon, TowerIcon, HeroGlyph } from "./WheelIcons.jsx";
+import { Header } from "../shared/Header.jsx";
 
 function StatBox({ icon, value }) {
   return (
@@ -69,6 +70,7 @@ export default function WheelsGame({ state, onSpin, onToggleLock, onResolve, onR
 
   return (
     <div id="wheels">
+      <Header floating />
       <div className="wheelsTable">
         <Title order={1} className="wheelsTitle">
           WHEELS
@@ -143,10 +145,6 @@ export default function WheelsGame({ state, onSpin, onToggleLock, onResolve, onR
           </Button>
         </Stack>
       )}
-
-      <a href="../" className="back">
-        &larr; back to the portal
-      </a>
     </div>
   );
 }

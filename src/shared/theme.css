@@ -1,15 +1,24 @@
 @import "@mantine/core/styles.css";
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap");
 
 :root {
-  --fg: #ede3cf;
-  --fg-dim: rgba(237, 227, 207, 0.6);
-  --fg-faint: rgba(237, 227, 207, 0.32);
-  --accent: #c98a3a;
-  --accent-glow: rgba(201, 138, 58, 0.55);
-  --line: rgba(237, 227, 207, 0.22);
-  --font-display: "Cinzel", "Georgia", serif;
-  --font-body: "EB Garamond", "Georgia", serif;
+  --bg: #0a0a0d;
+  --bg-elevated: #101014;
+  --fg: #f4f2ee;
+  --fg-dim: rgba(244, 242, 238, 0.64);
+  --fg-faint: rgba(244, 242, 238, 0.36);
+  --accent: #d9a35c;
+  --accent-glow: rgba(217, 163, 92, 0.45);
+  --accent-2: #8fae7a;
+  --accent-2-glow: rgba(143, 174, 122, 0.4);
+  --line: rgba(244, 242, 238, 0.1);
+  --line-strong: rgba(244, 242, 238, 0.18);
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-hover: rgba(255, 255, 255, 0.07);
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius-md: 14px;
+  --radius-lg: 20px;
 }
 
 * {
@@ -21,12 +30,12 @@
 html, body {
   width: 100%;
   min-height: 100%;
-  background: #000;
+  background: var(--bg);
 }
 
 body {
   font-family: var(--font-body);
-  font-size: 1.08rem;
+  font-size: 1rem;
   color: var(--fg);
   -webkit-user-select: none;
   user-select: none;
@@ -39,41 +48,114 @@ body {
   z-index: 1;
 }
 
-/* Soft aged-page vignette, applied once on top of everything */
-.crt-fx {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 999;
-}
-
-.crt-fx::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.6) 100%);
-}
-
 .glow {
-  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8), 0 0 22px rgba(201, 138, 58, 0.35);
+  text-shadow: 0 0 30px var(--accent-glow);
 }
 
 .glow-accent {
   color: var(--accent);
-  text-shadow: 0 0 8px var(--accent-glow), 0 0 22px var(--accent-glow);
+  text-shadow: 0 0 20px var(--accent-glow);
 }
 
 .display-font {
   font-family: var(--font-display);
-  line-height: 1.6;
+  line-height: 1.3;
 }
 
 ::selection {
   background: var(--accent);
-  color: #000;
+  color: #1a1408;
 }
 
-.pixel-icon {
-  image-rendering: pixelated;
-  filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.6));
+.icon {
+  color: currentColor;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* ---------- Shared glass-card surface ---------- */
+
+.surface {
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+/* ---------- Shared app header ---------- */
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0 1.1rem;
+  background: rgba(10, 10, 13, 0.66);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+
+.app-header-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--fg-dim);
+  text-decoration: none;
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.app-header-back:hover, .app-header-back:focus-visible {
+  color: var(--accent);
+  transform: translateX(-2px);
+}
+
+.app-header-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.92rem;
+  letter-spacing: 0.03em;
+  color: var(--fg-dim);
+  margin-left: auto;
+}
+
+/* Full-viewport, no-scroll game screens (Pong/Wheels/PCA) size themselves
+   against the raw viewport, so an in-flow sticky header would either need
+   those apps to recompute against a shrunk container or get clipped.
+   Floating instead: paints on top, zero layout impact. */
+.app-header-floating {
+  position: fixed;
+  top: 0.7rem;
+  left: 0.7rem;
+  z-index: 30;
+  height: auto;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(10, 10, 13, 0.5);
+}
+
+.app-header-floating .app-header-title {
+  display: none;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-up { animation: none; }
 }

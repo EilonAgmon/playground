@@ -1,51 +1,90 @@
 #portal {
   min-height: 100vh;
-  padding: 2rem 1.25rem 4rem;
+  min-height: 100dvh;
+  padding: clamp(2.5rem, 8vh, 5rem) 1.25rem 5rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.portal-hero {
   text-align: center;
+  margin-bottom: clamp(2rem, 6vh, 3.5rem);
 }
 
 .portal-title {
-  font-size: clamp(1rem, 5vw, 1.8rem) !important;
-  letter-spacing: 0.1em;
-  color: #fff !important;
+  font-size: clamp(2rem, 6vw, 3.2rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em;
+  color: var(--fg) !important;
+  margin-bottom: 0.6rem;
 }
 
-.tagline {
-  opacity: 0.6;
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
+.portal-tagline {
+  color: var(--fg-dim);
+  font-size: clamp(0.9rem, 2.2vw, 1.05rem);
+  max-width: 34rem;
+  margin: 0 auto;
 }
 
-.tile {
-  background: rgba(0, 0, 0, 0.45) !important;
-  backdrop-filter: blur(6px);
-  border-color: rgba(255, 255, 255, 0.18) !important;
+.portal-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.9rem;
+}
+
+@media (min-width: 640px) {
+  .portal-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.1rem;
+  }
+}
+
+.portal-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.55rem;
+  padding: 1.15rem 1.1rem;
+  min-height: 44px;
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
   text-decoration: none;
   color: var(--fg);
-  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tile:hover, .tile:focus-visible {
-  transform: translateY(-4px) scale(1.02);
-  border-color: var(--mantine-color-brand-4) !important;
-  box-shadow: 0 8px 28px -6px var(--mantine-color-brand-4);
+.portal-card .icon {
+  color: var(--accent);
 }
 
-.tile:hover .pixel-icon {
-  color: var(--mantine-color-brand-4);
-  filter: drop-shadow(0 0 10px var(--mantine-color-brand-4));
+.portal-card:hover, .portal-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  background: var(--surface-hover);
+  box-shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--accent-glow) inset;
 }
 
-.tile .label {
-  font-size: 0.85rem;
-  letter-spacing: 0.05em;
+.portal-card-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+}
+
+.portal-card-desc {
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  line-height: 1.4;
 }
 
 #identity {
-  position: fixed;
-  bottom: 0.6em;
-  right: 0.8em;
-  font-size: 0.7rem;
+  display: block;
+  text-align: center;
+  margin-top: clamp(2.5rem, 6vh, 3.5rem);
+  font-size: 0.72rem;
   opacity: 0.4;
   color: var(--fg) !important;
 }

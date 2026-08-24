@@ -13,6 +13,7 @@ import {
   Alert,
   Badge,
 } from "@mantine/core";
+import { Header } from "../shared/Header.jsx";
 
 function StatTiles({ totals }) {
   const tiles = [
@@ -171,31 +172,34 @@ export default function Dashboard({ stats, onLogout, onFlushPong, onFlushTravel 
   }
 
   return (
-    <div id="dashboard">
-      <Group justify="space-between" className="dashboard-header" mb="xl">
-        <Title order={1} className="glow small">
-          BACKOFFICE
-        </Title>
-        <Button variant="outline" onClick={onLogout}>
-          log out
-        </Button>
-      </Group>
-
-      <StatTiles totals={stats.totals} />
-      <DayChart byDay={stats.byDay} />
-      <CountryBars byCountry={stats.byCountry} />
-      <RecentTable recent={stats.recent} />
-
-      <Alert color="red" variant="outline" title="danger zone" mt="xl">
-        <Group>
-          <Button color="red" variant="outline" onClick={handleFlushPong}>
-            flush Pong data
-          </Button>
-          <Button color="red" variant="outline" onClick={handleFlushTravel}>
-            flush Travel data
+    <>
+      <Header title="Backoffice" />
+      <div id="dashboard">
+        <Group justify="space-between" className="dashboard-header" mb="xl">
+          <Title order={1} className="display-font small">
+            Backoffice
+          </Title>
+          <Button variant="outline" onClick={onLogout}>
+            log out
           </Button>
         </Group>
-      </Alert>
-    </div>
+
+        <StatTiles totals={stats.totals} />
+        <DayChart byDay={stats.byDay} />
+        <CountryBars byCountry={stats.byCountry} />
+        <RecentTable recent={stats.recent} />
+
+        <Alert color="red" variant="outline" title="danger zone" mt="xl">
+          <Group>
+            <Button color="red" variant="outline" onClick={handleFlushPong}>
+              flush Pong data
+            </Button>
+            <Button color="red" variant="outline" onClick={handleFlushTravel}>
+              flush Travel data
+            </Button>
+          </Group>
+        </Alert>
+      </div>
+    </>
   );
 }

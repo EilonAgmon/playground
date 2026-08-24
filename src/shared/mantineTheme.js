@@ -7,15 +7,15 @@ export function createAppTheme(period) {
     primaryColor: "brand",
     primaryShade: 4,
     colors: { brand: p.shades },
-    fontFamily: '"EB Garamond", Georgia, serif',
+    fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif',
     headings: {
-      fontFamily: '"Cinzel", Georgia, serif',
+      fontFamily: '"Fraunces", Georgia, serif',
       fontWeight: "600",
     },
-    defaultRadius: "sm",
+    defaultRadius: "md",
     components: {
       Button: {
-        defaultProps: { fw: 400 },
+        defaultProps: { fw: 500 },
       },
     },
   });

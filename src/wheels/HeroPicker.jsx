@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Stack, Title, Text, SimpleGrid, Card, Button } from "@mantine/core";
 import { HERO_LIST } from "./heroes.js";
 import { HeroGlyph } from "./WheelIcons.jsx";
+import { Header } from "../shared/Header.jsx";
 
 function PickerColumn({ label, heroes, selected, onSelect, exclude }) {
   return (
@@ -33,24 +34,23 @@ export default function HeroPicker({ onConfirm }) {
   const [right, setRight] = useState(null);
 
   return (
-    <Stack align="center" gap="md" className="pickerScreen">
-      <Title order={1} className="wheelsTitle">
-        WHEELS
-      </Title>
-      <Text className="hint">choose your left hero (Squares) and right hero (Diamonds)</Text>
+    <>
+      <Header floating />
+      <Stack align="center" gap="md" className="pickerScreen">
+        <Title order={1} className="wheelsTitle">
+          WHEELS
+        </Title>
+        <Text className="hint">choose your left hero (Squares) and right hero (Diamonds)</Text>
 
-      <div className="pickerCols">
-        <PickerColumn label="left — squares" heroes={HERO_LIST} selected={left} onSelect={setLeft} exclude={right} />
-        <PickerColumn label="right — diamonds" heroes={HERO_LIST} selected={right} onSelect={setRight} exclude={left} />
-      </div>
+        <div className="pickerCols">
+          <PickerColumn label="left — squares" heroes={HERO_LIST} selected={left} onSelect={setLeft} exclude={right} />
+          <PickerColumn label="right — diamonds" heroes={HERO_LIST} selected={right} onSelect={setRight} exclude={left} />
+        </div>
 
-      <Button className="wheelsBtn" disabled={!left || !right} onClick={() => onConfirm(left, right)}>
-        begin
-      </Button>
-
-      <a href="../" className="back">
-        &larr; back to the portal
-      </a>
-    </Stack>
+        <Button className="wheelsBtn" disabled={!left || !right} onClick={() => onConfirm(left, right)}>
+          begin
+        </Button>
+      </Stack>
+    </>
   );
 }

@@ -3,17 +3,13 @@ body {
 }
 
 #loginScreen {
-  min-height: 100vh;
+  min-height: calc(100vh - 52px);
+  min-height: calc(100dvh - 52px);
   text-align: center;
 }
 
 #loginScreen .mantine-Title-root {
   font-size: clamp(1.2rem, 6vw, 2rem);
-}
-
-.back {
-  color: var(--fg-dim) !important;
-  font-size: 0.85rem;
 }
 
 #dashboard {
@@ -26,9 +22,9 @@ body {
 }
 
 .tile {
-  background: rgba(0, 0, 0, 0.5) !important;
+  background: var(--surface) !important;
   backdrop-filter: blur(6px);
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: var(--line) !important;
   text-align: center;
 }
 
@@ -46,9 +42,9 @@ body {
 }
 
 .panel {
-  background: rgba(0, 0, 0, 0.45) !important;
+  background: var(--surface) !important;
   backdrop-filter: blur(6px);
-  border-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: var(--line) !important;
 }
 
 .panel-title {

@@ -394,17 +394,6 @@ html, body {
   z-index: 10;
 }
 
-.back {
-  flex-shrink: 0;
-  color: rgba(245, 230, 200, 0.55);
-  font-size: clamp(0.6rem, 1.9vw, 0.76rem);
-  text-decoration: none;
-}
-
-.back:hover {
-  color: #f0c443;
-}
-
 @media (max-height: 600px) {
   .hint {
     display: none;
