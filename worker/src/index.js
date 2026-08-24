@@ -305,14 +305,28 @@ async function handleTickers(env, origin) {
   }
 }
 
-// ---------- Jobs: Director/VP of Engineering & CTO roles at known gaming companies ----------
+// ---------- Jobs: (title @ known gaming company, any location) — two independent, unioned criteria ----------
+//
+// The actual requirement is a union of two independent legs:
+//   Leg A — title match, located in Israel, any company
+//   Leg B — title match, at a known gaming company, any location
+// Adzuna can't do Leg A at all (see GAMING_COMPANIES comment below) or
+// serve as its data source; it's pending a provider that actually indexes
+// Israel. This file currently only implements Leg B — the "known gaming
+// company" search below is NOT filtered to Israel, or to any other single
+// location, on purpose: a Nintendo posting in any Adzuna-covered country
+// should surface regardless of where else this ends up covering.
 
-// Adzuna only indexes 12 countries (US, GB, DE, FR, AU, NZ, CA, IN, PL, BR,
-// AT, ZA) and Israel isn't one of them — there is no way to scope a search
-// by "based in Israel" through this provider, so this list can only ever
-// surface roles at recognizable gaming companies. Scoped to "us" only (not
-// also "gb") to keep upstream call volume comfortably inside Adzuna's free
-// 1,000/month, alongside a long cache TTL below.
+// Adzuna indexes 12 countries: US, GB, DE, FR, AU, NZ, CA, IN, PL, BR, AT,
+// ZA. Israel isn't one of them (Leg A blocked), and neither is Japan — so
+// even Leg B can't reach Nintendo's home-market postings through this
+// provider, only its offices in whichever of these 12 it operates in.
+// Querying multiple countries multiplies upstream calls (country count ×
+// search-term count per refresh), so this is deliberately the subset of
+// the 12 where a Western gaming company office is actually plausible
+// (US/GB/DE/FR/CA/AU), paired with a longer cache TTL below to compensate.
+const JOB_COUNTRIES = ["us", "gb", "de", "fr", "ca", "au"];
+
 const JOB_SEARCHES = [
   { term: "Director of Engineering", category: "Director of Engineering" },
   { term: "VP of Engineering", category: "VP of Engineering" },
@@ -340,9 +354,13 @@ function isKnownGamingCompany(name) {
   return GAMING_COMPANIES.some((c) => lower.includes(c));
 }
 
-const JOB_CACHE_TTL_MS = 3 * 60 * 60 * 1000; // 3 hours — postings don't need minute-level freshness
+// 6 countries × 5 search terms = 30 upstream calls per cache refresh, so
+// this is deliberately long — job postings don't need minute-level
+// freshness, and a shorter TTL here would burn through Adzuna's free
+// 1,000/month quota fast under any real traffic.
+const JOB_CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
 
-async function fetchJobsForSearch(appId, appKey, term) {
+async function fetchJobsForSearch(appId, appKey, country, term) {
   // Adzuna's `title_only` param doesn't restrict matching to the title the
   // way its name implies (verified against live responses — it returns
   // titles that don't contain the search phrase at all, and combined with
@@ -357,19 +375,23 @@ async function fetchJobsForSearch(appId, appKey, term) {
     results_per_page: "50",
     sort_by: "date",
   });
-  const res = await fetch(`https://api.adzuna.com/v1/api/jobs/us/search/1?${params}`);
-  if (!res.ok) throw new Error(`Adzuna responded ${res.status} for "${term}"`);
+  const res = await fetch(`https://api.adzuna.com/v1/api/jobs/${country}/search/1?${params}`);
+  if (!res.ok) throw new Error(`Adzuna ${country} responded ${res.status} for "${term}"`);
   const data = await res.json();
   const lowerTerm = term.toLowerCase();
   return (data.results || []).filter((job) => (job.title || "").toLowerCase().includes(lowerTerm));
 }
 
 async function fetchJobs(appId, appKey) {
-  const settled = await Promise.allSettled(
-    JOB_SEARCHES.map((search) =>
-      fetchJobsForSearch(appId, appKey, search.term).then((results) => ({ results, category: search.category }))
-    )
-  );
+  const tasks = [];
+  for (const country of JOB_COUNTRIES) {
+    for (const search of JOB_SEARCHES) {
+      tasks.push(
+        fetchJobsForSearch(appId, appKey, country, search.term).then((results) => ({ results, category: search.category }))
+      );
+    }
+  }
+  const settled = await Promise.allSettled(tasks);
 
   const seen = new Set();
   const jobs = [];

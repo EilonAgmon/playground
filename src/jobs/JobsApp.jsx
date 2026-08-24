@@ -63,7 +63,8 @@ export default function JobsApp() {
           <h1 className="display-font jobs-title">Jobs</h1>
           <p className="jobs-sub">
             Director of Engineering, VP of Engineering, and CTO roles posted in the last 24 hours at known gaming
-            companies — Nintendo, Sony, EA, Playtika, and around 40 others.
+            companies — Nintendo, Sony, EA, Playtika, and around 40 others — in any of the markets covered below.
+            Israel-based roles at any company are a separate leg, pending a data source that actually covers Israel.
           </p>
           <p className="jobs-freshness">
             <span className={`jobs-dot ${stale ? "stale" : ""}`} />
@@ -115,9 +116,10 @@ export default function JobsApp() {
         </div>
 
         <p className="jobs-note">
-          US market only, via Adzuna (Israel isn't covered by this data source — there's no way to scope by
-          location there). The gaming-company list is a hand-maintained set of well-known studios and publishers,
-          not exhaustive.
+          Gaming-company roles via Adzuna, searched across the US, UK, Germany, France, Canada, and Australia —
+          Adzuna doesn't index Israel or Japan at all, so Israeli postings and Nintendo's home-market roles are out
+          of reach through this provider regardless. The gaming-company list is a hand-maintained set of well-known
+          studios and publishers, not exhaustive.
         </p>
       </div>
     </>
