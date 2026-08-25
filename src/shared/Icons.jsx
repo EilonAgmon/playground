@@ -101,6 +101,27 @@ export function TickersIcon({ size = 24 }) {
   );
 }
 
+export function VineIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M4 20c3-1 3-4 6-5s3-4 6-5 3-4 4-4" />
+      <circle cx="20" cy="6" r="1.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function RicochetIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <rect x="4" y="5" width="4.5" height="2.6" rx="0.6" />
+      <rect x="9.5" y="5" width="4.5" height="2.6" rx="0.6" />
+      <rect x="15" y="5" width="4.5" height="2.6" rx="0.6" />
+      <circle cx="12" cy="14" r="1.6" fill="currentColor" stroke="none" />
+      <rect x="8" y="19" width="8" height="2" rx="1" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

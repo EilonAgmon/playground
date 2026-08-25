@@ -18,6 +18,8 @@ export default defineConfig({
         plot: resolve(__dirname, "plot/index.html"),
         globe: resolve(__dirname, "globe/index.html"),
         tickers: resolve(__dirname, "tickers/index.html"),
+        vine: resolve(__dirname, "vine/index.html"),
+        ricochet: resolve(__dirname, "ricochet/index.html"),
       },
     },
   },
