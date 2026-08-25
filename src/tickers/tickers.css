@@ -54,6 +54,47 @@
   50% { opacity: 0.35; }
 }
 
+.tickers-windows {
+  display: flex;
+  gap: 0.3rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.25rem;
+}
+
+.tickers-window-btn {
+  min-height: 34px;
+  padding: 0 1.1rem;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  color: var(--fg-dim);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tickers-window-btn.active {
+  background: var(--accent);
+  color: #1a1408;
+}
+
+.tickers-history-note {
+  max-width: 26rem;
+  text-align: center;
+  font-size: 0.74rem;
+  color: var(--fg-faint);
+  line-height: 1.5;
+}
+
+.tickers-daysseen {
+  margin-top: 0.4rem;
+  font-size: 0.66rem;
+  color: var(--accent);
+}
+
 .tickers-filters {
   display: flex;
   flex-wrap: wrap;

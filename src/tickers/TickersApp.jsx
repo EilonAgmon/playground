@@ -3,17 +3,30 @@ import { Header } from "../shared/Header.jsx";
 import { api } from "../shared/api.js";
 import "./tickers.css";
 
-const POLL_MS = 1200;
 const CATEGORY_ORDER = ["Health", "Tech", "Gaming", "Energy", "Finance", "Materials", "Consumer", "Industrial", "Other"];
+const WINDOWS = [
+  { key: "today", label: "Today" },
+  { key: "48h", label: "48h" },
+  { key: "week", label: "Week" },
+];
+const REQUIRED_DAYS = { "48h": 2, week: 7 };
+const FAST_POLL_MS = 1200;
+const SLOW_POLL_MS = 60000;
 
-function secondsAgo(ts) {
+function formatAgo(ts) {
   if (!ts) return null;
-  return Math.max(0, Math.round((Date.now() - ts) / 1000));
+  const secs = Math.max(0, Math.round((Date.now() - ts) / 1000));
+  if (secs < 60) return "just now";
+  const mins = Math.round(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  return `${Math.round(mins / 60)}h ago`;
 }
 
 export default function TickersApp() {
+  const [activeWindow, setActiveWindow] = useState("today");
   const [tickers, setTickers] = useState([]);
   const [fetchedAt, setFetchedAt] = useState(null);
+  const [daysAvailable, setDaysAvailable] = useState(null);
   const [stale, setStale] = useState(false);
   const [error, setError] = useState(false);
   const [filter, setFilter] = useState("All");
@@ -23,10 +36,12 @@ export default function TickersApp() {
 
   useEffect(() => {
     let cancelled = false;
+    prevRef.current = new Map();
+    setFilter("All");
 
     async function poll() {
       try {
-        const data = await api.tickers();
+        const data = await api.tickers(activeWindow);
         if (cancelled) return;
         const next = data.tickers || [];
 
@@ -40,21 +55,21 @@ export default function TickersApp() {
 
         setTickers(next);
         setFetchedAt(data.fetchedAt || null);
+        setDaysAvailable(data.daysAvailable ?? null);
         setStale(Boolean(data.stale));
-        setChangedSymbols(changed);
-        setError(next.length === 0 && !data.fetchedAt);
+        setError(false);
       } catch {
         if (!cancelled) setError(true);
       }
     }
 
     poll();
-    const interval = setInterval(poll, POLL_MS);
+    const interval = setInterval(poll, activeWindow === "today" ? FAST_POLL_MS : SLOW_POLL_MS);
     return () => {
       cancelled = true;
       clearInterval(interval);
     };
-  }, []);
+  }, [activeWindow]);
 
   // Re-render every few seconds purely so the "updated Ns ago" label ticks
   // forward between polls, without that being tied to actual data fetches.
@@ -65,7 +80,8 @@ export default function TickersApp() {
 
   const categoriesPresent = CATEGORY_ORDER.filter((c) => tickers.some((t) => t.category === c));
   const visible = filter === "All" ? tickers : tickers.filter((t) => t.category === filter);
-  const ago = secondsAgo(fetchedAt);
+  const requiredDays = REQUIRED_DAYS[activeWindow];
+  const buildingHistory = requiredDays && daysAvailable !== null && daysAvailable < requiredDays;
 
   return (
     <>
@@ -73,16 +89,38 @@ export default function TickersApp() {
       <div id="tickers">
         <div className="tickers-hero fade-up">
           <h1 className="display-font tickers-title">Tickers</h1>
-          <p className="tickers-sub">Today's biggest NYSE &amp; NASDAQ decliners, grouped by sector — refreshed live.</p>
+          <p className="tickers-sub">Biggest NYSE &amp; NASDAQ decliners, grouped by sector.</p>
           <p className="tickers-freshness">
             <span className={`tickers-dot ${stale ? "stale" : ""}`} />
             {error
               ? "Feed unavailable right now."
-              : ago === null
+              : fetchedAt === null
               ? "Loading…"
-              : `Updated ${ago === 0 ? "just now" : `${ago}s ago`}${stale ? " (last known good)" : ""}`}
+              : activeWindow === "today"
+              ? `Updated ${formatAgo(fetchedAt)}${stale ? " (last known good)" : ""}`
+              : `Latest snapshot ${formatAgo(fetchedAt)}`}
           </p>
         </div>
+
+        <div className="tickers-windows fade-up">
+          {WINDOWS.map((w) => (
+            <button
+              key={w.key}
+              className={`tickers-window-btn ${activeWindow === w.key ? "active" : ""}`}
+              onClick={() => setActiveWindow(w.key)}
+            >
+              {w.label}
+            </button>
+          ))}
+        </div>
+
+        {buildingHistory && (
+          <p className="tickers-history-note fade-up">
+            Still building history — {daysAvailable} day{daysAvailable === 1 ? "" : "s"} collected so far
+            {activeWindow === "week" ? " toward a full week" : ""}. This grows richer over time rather than being
+            retroactive.
+          </p>
+        )}
 
         <div className="tickers-filters fade-up">
           <button className={`tickers-chip ${filter === "All" ? "active" : ""}`} onClick={() => setFilter("All")}>
@@ -113,16 +151,22 @@ export default function TickersApp() {
               <div className="tickers-card-bottom">
                 <span className="tickers-price">${t.price?.toFixed(2)}</span>
                 <span className="tickers-change">
-                  {t.change?.toFixed(2)} ({t.changesPercentage?.toFixed(2)}%)
+                  {activeWindow === "today" && t.change != null ? `${t.change.toFixed(2)} ` : ""}
+                  ({t.changesPercentage?.toFixed(2)}%)
                 </span>
               </div>
+              {activeWindow !== "today" && t.daysSeen > 1 && (
+                <p className="tickers-daysseen">Flagged {t.daysSeen}&times; this window</p>
+              )}
             </div>
           ))}
         </div>
 
         <p className="tickers-note">
           Categorized by matching keywords in each company's name — a heuristic, not official sector data. Leveraged
-          and single-stock ETFs are excluded. Powered by Financial Modeling Prep.
+          and single-stock ETFs are excluded. 48h/week views are built from daily snapshots collected going forward
+          (FMP's free tier has no historical "as of" data for this feed), and show change from a ticker's first to
+          most recent appearance in that window, not a fixed-point return. Powered by Financial Modeling Prep.
         </p>
       </div>
     </>

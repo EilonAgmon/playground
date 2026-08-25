@@ -29,7 +29,8 @@ export const api = {
   stats(token) {
     return request("/api/stats", { headers: { Authorization: `Bearer ${token}` } });
   },
-  tickers() {
-    return request("/api/tickers").then((r) => (r.ok ? r.json() : { tickers: [] }));
+  tickers(window = "today") {
+    const params = window !== "today" ? `?window=${window}` : "";
+    return request(`/api/tickers${params}`).then((r) => (r.ok ? r.json() : { tickers: [] }));
   },
 };

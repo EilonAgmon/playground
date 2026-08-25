@@ -57,3 +57,15 @@ CREATE TABLE IF NOT EXISTS ticker_cache (
   payload TEXT NOT NULL,
   fetched_at INTEGER NOT NULL
 );
+
+-- One row per US-Eastern calendar day, upserted every time a live "today"
+-- fetch happens (so it naturally converges to that day's last-observed
+-- snapshot by market close, traffic permitting). FMP's free tier has no
+-- "as of N days ago" parameter on the movers endpoint, so this is how the
+-- 48h/week views in /api/tickers get built — accumulated going forward
+-- from whenever this shipped, not backfilled from FMP's history.
+CREATE TABLE IF NOT EXISTS ticker_daily_snapshot (
+  date TEXT PRIMARY KEY,
+  payload TEXT NOT NULL,
+  captured_at INTEGER NOT NULL
+);

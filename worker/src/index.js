@@ -269,15 +269,30 @@ async function fetchLosersFromFmp(apiKey) {
     }));
 }
 
-async function handleTickers(env, origin) {
-  if (!env.FMP_API_KEY) return json({ error: "Ticker feed not configured" }, 500, origin);
+// FMP's free tier has no "as of N days ago" parameter on this endpoint —
+// it only ever returns today's snapshot. So 48h/week views can't be
+// fetched retroactively; instead, every live "today" refresh also upserts
+// today's row here, and the window views are built by aggregating however
+// many of these daily rows have accumulated so far (see getWindowedTickers).
+function todayKeyEastern(date = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(date);
+}
 
+async function upsertDailySnapshot(env, tickers) {
+  await env.DB.prepare(
+    "INSERT INTO ticker_daily_snapshot (date, payload, captured_at) VALUES (?, ?, ?) ON CONFLICT(date) DO UPDATE SET payload = excluded.payload, captured_at = excluded.captured_at"
+  )
+    .bind(todayKeyEastern(), JSON.stringify(tickers), Date.now())
+    .run();
+}
+
+async function getTodayTickers(env) {
   const cached = await env.DB.prepare("SELECT payload, fetched_at FROM ticker_cache WHERE id = 1").first();
   const now = Date.now();
   const isFresh = cached && now - cached.fetched_at < TICKER_CACHE_TTL_MS;
 
   if (isFresh) {
-    return json({ tickers: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: false }, 200, origin);
+    return { tickers: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: false };
   }
 
   try {
@@ -287,13 +302,80 @@ async function handleTickers(env, origin) {
     )
       .bind(JSON.stringify(tickers), now)
       .run();
-    return json({ tickers, fetchedAt: now, stale: false }, 200, origin);
+    await upsertDailySnapshot(env, tickers);
+    return { tickers, fetchedAt: now, stale: false };
   } catch (err) {
     // Upstream hiccup or quota hit — serve the last known-good snapshot
     // rather than a hard failure, if one exists.
     if (cached) {
-      return json({ tickers: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: true }, 200, origin);
+      return { tickers: JSON.parse(cached.payload), fetchedAt: cached.fetched_at, stale: true };
     }
+    throw err;
+  }
+}
+
+// Merges up to `days` daily snapshots into one "worst decline in this
+// window" list. For a symbol seen on more than one distinct day, the
+// change shown is computed from its price on the earliest day it appeared
+// to its price on the most recent — a real cumulative move, not just
+// re-showing a single day's % change. Symbols seen only once fall back to
+// that day's own change. `daysSeen` tells the client how many distinct
+// days each symbol was actually flagged, and `daysAvailable` tells it how
+// much history exists yet at all (relevant right after this shipped).
+async function getWindowedTickers(env, days) {
+  const rows = await env.DB.prepare(
+    "SELECT date, payload, captured_at FROM ticker_daily_snapshot ORDER BY date DESC LIMIT ?"
+  )
+    .bind(days)
+    .all();
+  const results = rows.results || [];
+
+  const bySymbol = new Map();
+  // Oldest-first so the first pass through each symbol is its earliest
+  // appearance in the window, and the last pass is its most recent.
+  for (const row of [...results].reverse()) {
+    const dayTickers = JSON.parse(row.payload);
+    for (const t of dayTickers) {
+      const entry = bySymbol.get(t.symbol) || { first: t, dates: [] };
+      entry.last = t;
+      entry.dates.push(row.date);
+      bySymbol.set(t.symbol, entry);
+    }
+  }
+
+  const merged = Array.from(bySymbol.values()).map(({ first, last, dates }) => {
+    const daysSeen = new Set(dates).size;
+    const changesPercentage =
+      daysSeen > 1 && first.price ? ((last.price - first.price) / first.price) * 100 : last.changesPercentage;
+    return {
+      symbol: last.symbol,
+      name: last.name,
+      category: last.category,
+      price: last.price,
+      changesPercentage,
+      daysSeen,
+    };
+  });
+
+  merged.sort((a, b) => a.changesPercentage - b.changesPercentage);
+  return {
+    tickers: merged.slice(0, 20),
+    daysAvailable: results.length,
+    fetchedAt: results[0] ? results[0].captured_at : null,
+  };
+}
+
+async function handleTickers(env, origin, window) {
+  if (!env.FMP_API_KEY) return json({ error: "Ticker feed not configured" }, 500, origin);
+
+  try {
+    if (window === "48h" || window === "week") {
+      const data = await getWindowedTickers(env, window === "48h" ? 2 : 7);
+      return json({ ...data, window, stale: false }, 200, origin);
+    }
+    const data = await getTodayTickers(env);
+    return json({ ...data, window: "today", daysAvailable: null }, 200, origin);
+  } catch (err) {
     return json({ error: "Ticker feed unavailable", detail: String(err) }, 502, origin);
   }
 }
@@ -330,7 +412,8 @@ export default {
       }
 
       if (request.method === "GET" && url.pathname === "/api/tickers") {
-        return await handleTickers(env, origin);
+        const window = url.searchParams.get("window");
+        return await handleTickers(env, origin, window === "48h" || window === "week" ? window : "today");
       }
 
       if (request.method === "POST" && url.pathname === "/api/admin/flush-pong") {
