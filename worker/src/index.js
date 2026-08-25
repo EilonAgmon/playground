@@ -278,12 +278,19 @@ function todayKeyEastern(date = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(date);
 }
 
+// The "week" view is the longest lookback anywhere in this app, so nothing
+// past 14 days (a buffer beyond that 7) is ever read. Pruning on every
+// write keeps this table at a small constant size forever instead of
+// growing unbounded — it costs one cheap DELETE, at most once per TTL
+// refresh, so effectively free.
 async function upsertDailySnapshot(env, tickers) {
-  await env.DB.prepare(
-    "INSERT INTO ticker_daily_snapshot (date, payload, captured_at) VALUES (?, ?, ?) ON CONFLICT(date) DO UPDATE SET payload = excluded.payload, captured_at = excluded.captured_at"
-  )
-    .bind(todayKeyEastern(), JSON.stringify(tickers), Date.now())
-    .run();
+  const dateKey = todayKeyEastern();
+  await env.DB.batch([
+    env.DB.prepare(
+      "INSERT INTO ticker_daily_snapshot (date, payload, captured_at) VALUES (?, ?, ?) ON CONFLICT(date) DO UPDATE SET payload = excluded.payload, captured_at = excluded.captured_at"
+    ).bind(dateKey, JSON.stringify(tickers), Date.now()),
+    env.DB.prepare("DELETE FROM ticker_daily_snapshot WHERE date < date('now', '-14 days')"),
+  ]);
 }
 
 async function getTodayTickers(env) {
