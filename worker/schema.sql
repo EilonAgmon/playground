@@ -29,6 +29,10 @@ CREATE TABLE IF NOT EXISTS sessions (
   expires_at TEXT NOT NULL
 );
 
+-- Orphaned: the Travel app and its worker routes were removed, but this
+-- table's data (real user-submitted saved-place lists) is intentionally
+-- left in place rather than dropped. Safe to delete for real if that
+-- data is no longer wanted.
 CREATE TABLE IF NOT EXISTS travel_items (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   username TEXT NOT NULL,
@@ -49,15 +53,6 @@ CREATE INDEX IF NOT EXISTS idx_travel_items_username_city ON travel_items (usern
 -- only calls upstream when this row is older than the TTL, so usage scales
 -- with real site traffic instead of wall-clock time.
 CREATE TABLE IF NOT EXISTS ticker_cache (
-  id INTEGER PRIMARY KEY CHECK (id = 1),
-  payload TEXT NOT NULL,
-  fetched_at INTEGER NOT NULL
-);
-
--- Same stale-while-revalidate pattern for /api/jobs. Job postings don't
--- need minute-by-minute freshness, so this one refreshes on a much longer
--- TTL (see JOB_CACHE_TTL_MS) than the ticker cache.
-CREATE TABLE IF NOT EXISTS job_cache (
   id INTEGER PRIMARY KEY CHECK (id = 1),
   payload TEXT NOT NULL,
   fetched_at INTEGER NOT NULL

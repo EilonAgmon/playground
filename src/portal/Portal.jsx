@@ -6,10 +6,7 @@ import {
   PongIcon,
   PlotIcon,
   GlobeIcon,
-  TravelIcon,
-  TerminalIcon,
   TickersIcon,
-  JobsIcon,
   PcaIcon,
   AboutIcon,
 } from "../shared/Icons.jsx";
@@ -22,10 +19,7 @@ const APPS = [
   { href: "pong/", label: "Pong", desc: "The original arcade classic.", Icon: PongIcon },
   { href: "plot/", label: "Plot", desc: "Plan a companion-planted garden bed.", Icon: PlotIcon },
   { href: "globe/", label: "Globe", desc: "Track the countries you've visited.", Icon: GlobeIcon },
-  { href: "travel/", label: "Travel", desc: "Save the places worth remembering.", Icon: TravelIcon },
   { href: "tickers/", label: "Tickers", desc: "Today's biggest NYSE & NASDAQ decliners, live.", Icon: TickersIcon },
-  { href: "jobs/", label: "Jobs", desc: "Eng leadership roles at gaming companies, today.", Icon: JobsIcon },
-  { href: "terminal/", label: "Terminal", desc: "Explore the resume from a shell prompt.", Icon: TerminalIcon },
   { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
   { href: "about/", label: "About", desc: "Experience, education, background.", Icon: AboutIcon },
 ];

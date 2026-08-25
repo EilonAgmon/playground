@@ -9,7 +9,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         pong: resolve(__dirname, "pong/index.html"),
-        travel: resolve(__dirname, "travel/index.html"),
         backoffice: resolve(__dirname, "backoffice/index.html"),
         pca: resolve(__dirname, "pca/index.html"),
         about: resolve(__dirname, "about/index.html"),
@@ -18,9 +17,7 @@ export default defineConfig({
         reels: resolve(__dirname, "reels/index.html"),
         plot: resolve(__dirname, "plot/index.html"),
         globe: resolve(__dirname, "globe/index.html"),
-        terminal: resolve(__dirname, "terminal/index.html"),
         tickers: resolve(__dirname, "tickers/index.html"),
-        jobs: resolve(__dirname, "jobs/index.html"),
       },
     },
   },

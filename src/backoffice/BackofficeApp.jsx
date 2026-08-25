@@ -45,10 +45,6 @@ export default function BackofficeApp() {
     reloadStats();
   }
 
-  async function handleFlushTravel() {
-    await api.flushTravel(token);
-  }
-
   async function handleLogin(e) {
     e.preventDefault();
     setError(false);
@@ -72,12 +68,7 @@ export default function BackofficeApp() {
 
   if (token && stats) {
     return (
-      <Dashboard
-        stats={stats}
-        onLogout={handleLogout}
-        onFlushPong={handleFlushPong}
-        onFlushTravel={handleFlushTravel}
-      />
+      <Dashboard stats={stats} onLogout={handleLogout} onFlushPong={handleFlushPong} />
     );
   }
 

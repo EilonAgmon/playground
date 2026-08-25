@@ -158,16 +158,10 @@ function RecentTable({ recent }) {
   );
 }
 
-export default function Dashboard({ stats, onLogout, onFlushPong, onFlushTravel }) {
+export default function Dashboard({ stats, onLogout, onFlushPong }) {
   function handleFlushPong() {
     if (window.confirm("Delete ALL Pong play data? This cannot be undone.")) {
       onFlushPong();
-    }
-  }
-
-  function handleFlushTravel() {
-    if (window.confirm("Delete ALL saved Travel items for every user? This cannot be undone.")) {
-      onFlushTravel();
     }
   }
 
@@ -193,9 +187,6 @@ export default function Dashboard({ stats, onLogout, onFlushPong, onFlushTravel 
           <Group>
             <Button color="red" variant="outline" onClick={handleFlushPong}>
               flush Pong data
-            </Button>
-            <Button color="red" variant="outline" onClick={handleFlushTravel}>
-              flush Travel data
             </Button>
           </Group>
         </Alert>

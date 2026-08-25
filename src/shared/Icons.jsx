@@ -19,15 +19,6 @@ export function PongIcon({ size = 24 }) {
   );
 }
 
-export function TravelIcon({ size = 24 }) {
-  return (
-    <svg {...BASE} width={size} height={size}>
-      <path d="M12 21c4-4.2 7-8 7-11.5A7 7 0 0 0 5 9.5C5 13 8 16.8 12 21Z" />
-      <circle cx="12" cy="9.5" r="2.4" />
-    </svg>
-  );
-}
-
 export function AboutIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
@@ -101,31 +92,11 @@ export function GlobeIcon({ size = 24 }) {
   );
 }
 
-export function TerminalIcon({ size = 24 }) {
-  return (
-    <svg {...BASE} width={size} height={size}>
-      <rect x="3" y="4.5" width="18" height="15" rx="2.5" />
-      <path d="M7 10l3 2.5L7 15" />
-      <path d="M12.5 15h4.5" />
-    </svg>
-  );
-}
-
 export function TickersIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
       <path d="M3 18l5-4 4 3 5-9 4 3" />
       <path d="M17 9h4v4" />
-    </svg>
-  );
-}
-
-export function JobsIcon({ size = 24 }) {
-  return (
-    <svg {...BASE} width={size} height={size}>
-      <rect x="3.5" y="7.5" width="17" height="12" rx="2" />
-      <path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5" />
-      <path d="M3.5 12.5h17" />
     </svg>
   );
 }

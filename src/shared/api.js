@@ -26,40 +26,10 @@ export const api = {
   flushPong(token) {
     return request("/api/admin/flush-pong", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
   },
-  flushTravel(token) {
-    return request("/api/admin/flush-travel", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
-  },
   stats(token) {
     return request("/api/stats", { headers: { Authorization: `Bearer ${token}` } });
   },
-  searchCities(q) {
-    return request(`/api/travel/cities?q=${encodeURIComponent(q)}`).then((r) => (r.ok ? r.json() : { results: [] }));
-  },
-  searchAttractions(q, city) {
-    const params = new URLSearchParams({ q, city: city || "" });
-    return request(`/api/travel/attractions?${params}`).then((r) => (r.ok ? r.json() : { results: [] }));
-  },
-  travelCitiesSummary(username) {
-    const params = new URLSearchParams({ username });
-    return request(`/api/travel/cities-summary?${params}`).then((r) => (r.ok ? r.json() : { cities: [] }));
-  },
-  listTravelItems(username, city) {
-    const params = new URLSearchParams({ username, city: city || "" });
-    return request(`/api/travel/items?${params}`).then((r) => (r.ok ? r.json() : { items: [] }));
-  },
-  addTravelItem(item) {
-    return request("/api/travel/items", { method: "POST", body: JSON.stringify(item) }).then((r) =>
-      r.ok ? r.json() : null
-    );
-  },
-  deleteTravelItem(id, username) {
-    const params = new URLSearchParams({ username });
-    return request(`/api/travel/items/${id}?${params}`, { method: "DELETE" });
-  },
   tickers() {
     return request("/api/tickers").then((r) => (r.ok ? r.json() : { tickers: [] }));
-  },
-  jobs() {
-    return request("/api/jobs").then((r) => (r.ok ? r.json() : { jobs: [] }));
   },
 };
