@@ -1,4 +1,5 @@
-import { Anchor, Text, Title } from "@mantine/core";
+import { useEffect, useRef, useState } from "react";
+import { Anchor } from "@mantine/core";
 import {
   HqIcon,
   WheelsIcon,
@@ -15,52 +16,142 @@ import {
 } from "../shared/Icons.jsx";
 import "./portal.css";
 
-const APPS = [
-  { href: "hq/", label: "HQ", desc: "Run your own engineering org.", Icon: HqIcon },
+const FEATURED = [
+  {
+    href: "volfied/",
+    label: "Volfied",
+    desc: "A from-scratch Taito homage — draw out into open territory, claim 80% of the field, survive the boss cutting your line.",
+    Icon: VolfiedIcon,
+    badge: "Newest",
+  },
+  {
+    href: "hq/",
+    label: "HQ",
+    desc: "Run your own engineering org from a 2-person startup toward 45 engineers — hire, ship, weather the incidents.",
+    Icon: HqIcon,
+    badge: "Flagship",
+  },
+];
+
+const GAMES = [
   { href: "wheels/", label: "Wheels", desc: "A tavern dice game, Sea of Stars style.", Icon: WheelsIcon },
   { href: "reels/", label: "Reels", desc: "An original harvest-themed slot machine.", Icon: ReelsIcon },
   { href: "pong/", label: "Pong", desc: "The original arcade classic.", Icon: PongIcon },
   { href: "vine/", label: "Vine", desc: "A Snake homage — grow a garden vine.", Icon: VineIcon },
   { href: "ricochet/", label: "Ricochet", desc: "A Breakout homage — clear every brick.", Icon: RicochetIcon },
-  { href: "volfied/", label: "Volfied", desc: "A Volfied homage — draw, claim, survive.", Icon: VolfiedIcon },
+  { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
+];
+
+const TOOLS = [
   { href: "plot/", label: "Plot", desc: "Plan a companion-planted garden bed.", Icon: PlotIcon },
   { href: "globe/", label: "Globe", desc: "Track the countries you've visited.", Icon: GlobeIcon },
   { href: "tickers/", label: "Tickers", desc: "Today's biggest NYSE & NASDAQ decliners, live.", Icon: TickersIcon },
-  { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
-  { href: "about/", label: "About", desc: "Experience, education, background.", Icon: AboutIcon },
 ];
 
+const TAGLINES = [
+  "Engineering leader. Occasional game developer.",
+  "18 years scaling teams that ship real products.",
+  "Grows a garden. Grows an org. Same instinct.",
+  "Full-time playground builder.",
+];
+
+function TiltCard({ href, label, desc, Icon, className = "", badge, iconSize = 26 }) {
+  const ref = useRef(null);
+
+  function handleMouseMove(e) {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    el.style.setProperty("--rx", `${(py - 0.5) * -9}deg`);
+    el.style.setProperty("--ry", `${(px - 0.5) * 9}deg`);
+    el.style.setProperty("--mx", `${px * 100}%`);
+    el.style.setProperty("--my", `${py * 100}%`);
+  }
+
+  function handleMouseLeave() {
+    const el = ref.current;
+    if (!el) return;
+    el.style.setProperty("--rx", "0deg");
+    el.style.setProperty("--ry", "0deg");
+  }
+
+  return (
+    <a
+      href={href}
+      ref={ref}
+      className={`portal-card ${className}`}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {badge && <span className="portal-card-badge">{badge}</span>}
+      <Icon size={iconSize} />
+      <span className="portal-card-label">{label}</span>
+      <span className="portal-card-desc">{desc}</span>
+    </a>
+  );
+}
+
+function Section({ title, apps }) {
+  return (
+    <div className="portal-section fade-up">
+      <p className="portal-section-title">{title}</p>
+      <div className="portal-grid">
+        {apps.map((app) => (
+          <TiltCard key={app.href} {...app} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Portal() {
+  const [taglineIndex, setTaglineIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => setTaglineIndex((i) => (i + 1) % TAGLINES.length), 3200);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    function handleMove(e) {
+      document.documentElement.style.setProperty("--portal-mx", `${e.clientX}px`);
+      document.documentElement.style.setProperty("--portal-my", `${e.clientY}px`);
+    }
+    window.addEventListener("mousemove", handleMove);
+    return () => window.removeEventListener("mousemove", handleMove);
+  }, []);
+
   return (
     <div id="portal">
       <div className="portal-hero fade-up">
-        <Title order={1} className="display-font portal-title">
-          Eilon Agmon
-        </Title>
-        <Text className="portal-tagline">
-          Engineering leader. Occasional game developer. Full-time playground builder.
-        </Text>
+        <h1 className="display-font portal-title">
+          <span className="portal-title-glow">Eilon Agmon</span>
+        </h1>
+        <p key={taglineIndex} className="portal-tagline">
+          {TAGLINES[taglineIndex]}
+        </p>
       </div>
 
-      <div className="portal-grid">
-        {APPS.map(({ href, label, desc, Icon }, i) => (
-          <a key={href} href={href} className="portal-card fade-up" style={{ animationDelay: `${i * 40}ms` }}>
-            <Icon size={26} />
-            <span className="portal-card-label">{label}</span>
-            <span className="portal-card-desc">{desc}</span>
-          </a>
+      <div className="portal-featured fade-up">
+        {FEATURED.map((app) => (
+          <TiltCard key={app.href} {...app} className="featured" iconSize={36} />
         ))}
       </div>
 
-      <Anchor
-        href="https://github.com/EilonAgmon"
-        target="_blank"
-        rel="noopener"
-        id="identity"
-        underline="hover"
-      >
-        github.com/EilonAgmon
-      </Anchor>
+      <Section title="Games" apps={GAMES} />
+      <Section title="Tools" apps={TOOLS} />
+
+      <div className="portal-footer fade-up">
+        <a href="about/" className="portal-about-link">
+          <AboutIcon size={16} />
+          About &amp; resume
+        </a>
+        <Anchor href="https://github.com/EilonAgmon" target="_blank" rel="noopener" id="identity" underline="hover">
+          github.com/EilonAgmon
+        </Anchor>
+      </div>
     </div>
   );
 }
