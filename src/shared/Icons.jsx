@@ -122,6 +122,17 @@ export function RicochetIcon({ size = 24 }) {
   );
 }
 
+export function VolfiedIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <rect x="3" y="3" width="18" height="18" rx="1.5" />
+      <path d="M3 8h6v6H3" />
+      <circle cx="16" cy="15" r="2.4" />
+      <path d="M13 6l1.4 1.4" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

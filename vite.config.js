@@ -20,6 +20,7 @@ export default defineConfig({
         tickers: resolve(__dirname, "tickers/index.html"),
         vine: resolve(__dirname, "vine/index.html"),
         ricochet: resolve(__dirname, "ricochet/index.html"),
+        volfied: resolve(__dirname, "volfied/index.html"),
       },
     },
   },

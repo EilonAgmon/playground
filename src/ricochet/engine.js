@@ -1,9 +1,13 @@
+import { createParticleSystem, createScreenShake } from "../shared/gameJuice.js";
+
 // A from-scratch Breakout/Arkanoid homage. Same architecture as Pong's
 // engine (logical coordinate space + canvas scaling, requestAnimationFrame
 // loop, onState callback for React overlays), with brick-field physics
 // instead of a second paddle.
 export function createRicochetEngine(canvas, { onState }) {
   const ctx = canvas.getContext("2d");
+  const particles = createParticleSystem();
+  const shake = createScreenShake();
 
   const LOGICAL_W = 800;
   const LOGICAL_H = 520;
@@ -228,6 +232,7 @@ export function createRicochetEngine(canvas, { onState }) {
     ball.vx = Math.cos(angle) * ball.speed;
     ball.vy = Math.sin(angle) * ball.speed;
     sound.paddle();
+    particles.burst(ball.x, ball.y, { color: "#7dc4ff", count: 8, speed: 130, life: 0.28, size: 2 });
   }
 
   function updatePaddle(dt) {
@@ -294,17 +299,26 @@ export function createRicochetEngine(canvas, { onState }) {
       score += brick.points;
       ball.speed = Math.min(ball.speed * BALL_SPEEDUP, MAX_BALL_SPEED);
       sound.brick(brick.points);
+      particles.burst(brick.x + brick.w / 2, brick.y + brick.h / 2, {
+        color: brick.color,
+        count: 14,
+        speed: 170,
+        life: 0.4,
+      });
       break;
     }
 
     if (bricks.every((b) => !b.alive)) {
       sound.win();
+      shake.trigger(5, 0.3);
+      particles.burst(LOGICAL_W / 2, LOGICAL_H / 2, { color: "#ffe066", count: 40, speed: 260, life: 0.8 });
       setState("gameover", { text: "CLEARED", score });
       return;
     }
 
     if (ball.y - BALL_RADIUS > LOGICAL_H) {
       lives -= 1;
+      shake.trigger(7, 0.3);
       if (lives <= 0) {
         sound.lose();
         setState("gameover", { text: "OUT OF LIVES", score });
@@ -315,9 +329,13 @@ export function createRicochetEngine(canvas, { onState }) {
   }
 
   function draw() {
-    ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+    const off = shake.offset();
+    ctx.save();
+    ctx.translate(off.x, off.y);
+
+    ctx.clearRect(-10, -10, LOGICAL_W + 20, LOGICAL_H + 20);
     ctx.fillStyle = "#0a0a16";
-    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+    ctx.fillRect(-10, -10, LOGICAL_W + 20, LOGICAL_H + 20);
 
     for (const brick of bricks) {
       if (!brick.alive) continue;
@@ -350,12 +368,16 @@ export function createRicochetEngine(canvas, { onState }) {
       ctx.fillText("tap, click, or space to launch", LOGICAL_W / 2, ball.y - 20);
     }
 
+    particles.draw(ctx);
+
     ctx.font = "20px 'Courier New', monospace";
     ctx.textAlign = "left";
     ctx.fillStyle = "rgba(232, 236, 255, 0.85)";
     ctx.fillText(`Score ${score}`, 14, 26);
     ctx.textAlign = "right";
     ctx.fillText(`${"♥".repeat(Math.max(0, lives))}`, LOGICAL_W - 14, 26);
+
+    ctx.restore();
   }
 
   let lastTime = performance.now();
@@ -370,6 +392,8 @@ export function createRicochetEngine(canvas, { onState }) {
       updatePaddle(dt);
       updateBall(dt);
     }
+    particles.update(dt);
+    shake.update(dt);
 
     draw();
     rafId = requestAnimationFrame(frame);

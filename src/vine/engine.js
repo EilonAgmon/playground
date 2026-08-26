@@ -1,9 +1,13 @@
+import { createParticleSystem, createScreenShake } from "../shared/gameJuice.js";
+
 // A from-scratch Snake homage: a garden vine that grows by eating fruit.
 // Same architecture as Pong's engine (logical coordinate space + canvas
 // scaling, requestAnimationFrame loop, onState callback for React
 // overlays) adapted for a discrete grid instead of continuous physics.
 export function createVineEngine(canvas, { onState }) {
   const ctx = canvas.getContext("2d");
+  const particles = createParticleSystem();
+  const shake = createScreenShake();
 
   const COLS = 20;
   const ROWS = 20;
@@ -157,8 +161,13 @@ export function createVineEngine(canvas, { onState }) {
     const head = vine[0];
     const newHead = { x: head.x + direction.x, y: head.y + direction.y };
 
+    const headPx = head.x * CELL + CELL / 2;
+    const headPy = head.y * CELL + CELL / 2;
+
     if (newHead.x < 0 || newHead.x >= COLS || newHead.y < 0 || newHead.y >= ROWS) {
       sound.dead();
+      shake.trigger(6, 0.3);
+      particles.burst(headPx, headPy, { color: "#39ff6a", count: 22, speed: 170, life: 0.6 });
       setState("gameover", { score });
       return;
     }
@@ -167,6 +176,8 @@ export function createVineEngine(canvas, { onState }) {
     const bodyToCheck = wouldEat ? vine : vine.slice(0, -1);
     if (bodyToCheck.some((s) => s.x === newHead.x && s.y === newHead.y)) {
       sound.dead();
+      shake.trigger(6, 0.3);
+      particles.burst(headPx, headPy, { color: "#39ff6a", count: 22, speed: 170, life: 0.6 });
       setState("gameover", { score });
       return;
     }
@@ -176,6 +187,13 @@ export function createVineEngine(canvas, { onState }) {
       score += 1;
       stepSeconds = Math.max(MIN_STEP_S, START_STEP_S - score * STEP_SPEEDUP);
       sound.eat();
+      particles.burst(newHead.x * CELL + CELL / 2, newHead.y * CELL + CELL / 2, {
+        color: "#e0682a",
+        count: 12,
+        speed: 130,
+        life: 0.4,
+        size: 2.5,
+      });
       placeFruit();
     } else {
       vine.pop();
@@ -183,9 +201,13 @@ export function createVineEngine(canvas, { onState }) {
   }
 
   function draw() {
-    ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+    const off = shake.offset();
+    ctx.save();
+    ctx.translate(off.x, off.y);
+
+    ctx.clearRect(-10, -10, LOGICAL_W + 20, LOGICAL_H + 20);
     ctx.fillStyle = "#050b06";
-    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+    ctx.fillRect(-10, -10, LOGICAL_W + 20, LOGICAL_H + 20);
 
     ctx.strokeStyle = "rgba(57, 255, 106, 0.06)";
     ctx.lineWidth = 1;
@@ -216,10 +238,14 @@ export function createVineEngine(canvas, { onState }) {
       });
     }
 
+    particles.draw(ctx);
+
     ctx.font = "20px 'Courier New', monospace";
     ctx.textAlign = "left";
     ctx.fillStyle = "rgba(125, 255, 160, 0.85)";
     ctx.fillText(String(score), 12, 26);
+
+    ctx.restore();
   }
 
   let lastTime = performance.now();
@@ -242,6 +268,8 @@ export function createVineEngine(canvas, { onState }) {
       }
     }
 
+    particles.update(dt);
+    shake.update(dt);
     draw();
     rafId = requestAnimationFrame(frame);
   }

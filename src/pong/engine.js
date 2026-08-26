@@ -1,4 +1,5 @@
 import { api } from "../shared/api.js";
+import { createParticleSystem, createScreenShake } from "../shared/gameJuice.js";
 
 // Ported near-verbatim from the original vanilla game.js. The only real change
 // is that title/game-over screen visibility is reported via onState() instead
@@ -47,6 +48,8 @@ export function createPongEngine(canvas, { onState }) {
   const AI_REACTION_SLACK = 18;
 
   let scale = 1;
+  const particles = createParticleSystem();
+  const shake = createScreenShake();
 
   const player = { x: 0, y: 0, w: PADDLE_W, h: PADDLE_H, targetY: LOGICAL_H / 2 };
   const ai = { x: 0, y: 0, w: PADDLE_W, h: PADDLE_H };
@@ -224,6 +227,8 @@ export function createPongEngine(canvas, { onState }) {
     ball.vx = Math.cos(angle) * ball.speed * dirSign;
     ball.vy = Math.sin(angle) * ball.speed;
     sound.paddle();
+    particles.burst(ball.x, ball.y, { color: "#ffffff", count: 9, speed: 160, life: 0.3, size: 2.2 });
+    shake.trigger(2.5, 0.08);
   }
 
   function updateBall(dt) {
@@ -242,10 +247,12 @@ export function createPongEngine(canvas, { onState }) {
       ball.y = half;
       ball.vy *= -1;
       sound.wall();
+      particles.burst(ball.x, ball.y, { color: "#ffffff", count: 5, speed: 110, life: 0.25, size: 1.8 });
     } else if (ball.y + half > LOGICAL_H) {
       ball.y = LOGICAL_H - half;
       ball.vy *= -1;
       sound.wall();
+      particles.burst(ball.x, ball.y, { color: "#ffffff", count: 5, speed: 110, life: 0.25, size: 1.8 });
     }
 
     if (
@@ -273,10 +280,14 @@ export function createPongEngine(canvas, { onState }) {
     if (ball.x + half < 0) {
       aiScore++;
       sound.score();
+      particles.burst(0, ball.y, { color: "#ffffff", count: 20, speed: 200, life: 0.5, size: 2.5 });
+      shake.trigger(6, 0.22);
       onScore();
     } else if (ball.x - half > LOGICAL_W) {
       playerScore++;
       sound.score();
+      particles.burst(LOGICAL_W, ball.y, { color: "#ffffff", count: 20, speed: 200, life: 0.5, size: 2.5 });
+      shake.trigger(6, 0.22);
       onScore();
     }
   }
@@ -292,9 +303,13 @@ export function createPongEngine(canvas, { onState }) {
   }
 
   function draw() {
-    ctx.clearRect(0, 0, LOGICAL_W, LOGICAL_H);
+    const off = shake.offset();
+    ctx.save();
+    ctx.translate(off.x, off.y);
+
+    ctx.clearRect(-10, -10, LOGICAL_W + 20, LOGICAL_H + 20);
     ctx.fillStyle = "#000";
-    ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
+    ctx.fillRect(-10, -10, LOGICAL_W + 20, LOGICAL_H + 20);
 
     ctx.strokeStyle = "rgba(255,255,255,0.5)";
     ctx.setLineDash([8, 12]);
@@ -313,11 +328,15 @@ export function createPongEngine(canvas, { onState }) {
       ctx.fillRect(ball.x - BALL_SIZE / 2, ball.y - BALL_SIZE / 2, BALL_SIZE, BALL_SIZE);
     }
 
+    particles.draw(ctx);
+
     ctx.font = "48px 'Courier New', monospace";
     ctx.textAlign = "center";
     ctx.fillStyle = "rgba(255,255,255,0.85)";
     ctx.fillText(String(playerScore), LOGICAL_W * 0.25, 64);
     ctx.fillText(String(aiScore), LOGICAL_W * 0.75, 64);
+
+    ctx.restore();
   }
 
   let lastTime = performance.now();
@@ -332,6 +351,8 @@ export function createPongEngine(canvas, { onState }) {
       updatePaddles(dt);
       updateBall(dt);
     }
+    particles.update(dt);
+    shake.update(dt);
 
     draw();
     rafId = requestAnimationFrame(frame);
