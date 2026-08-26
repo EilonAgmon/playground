@@ -21,6 +21,7 @@ export default defineConfig({
         vine: resolve(__dirname, "vine/index.html"),
         ricochet: resolve(__dirname, "ricochet/index.html"),
         volfied: resolve(__dirname, "volfied/index.html"),
+        salvo: resolve(__dirname, "salvo/index.html"),
       },
     },
   },

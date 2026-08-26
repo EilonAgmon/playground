@@ -133,6 +133,15 @@ export function VolfiedIcon({ size = 24 }) {
   );
 }
 
+export function SalvoIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M8 6h2v2H8zM14 6h2v2h-2zM6 8h12v4H6zM8 12h2v2H8zM14 12h2v2h-2z" fill="currentColor" stroke="none" />
+      <path d="M11 16v3M8 20h8" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

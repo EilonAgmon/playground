@@ -8,6 +8,7 @@ import {
   VineIcon,
   RicochetIcon,
   VolfiedIcon,
+  SalvoIcon,
   PlotIcon,
   GlobeIcon,
   TickersIcon,
@@ -39,6 +40,7 @@ const GAMES = [
   { href: "pong/", label: "Pong", desc: "The original arcade classic.", Icon: PongIcon },
   { href: "vine/", label: "Vine", desc: "A Snake homage — grow a garden vine.", Icon: VineIcon },
   { href: "ricochet/", label: "Ricochet", desc: "A Breakout homage — clear every brick.", Icon: RicochetIcon },
+  { href: "salvo/", label: "Salvo", desc: "A Space Invaders homage — hold the line.", Icon: SalvoIcon },
   { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
 ];
 
