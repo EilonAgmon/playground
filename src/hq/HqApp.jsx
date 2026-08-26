@@ -35,11 +35,34 @@ function loadState() {
 
 export default function HqApp() {
   const [state, setState] = useState(loadState);
+  const [cashFlash, setCashFlash] = useState(null);
+  const [logPulse, setLogPulse] = useState(false);
   const intervalRef = useRef(null);
+  const prevCash = useRef(state.cash);
+  const prevLastLog = useRef(state.log[state.log.length - 1]);
 
   useEffect(() => {
     localStorage.setItem(SAVE_KEY, JSON.stringify(state));
   }, [state]);
+
+  useEffect(() => {
+    if (Math.round(state.cash) !== Math.round(prevCash.current)) {
+      setCashFlash(state.cash > prevCash.current ? "up" : "down");
+      const t = setTimeout(() => setCashFlash(null), 500);
+      prevCash.current = state.cash;
+      return () => clearTimeout(t);
+    }
+  }, [state.cash]);
+
+  useEffect(() => {
+    const last = state.log[state.log.length - 1];
+    if (last !== prevLastLog.current) {
+      setLogPulse(true);
+      prevLastLog.current = last;
+      const t = setTimeout(() => setLogPulse(false), 500);
+      return () => clearTimeout(t);
+    }
+  }, [state.log]);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -85,7 +108,9 @@ export default function HqApp() {
         <div className="hq-stats fade-up">
           <div className="hq-stat">
             <span>Cash</span>
-            <strong className={state.cash < 20 ? "warn" : ""}>${Math.round(state.cash)}</strong>
+            <strong className={`${state.cash < 20 ? "warn" : ""} ${cashFlash ? `flash-${cashFlash}` : ""}`}>
+              ${Math.round(state.cash)}
+            </strong>
           </div>
           <div className="hq-stat">
             <span>Morale</span>
@@ -158,8 +183,8 @@ export default function HqApp() {
         </div>
 
         <div className="hq-log surface fade-up">
-          {state.log.slice(-5).map((line, i) => (
-            <p key={i} className="hq-log-line">
+          {state.log.slice(-5).map((line, i, arr) => (
+            <p key={i} className={`hq-log-line ${i === arr.length - 1 && logPulse ? "hq-log-newest" : ""}`}>
               {line}
             </p>
           ))}

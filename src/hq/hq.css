@@ -65,6 +65,26 @@
   color: #e07a6d;
 }
 
+.hq-stat strong.flash-up {
+  animation: stat-flash-up 0.5s ease;
+}
+
+.hq-stat strong.flash-down {
+  animation: stat-flash-down 0.5s ease;
+}
+
+@keyframes stat-flash-up {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.25); color: var(--accent-2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes stat-flash-down {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.1); color: #e07a6d; }
+  100% { transform: scale(1); }
+}
+
 .hq-bar {
   height: 8px;
   border-radius: 999px;
@@ -204,6 +224,10 @@
   transform: translateY(-2px);
 }
 
+.hq-hire-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.95);
+}
+
 .hq-hire-btn:disabled {
   opacity: 0.4;
   cursor: default;
@@ -230,6 +254,15 @@
   font-size: 0.78rem;
   color: var(--fg-dim);
   line-height: 1.5;
+}
+
+.hq-log-newest {
+  animation: log-in 0.4s ease;
+}
+
+@keyframes log-in {
+  from { opacity: 0; transform: translateX(-6px); color: var(--accent); }
+  to { opacity: 1; transform: translateX(0); }
 }
 
 .hq-overlay {

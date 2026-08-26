@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Stack, Group, Title, Text, Button } from "@mantine/core";
 import { LEVEL_NAMES } from "./heroes.js";
 import { SquareSymbol, DiamondSymbol, HammerSymbol, BlankSymbol, ChargeIcon, TowerIcon, HeroGlyph } from "./WheelIcons.jsx";
@@ -30,10 +31,23 @@ function HeroPortal({ fighter, wallHeight, position, active }) {
 }
 
 function CrownBadge({ value, active }) {
+  const [damaged, setDamaged] = useState(false);
+  const prevValue = useRef(value);
+
+  useEffect(() => {
+    if (value < prevValue.current) {
+      setDamaged(true);
+      const t = setTimeout(() => setDamaged(false), 400);
+      prevValue.current = value;
+      return () => clearTimeout(t);
+    }
+    prevValue.current = value;
+  }, [value]);
+
   return (
     <div className="crownBadgeWrap">
       <span className="crownBadgeGem" />
-      <div className={`crownBadge ${active ? "active" : ""}`}>
+      <div className={`crownBadge ${active ? "active" : ""} ${damaged ? "damaged" : ""}`}>
         <span className="crownBadgeValue">{String(value).padStart(2, "0")}</span>
       </div>
     </div>

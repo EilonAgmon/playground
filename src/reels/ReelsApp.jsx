@@ -18,6 +18,7 @@ export default function ReelsApp() {
   const [reels, setReels] = useState(randomDisplay);
   const [spinningReels, setSpinningReels] = useState([false, false, false]);
   const [message, setMessage] = useState("Spin to start harvesting.");
+  const [win, setWin] = useState(false);
   const timers = useRef([]);
   const spinning = spinningReels.some(Boolean);
 
@@ -56,6 +57,8 @@ export default function ReelsApp() {
                 ? `${outcome.symbol.name} × 3 — +${outcome.win} credits!`
                 : `Two of a kind — +${outcome.win} credits.`
             );
+            setWin(true);
+            setTimeout(() => setWin(false), 900);
           } else {
             setMessage("No match — spin again.");
           }
@@ -79,10 +82,10 @@ export default function ReelsApp() {
           <p className="reels-sub">An original slot machine — purely for fun, no real money, ever.</p>
         </div>
 
-        <div className="reels-machine surface fade-up">
+        <div className={`reels-machine surface fade-up ${win ? "win-glow" : ""}`}>
           <div className="reels-credits">
             <span>Credits</span>
-            <strong>{credits}</strong>
+            <strong className={win ? "win-pop" : ""}>{credits}</strong>
           </div>
 
           <div className="reels-window">
