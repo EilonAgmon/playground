@@ -22,6 +22,7 @@ export default defineConfig({
         ricochet: resolve(__dirname, "ricochet/index.html"),
         volfied: resolve(__dirname, "volfied/index.html"),
         salvo: resolve(__dirname, "salvo/index.html"),
+        wick: resolve(__dirname, "wick/index.html"),
       },
     },
   },

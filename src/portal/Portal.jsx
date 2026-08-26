@@ -9,6 +9,7 @@ import {
   RicochetIcon,
   VolfiedIcon,
   SalvoIcon,
+  WickIcon,
   PlotIcon,
   GlobeIcon,
   TickersIcon,
@@ -19,10 +20,10 @@ import "./portal.css";
 
 const FEATURED = [
   {
-    href: "volfied/",
-    label: "Volfied",
-    desc: "A from-scratch Taito homage — draw out into open territory, claim 80% of the field, survive the boss cutting your line.",
-    Icon: VolfiedIcon,
+    href: "wick/",
+    label: "Wick",
+    desc: "An original text adventure — a lighthouse automaton, a storm closing in, and a story worth reading twice.",
+    Icon: WickIcon,
     badge: "Newest",
   },
   {
@@ -41,6 +42,7 @@ const GAMES = [
   { href: "vine/", label: "Vine", desc: "A Snake homage — grow a garden vine.", Icon: VineIcon },
   { href: "ricochet/", label: "Ricochet", desc: "A Breakout homage — clear every brick.", Icon: RicochetIcon },
   { href: "salvo/", label: "Salvo", desc: "A Space Invaders homage — hold the line.", Icon: SalvoIcon },
+  { href: "volfied/", label: "Volfied", desc: "A Taito homage — carve out territory, dodge the boss.", Icon: VolfiedIcon },
   { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
 ];
 

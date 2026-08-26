@@ -142,6 +142,17 @@ export function SalvoIcon({ size = 24 }) {
   );
 }
 
+export function WickIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M12 3.2c1.4 1.8 2.1 3.1 2.1 4.1a2.1 2.1 0 1 1-4.2 0c0-1 .7-2.3 2.1-4.1Z" />
+      <path d="M12 7.3v3.7" />
+      <rect x="9.2" y="11" width="5.6" height="8.5" rx="1" />
+      <path d="M9.2 14.8h5.6" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
