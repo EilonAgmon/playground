@@ -206,3 +206,12 @@ export function BackofficeIcon({ size = 24 }) {
     </svg>
   );
 }
+
+export function RosterIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M4 6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H9l-3 3v-3H6a2 2 0 0 1-2-2V6Z" />
+      <path d="M20 12v3a2 2 0 0 1-2 2h-1v3l-3-3h-2" />
+    </svg>
+  );
+}
