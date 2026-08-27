@@ -1,0 +1,151 @@
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cstage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cviewport {
+  position: relative;
+  line-height: 0;
+}
+
+#cstage .cglow {
+  color: #d7f5e6;
+  text-shadow: 0 0 12px rgba(125, 255, 179, 0.65), 0 0 28px rgba(94, 224, 138, 0.3);
+}
+
+#cgame {
+  touch-action: none;
+  background: #1c1f26;
+  display: block;
+  outline: 2px solid rgba(125, 255, 179, 0.25);
+  outline-offset: -2px;
+  box-shadow: 0 0 30px rgba(94, 224, 138, 0.12);
+}
+
+.coverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9em;
+  text-align: center;
+  background: rgba(10, 16, 12, 0.76);
+  cursor: pointer;
+  padding: 1em;
+  color: #e7f7ee;
+}
+
+.coverlay h1 {
+  font-size: clamp(1.3rem, 6vw, 2.3rem);
+  letter-spacing: 0.1em;
+}
+
+.cbyline {
+  font-size: clamp(0.8rem, 3vw, 1rem);
+  opacity: 0.85;
+}
+
+.cbyline a {
+  color: #7dffb3;
+}
+
+.cprompt {
+  font-size: clamp(0.9rem, 3.2vw, 1.1rem);
+  animation: c-blink 1.1s steps(1) infinite;
+}
+
+.cprompt.score {
+  animation: none;
+  opacity: 0.85;
+  font-size: clamp(1rem, 3.6vw, 1.3rem);
+}
+
+.chint {
+  font-size: clamp(0.65rem, 2.4vw, 0.8rem);
+  opacity: 0.55;
+  max-width: 24em;
+}
+
+@keyframes c-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
+}
+
+#cidentity {
+  position: absolute;
+  bottom: 0.6em;
+  right: 0.8em;
+  font-size: 0.7rem;
+  opacity: 0.35;
+  z-index: 1;
+  color: #e7f7ee;
+}
+
+/* ---------- Touch controls ---------- */
+
+.ctouch {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 1.1rem;
+}
+
+.ctouch button {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.cdpad {
+  position: relative;
+  width: 148px;
+  height: 148px;
+}
+
+.cdbtn {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  border: 1px solid rgba(125, 255, 179, 0.4);
+  background: rgba(14, 30, 20, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.cdbtn:active {
+  background: rgba(125, 255, 179, 0.3);
+}
+
+.cdbtn.cup { top: 0; left: 49px; }
+.cdbtn.cleft { top: 49px; left: 0; }
+.cdbtn.cright { top: 49px; left: 98px; }
+.cdbtn.cdown { top: 98px; left: 49px; }
+
+@media (hover: hover) and (pointer: fine) {
+  .ctouch {
+    display: none;
+  }
+}

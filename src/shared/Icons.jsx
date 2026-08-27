@@ -176,6 +176,17 @@ export function RedlineIcon({ size = 24 }) {
   );
 }
 
+export function CrossingIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <ellipse cx="12" cy="13" rx="6" ry="5" />
+      <circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="9" r="1.2" fill="currentColor" stroke="none" />
+      <path d="M6 10l-3-2M18 10l3-2M6 16l-2 3M18 16l2 3" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
