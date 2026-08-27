@@ -124,6 +124,18 @@ body {
   user-select: none;
 }
 
+.rleftcontrols {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.rthrottle {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .rsteer {
   display: flex;
   gap: 0.6rem;
@@ -141,6 +153,21 @@ body {
 }
 
 .rsbtn:active {
+  background: rgba(255, 138, 92, 0.3);
+}
+
+.rtbtn {
+  width: 58px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 138, 92, 0.4);
+  background: rgba(28, 20, 16, 0.55);
+  backdrop-filter: blur(2px);
+  color: #ffd9c2;
+  font-size: 1.1rem;
+}
+
+.rtbtn:active {
   background: rgba(255, 138, 92, 0.3);
 }
 

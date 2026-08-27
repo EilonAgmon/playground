@@ -48,13 +48,23 @@ export default function RedlineApp() {
 
         {gameState === "playing" && (
           <div className="rtouch" aria-hidden="true">
-            <div className="rsteer">
-              <button className="rsbtn rleft" {...bindHold(engineRef, "left")}>
-                ◀
-              </button>
-              <button className="rsbtn rright" {...bindHold(engineRef, "right")}>
-                ▶
-              </button>
+            <div className="rleftcontrols">
+              <div className="rthrottle">
+                <button className="rtbtn rup" {...bindHold(engineRef, "up")}>
+                  ▲
+                </button>
+                <button className="rtbtn rdown" {...bindHold(engineRef, "down")}>
+                  ▼
+                </button>
+              </div>
+              <div className="rsteer">
+                <button className="rsbtn rleft" {...bindHold(engineRef, "left")}>
+                  ◀
+                </button>
+                <button className="rsbtn rright" {...bindHold(engineRef, "right")}>
+                  ▶
+                </button>
+              </div>
             </div>
             <div className="ractions">
               <button
@@ -86,8 +96,8 @@ export default function RedlineApp() {
             </Text>
             <Text className="rprompt">tap or click to hit the highway</Text>
             <Text className="rhint">
-              arrows/WASD to steer &middot; Z/X to fire &middot; space/down to drop oil behind you &middot; dodge
-              civilians, drop enemy cars, survive to the end of the route
+              arrows/WASD to steer &middot; up/W to floor it, down/S to brake &middot; Z/X to fire &middot; space to
+              drop oil behind you &middot; three stages of traffic between you and the end of the route
             </Text>
           </Stack>
         )}

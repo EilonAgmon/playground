@@ -256,9 +256,23 @@ export function createBarrageEngine(canvas, { onState }) {
   window.addEventListener("keyup", onKeyUp);
 
   function onCanvasPointerDown() {
-    if (phase === "title" || phase === "gameover" || phase === "win") startOrRestart();
+    if (phase === "title" || phase === "gameover" || phase === "win") {
+      startOrRestart();
+      return;
+    }
+    // Clicking/tapping the game itself is a completely natural thing to
+    // try for "fire" — Z/X worked but nothing on the canvas itself did,
+    // which reads as "shooting doesn't work" if that's what a player
+    // reaches for first.
+    ensureAudio();
+    setKey("fire", true);
+  }
+  function onCanvasPointerUp() {
+    setKey("fire", false);
   }
   canvas.addEventListener("pointerdown", onCanvasPointerDown);
+  canvas.addEventListener("pointerup", onCanvasPointerUp);
+  canvas.addEventListener("pointerleave", onCanvasPointerUp);
 
   function startOrRestart() {
     ensureAudio();
@@ -777,6 +791,8 @@ export function createBarrageEngine(canvas, { onState }) {
     window.removeEventListener("keydown", onKeyDown);
     window.removeEventListener("keyup", onKeyUp);
     canvas.removeEventListener("pointerdown", onCanvasPointerDown);
+    canvas.removeEventListener("pointerup", onCanvasPointerUp);
+    canvas.removeEventListener("pointerleave", onCanvasPointerUp);
     document.removeEventListener("visibilitychange", onVisibilityChange);
   }
 

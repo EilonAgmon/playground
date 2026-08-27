@@ -89,8 +89,8 @@ export default function BarrageApp() {
             </Text>
             <Text className="bprompt">tap or click to drop in</Text>
             <Text className="bhint">
-              arrows/WASD to move &middot; up to aim, down to duck &middot; space to jump &middot; Z/X to fire &middot;
-              one weapon at a time — grab a new drop, lose the old one
+              arrows/WASD to move &middot; up to aim, down to duck &middot; space to jump &middot; Z/X or click/tap to
+              fire &middot; one weapon at a time — grab a new drop, lose the old one
             </Text>
           </Stack>
         )}

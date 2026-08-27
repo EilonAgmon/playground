@@ -20,6 +20,12 @@ export function createRedlineEngine(canvas, { onState }) {
   const PLAYER_H = 50;
   const MOVE_SPEED = 280;
   const BASE_SCROLL_SPEED = 230;
+  // Holding up/down throttles up or down from cruising speed — scales how
+  // fast distance accrues, how fast traffic closes in, and how often new
+  // cars spawn, so "go faster" is a real risk/reward choice (more ground
+  // covered per second, less reaction time) rather than cosmetic.
+  const SPEED_FAST = 1.6;
+  const SPEED_SLOW = 0.55;
   const BULLET_SPEED = 640;
   const START_LIVES = 4;
   const INVULN_TIME = 1.5;
@@ -27,7 +33,16 @@ export function createRedlineEngine(canvas, { onState }) {
   const BULLET_DAMAGE = { default: 1, missile: 2 };
   const WEAPON_COLOR = { default: "#bfe8ff", missile: "#ffb35c" };
   const OIL_COOLDOWN = 3.2;
-  const DISTANCE_GOAL = 6000;
+  // Three visually-distinct stages (day/dusk/night) instead of one
+  // undifferentiated grind to a single distance number — clearing the
+  // last stage's threshold is the actual win condition.
+  const STAGE_GOALS = [2000, 4000, 6000];
+  const DISTANCE_GOAL = STAGE_GOALS[STAGE_GOALS.length - 1];
+  const STAGE_THEME = [
+    { road: "#3a4048", edge: "#2a2f36", bg: "#1c1f26", label: "DAY" },
+    { road: "#39344c", edge: "#282338", bg: "#161320", label: "DUSK" },
+    { road: "#2a3346", edge: "#1a1f2c", bg: "#0c0e16", label: "NIGHT" },
+  ];
 
   const particles = createParticleSystem();
   const shake = createScreenShake();
@@ -37,6 +52,8 @@ export function createRedlineEngine(canvas, { onState }) {
   let lives = START_LIVES;
   let distance = 0;
   let elapsed = 0;
+  let stage = 1;
+  let stageAnnounce = 0;
 
   let player, playerBullets, enemyBullets, cars, oilSlicks, pickups, input, keys, oilCooldown, spawnTimer;
 
@@ -48,11 +65,13 @@ export function createRedlineEngine(canvas, { onState }) {
     oilSlicks = [];
     pickups = [];
     input = { moveDir: 0, fireHeld: false };
-    keys = { left: false, right: false, fire: false };
+    keys = { left: false, right: false, fire: false, up: false, down: false };
     oilCooldown = 0;
     spawnTimer = 0.6;
     distance = 0;
     elapsed = 0;
+    stage = 1;
+    stageAnnounce = 0;
     particles.clear();
   }
   freshWorld();
@@ -140,6 +159,11 @@ export function createRedlineEngine(canvas, { onState }) {
     if (name === "left" || name === "right") recomputeMove();
     if (name === "fire") input.fireHeld = val;
   }
+  function speedMultiplier() {
+    if (keys.up) return SPEED_FAST;
+    if (keys.down) return SPEED_SLOW;
+    return 1;
+  }
   function deployOil() {
     if (phase !== "playing" || oilCooldown > 0) return;
     ensureAudio();
@@ -152,10 +176,15 @@ export function createRedlineEngine(canvas, { onState }) {
     if (e.repeat) return;
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") setKey("left", true);
     else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") setKey("right", true);
-    else if (e.key === "z" || e.key === "Z" || e.key === "x" || e.key === "X") {
+    else if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") setKey("up", true);
+    else if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
+      e.preventDefault();
+      if (phase === "title" || phase === "gameover" || phase === "win") startOrRestart();
+      else setKey("down", true);
+    } else if (e.key === "z" || e.key === "Z" || e.key === "x" || e.key === "X") {
       ensureAudio();
       setKey("fire", true);
-    } else if (e.key === " " || e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
+    } else if (e.key === " ") {
       e.preventDefault();
       if (phase === "title" || phase === "gameover" || phase === "win") startOrRestart();
       else deployOil();
@@ -164,6 +193,8 @@ export function createRedlineEngine(canvas, { onState }) {
   function onKeyUp(e) {
     if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") setKey("left", false);
     else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") setKey("right", false);
+    else if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") setKey("up", false);
+    else if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") setKey("down", false);
     else if (e.key === "z" || e.key === "Z" || e.key === "x" || e.key === "X") setKey("fire", false);
   }
   window.addEventListener("keydown", onKeyDown);
@@ -182,7 +213,15 @@ export function createRedlineEngine(canvas, { onState }) {
   }
 
   function hudSnapshot() {
-    return { lives, weapon: player.weapon, distance: Math.floor(distance), goal: DISTANCE_GOAL, oilReady: oilCooldown <= 0 };
+    return {
+      lives,
+      weapon: player.weapon,
+      distance: Math.floor(distance),
+      goal: DISTANCE_GOAL,
+      oilReady: oilCooldown <= 0,
+      stage,
+      stageCount: STAGE_GOALS.length,
+    };
   }
 
   function hurtPlayer() {
@@ -250,9 +289,9 @@ export function createRedlineEngine(canvas, { onState }) {
     pickups = pickups.filter((p) => !p.collected);
   }
 
-  function updateCars(dt) {
+  function updateCars(dt, speedMul) {
     for (const c of cars) {
-      c.y += CAR_TYPES[c.type].speed * dt;
+      c.y += CAR_TYPES[c.type].speed * speedMul * dt;
       if (CAR_TYPES[c.type].weaves) {
         c.weaveTimer -= dt;
         if (c.weaveTimer <= 0) {
@@ -336,20 +375,28 @@ export function createRedlineEngine(canvas, { onState }) {
   function update(dt) {
     if (phase !== "playing") return;
     elapsed += dt;
-    distance += BASE_SCROLL_SPEED * dt;
+    const speedMul = speedMultiplier();
+    distance += BASE_SCROLL_SPEED * speedMul * dt;
+    if (stageAnnounce > 0) stageAnnounce = Math.max(0, stageAnnounce - dt);
 
     updatePlayer(dt);
     if (phase !== "playing") return;
-    updateCars(dt);
+    updateCars(dt, speedMul);
     updateBullets(dt);
     if (phase !== "playing") return;
 
-    spawnTimer -= dt;
+    spawnTimer -= dt * speedMul;
     const interval = Math.max(0.45, 1.3 - distance / 6000);
     if (spawnTimer <= 0) {
       spawnCar();
       maybeSpawnPickup();
       spawnTimer = interval;
+    }
+
+    if (stage < STAGE_GOALS.length && distance >= STAGE_GOALS[stage - 1]) {
+      stage += 1;
+      stageAnnounce = 1.6;
+      beep(560, 0.22, "triangle", 0.13);
     }
 
     if (distance >= DISTANCE_GOAL) {
@@ -365,12 +412,13 @@ export function createRedlineEngine(canvas, { onState }) {
   // ---------- render ----------
 
   function drawRoad() {
-    ctx.fillStyle = "#1c1f26";
+    const theme = STAGE_THEME[Math.min(stage, STAGE_THEME.length) - 1];
+    ctx.fillStyle = theme.bg;
     ctx.fillRect(0, 0, LOGICAL_W, LOGICAL_H);
-    ctx.fillStyle = "#3a4048";
+    ctx.fillStyle = theme.road;
     ctx.fillRect(ROAD_LEFT, 0, ROAD_RIGHT - ROAD_LEFT, LOGICAL_H);
 
-    ctx.fillStyle = "#2a2f36";
+    ctx.fillStyle = theme.edge;
     ctx.fillRect(ROAD_LEFT - 10, 0, 10, LOGICAL_H);
     ctx.fillRect(ROAD_RIGHT, 0, 10, LOGICAL_H);
 
@@ -453,11 +501,24 @@ export function createRedlineEngine(canvas, { onState }) {
     ctx.fillStyle = "rgba(230, 245, 250, 0.85)";
     ctx.font = "13px 'Courier New', monospace";
     const pct = Math.min(100, Math.floor((distance / DISTANCE_GOAL) * 100));
-    ctx.fillText(`${pct}%`, LOGICAL_W / 2, 26);
+    ctx.fillText(`STAGE ${stage}/${STAGE_GOALS.length} \u00b7 ${pct}%`, LOGICAL_W / 2, 26);
 
     ctx.fillStyle = oilCooldown <= 0 ? "#7dffb3" : "rgba(230,245,250,0.4)";
     ctx.font = "11px 'Courier New', monospace";
     ctx.fillText(oilCooldown <= 0 ? "OIL READY" : "OIL...", LOGICAL_W / 2, 44);
+
+    if (stageAnnounce > 0) {
+      const alpha = Math.min(1, stageAnnounce / 1.2);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = "#f4f2ee";
+      ctx.font = "bold 34px 'Courier New', monospace";
+      ctx.textAlign = "center";
+      ctx.fillText(`STAGE ${stage}`, LOGICAL_W / 2, LOGICAL_H / 2 - 10);
+      ctx.font = "14px 'Courier New', monospace";
+      ctx.fillStyle = "#d9a35c";
+      ctx.fillText(STAGE_THEME[stage - 1].label, LOGICAL_W / 2, LOGICAL_H / 2 + 18);
+      ctx.globalAlpha = 1;
+    }
   }
 
   function render() {

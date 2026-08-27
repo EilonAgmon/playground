@@ -154,7 +154,14 @@ export function createCrossingEngine(canvas, { onState }) {
 
   function tryHop(dir) {
     if (phase !== "playing" || frog.hopAnim > 0) return;
-    let { col, row } = frog;
+    // Recompute the frog's actual current column from its (possibly
+    // log-drifted) x position rather than trusting frog.col: that field
+    // only gets written by a hop, so after riding a log for a while it
+    // goes stale, and hopping — especially straight up/down, which
+    // shouldn't touch the column at all — would snap the frog sideways
+    // back to wherever it was before it started drifting.
+    let col = clamp(Math.round(frog.x / CELL - 0.5), 0, COLS - 1);
+    let row = frog.row;
     if (dir === "up") row = Math.min(HOME_ROW, row + 1);
     else if (dir === "down") row = Math.max(START_ROW, row - 1);
     else if (dir === "left") col = col - 1;
