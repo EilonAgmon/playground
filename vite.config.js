@@ -23,6 +23,7 @@ export default defineConfig({
         volfied: resolve(__dirname, "volfied/index.html"),
         salvo: resolve(__dirname, "salvo/index.html"),
         wick: resolve(__dirname, "wick/index.html"),
+        barrage: resolve(__dirname, "barrage/index.html"),
       },
     },
   },

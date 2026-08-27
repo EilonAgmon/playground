@@ -10,6 +10,7 @@ import {
   VolfiedIcon,
   SalvoIcon,
   WickIcon,
+  BarrageIcon,
   PlotIcon,
   GlobeIcon,
   TickersIcon,
@@ -42,6 +43,7 @@ const GAMES = [
   { href: "vine/", label: "Vine", desc: "A Snake homage — grow a garden vine.", Icon: VineIcon },
   { href: "ricochet/", label: "Ricochet", desc: "A Breakout homage — clear every brick.", Icon: RicochetIcon },
   { href: "salvo/", label: "Salvo", desc: "A Space Invaders homage — hold the line.", Icon: SalvoIcon },
+  { href: "barrage/", label: "Barrage", desc: "A run-and-gun homage — push through, take down the core.", Icon: BarrageIcon },
   { href: "volfied/", label: "Volfied", desc: "A Taito homage — carve out territory, dodge the boss.", Icon: VolfiedIcon },
   { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
 ];

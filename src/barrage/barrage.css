@@ -1,0 +1,182 @@
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#bstage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Shrink-wraps to the canvas's actual letterboxed size (set inline by the
+   engine's resize()), so touch controls and overlays anchor to the visible
+   game area instead of the full viewport — matters a lot here since 960x540
+   is a wide aspect that letterboxes to a thin strip on a portrait phone. */
+.bviewport {
+  position: relative;
+  line-height: 0;
+}
+
+#bstage .bglow {
+  color: #d7f5e6;
+  text-shadow: 0 0 12px rgba(125, 255, 179, 0.65), 0 0 28px rgba(63, 176, 201, 0.35);
+}
+
+#bgame {
+  touch-action: none;
+  background: #0e2418;
+  display: block;
+  outline: 2px solid rgba(125, 255, 179, 0.25);
+  outline-offset: -2px;
+  box-shadow: 0 0 30px rgba(63, 176, 201, 0.12);
+}
+
+.boverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9em;
+  text-align: center;
+  background: rgba(9, 18, 13, 0.74);
+  cursor: pointer;
+  padding: 1em;
+  color: #e7f7ee;
+}
+
+.boverlay h1 {
+  font-size: clamp(1.5rem, 6.5vw, 2.8rem);
+  letter-spacing: 0.14em;
+}
+
+.bbyline {
+  font-size: clamp(0.8rem, 3vw, 1rem);
+  opacity: 0.85;
+}
+
+.bbyline a {
+  color: #7dffb3;
+}
+
+.bprompt {
+  font-size: clamp(0.9rem, 3.2vw, 1.1rem);
+  animation: b-blink 1.1s steps(1) infinite;
+}
+
+.bprompt.score {
+  animation: none;
+  opacity: 0.85;
+  font-size: clamp(1rem, 3.6vw, 1.3rem);
+}
+
+.bhint {
+  font-size: clamp(0.65rem, 2.4vw, 0.8rem);
+  opacity: 0.55;
+  max-width: 32em;
+}
+
+@keyframes b-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
+}
+
+#bidentity {
+  position: absolute;
+  bottom: 0.6em;
+  right: 0.8em;
+  font-size: 0.7rem;
+  opacity: 0.35;
+  z-index: 1;
+  color: #e7f7ee;
+}
+
+/* ---------- Touch controls ---------- */
+
+.btouch {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 1rem 1.1rem;
+}
+
+.btouch button {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.bdpad {
+  position: relative;
+  width: 132px;
+  height: 132px;
+}
+
+.bdbtn {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  border-radius: 10px;
+  border: 1px solid rgba(125, 255, 179, 0.4);
+  background: rgba(14, 36, 24, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.bdbtn:active {
+  background: rgba(125, 255, 179, 0.3);
+}
+
+.bdbtn.bup { top: 0; left: 43px; }
+.bdbtn.bleft { top: 43px; left: 0; }
+.bdbtn.bright { top: 43px; left: 86px; }
+.bdbtn.bdown { top: 86px; left: 43px; }
+
+.bactions {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.8rem;
+}
+
+.babtn {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  border: 1px solid rgba(125, 255, 179, 0.45);
+  background: rgba(14, 36, 24, 0.55);
+  backdrop-filter: blur(2px);
+  color: #d7f5e6;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.babtn:active {
+  background: rgba(125, 255, 179, 0.3);
+}
+
+.babtn.bjump {
+  margin-bottom: 1.4rem;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btouch {
+    display: none;
+  }
+}

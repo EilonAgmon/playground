@@ -153,6 +153,18 @@ export function WickIcon({ size = 24 }) {
   );
 }
 
+export function BarrageIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M3 13h5l2-2h7" />
+      <path d="M17 11h3" />
+      <path d="M6 13v4M9 13v4" />
+      <path d="M12 11V8" />
+      <path d="M20 8l1.4-1.4M21.5 11h2M20 14l1.4 1.4" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
