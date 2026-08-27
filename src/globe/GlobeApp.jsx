@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Header } from "../shared/Header.jsx";
 import { COUNTRIES, CONTINENTS, flagEmoji } from "./countries.js";
+import RouteMap from "./RouteMap.jsx";
 import "./globe.css";
 
 const STATUS_KEY = "globe_status";
@@ -82,6 +83,8 @@ export default function GlobeApp() {
             <span>wishlist</span>
           </div>
         </div>
+
+        <RouteMap countries={COUNTRIES} status={status} onToggle={cycleStatus} />
 
         <div className="globe-controls fade-up">
           <input
