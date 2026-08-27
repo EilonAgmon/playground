@@ -187,6 +187,16 @@ export function CrossingIcon({ size = 24 }) {
   );
 }
 
+export function SwarmIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M5 5h3v3H5zM10.5 5h3v3h-3zM16 5h3v3h-3z" fill="currentColor" stroke="none" />
+      <path d="M12 8c0 4-4 5-4 9" />
+      <path d="M6.5 19.5l1.5-2.5 2.5 1" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

@@ -26,6 +26,7 @@ export default defineConfig({
         barrage: resolve(__dirname, "barrage/index.html"),
         redline: resolve(__dirname, "redline/index.html"),
         crossing: resolve(__dirname, "crossing/index.html"),
+        swarm: resolve(__dirname, "swarm/index.html"),
       },
     },
   },
