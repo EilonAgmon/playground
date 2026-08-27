@@ -19,14 +19,17 @@ html, body {
   padding: 0.5rem 0.6rem;
   overflow: hidden;
   text-align: center;
-  background: radial-gradient(ellipse at center, #3a1210 0%, #120504 100%);
+  background:
+    radial-gradient(circle at 12% 15%, rgba(240, 196, 67, 0.07) 0%, transparent 32%),
+    radial-gradient(circle at 88% 85%, rgba(240, 196, 67, 0.06) 0%, transparent 32%),
+    radial-gradient(ellipse at center, #3a1210 0%, #120504 100%);
   color: #f5e6c8;
   font-family: "EB Garamond", Georgia, serif;
 }
 
 .wheelsTable {
   width: 100%;
-  max-width: 500px;
+  max-width: 580px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -143,7 +146,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 3px;
-  width: clamp(64px, 20vw, 96px);
+  width: clamp(64px, 20vw, 108px);
 }
 
 .heroPortal.top-left { grid-column: 1; grid-row: 1; }
@@ -304,6 +307,40 @@ html, body {
   text-shadow: 0 0 6px rgba(240, 196, 67, 0.5);
 }
 
+.crownStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.wallMeter {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  opacity: 0.9;
+}
+
+.wallSegments {
+  display: flex;
+  gap: 2px;
+}
+
+.wallSeg {
+  width: 8px;
+  height: 12px;
+  border-radius: 1px;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid #6b3a20;
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+.wallSeg.filled {
+  background: linear-gradient(160deg, #d9dde0, #7d8288);
+  border-color: #4a4d50;
+  box-shadow: 0 0 4px rgba(201, 204, 209, 0.55);
+}
+
 .wheelRow {
   display: flex;
   gap: clamp(3px, 1vw, 6px);
@@ -317,8 +354,8 @@ html, body {
 
 .wheelTile {
   position: relative;
-  width: clamp(32px, 9vw, 46px);
-  height: clamp(32px, 9vw, 46px);
+  width: clamp(32px, 9vw, 52px);
+  height: clamp(32px, 9vw, 52px);
   background: radial-gradient(circle at 35% 28%, #351d10, #160b05);
   border: 2px solid #c98a3a;
   border-radius: 50% 50% 6px 6px / 60% 60% 6px 6px;

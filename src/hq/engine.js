@@ -31,10 +31,18 @@ function randomName(existing) {
   return list[Math.floor(Math.random() * list.length)];
 }
 
-export const TICK_MS = 1800;
+export const TICK_MS = 3600;
 export const SHIP_THRESHOLD = 40;
 export const MAX_OFFLINE_TICKS = 300;
-export const SAVE_KEY = "hq_state_v1";
+export const SAVE_KEY = "hq_state_v2";
+
+export const STAT_HELP = {
+  cash: "Drains on salaries every week. Refills when you ship.",
+  morale: "Drifts down on its own. Low morale throttles everyone's output.",
+  velocity: "Feature-track output fills this. Ships — and resets — at the top.",
+  quality: "Bug-track output fills this. Decays if neglected. Keeps incidents rarer.",
+  dau: "Grows only when you ship a feature.",
+};
 
 // Not a persisted counter: state (including engineer ids) is saved to
 // localStorage and reloaded across sessions, so a module-scoped counter
@@ -69,17 +77,21 @@ export const EVENTS = [
   {
     key: "incident",
     kind: "choice",
-    weight: 3,
+    // Neglected quality makes incidents noticeably more likely; a well-kept
+    // quality buffer makes them rarer — the whole point of the Bugs track.
+    weight: (s) => 3 * (1.6 - s.quality / 100),
     condition: (s) => s.engineers.length > 0,
     text: () => "Production incident! The pager is going off.",
     options: [
       {
         label: "All hands firefight",
+        hint: "-8 cash · -10 velocity · -4 morale",
         apply: (s) => ({ cash: s.cash - 8, velocity: Math.max(0, s.velocity - 10), morale: Math.max(0, s.morale - 4) }),
         result: "The team drops everything and fixes it fast.",
       },
       {
         label: "Patch and pray",
+        hint: "-10 morale",
         apply: (s) => ({ morale: Math.max(0, s.morale - 10) }),
         result: "It holds together. Barely. Morale takes the hit.",
       },
@@ -97,11 +109,13 @@ export const EVENTS = [
     options: [
       {
         label: "Counter-offer",
+        hint: "-30 cash · +3 morale",
         apply: (s) => ({ cash: s.cash - 30, morale: Math.min(100, s.morale + 3) }),
         result: "You match the offer. They stay, relieved.",
       },
       {
         label: "Let them go",
+        hint: "-1 engineer · -6 morale",
         apply: (s) => {
           const idx = s.engineers.findIndex((e) => e.level === "senior" || e.level === "staff");
           const engineers = idx >= 0 ? s.engineers.filter((_, i) => i !== idx) : s.engineers;
@@ -121,21 +135,26 @@ function pushLog(state, text) {
   return { ...state, log: [...state.log, text].slice(-8) };
 }
 
+function weightOf(event, state) {
+  return typeof event.weight === "function" ? event.weight(state) : event.weight;
+}
+
 function rollEvent(state, allowChoice) {
   if (state.gameOver || state.pendingEvent) return state;
   if (Math.random() > 0.16) return state;
   const pool = EVENTS.filter((e) => (allowChoice || e.kind !== "choice") && (!e.condition || e.condition(state)));
   if (!pool.length) return state;
 
-  const totalWeight = pool.reduce((sum, e) => sum + e.weight, 0);
+  const totalWeight = pool.reduce((sum, e) => sum + weightOf(e, state), 0);
   let r = Math.random() * totalWeight;
   let chosen = pool[0];
   for (const e of pool) {
-    if (r < e.weight) {
+    const w = weightOf(e, state);
+    if (r < w) {
       chosen = e;
       break;
     }
-    r -= e.weight;
+    r -= w;
   }
 
   if (chosen.kind === "instant") {
@@ -156,7 +175,7 @@ export function createInitialState() {
     ],
     morale: 80,
     velocity: 0,
-    qualityBuffer: 0,
+    quality: 70,
     reputation: 0,
     week: 0,
     log: ["You and one other engineer. A laptop. A dream."],
@@ -179,7 +198,7 @@ export function tick(state, { allowChoiceEvents = true } = {}) {
 
   s.cash -= salaries;
   s.velocity += featureOut;
-  s.qualityBuffer = Math.min(60, s.qualityBuffer + bugOut);
+  s.quality = Math.max(0, Math.min(100, s.quality - 0.4 + bugOut));
   s.morale = Math.max(0, s.morale - 0.3);
   s.week += 1;
 

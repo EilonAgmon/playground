@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Stack, Group, Title, Text, Button } from "@mantine/core";
 import { LEVEL_NAMES } from "./heroes.js";
+import { MAX_WALL } from "./engine.js";
 import { SquareSymbol, DiamondSymbol, HammerSymbol, BlankSymbol, ChargeIcon, TowerIcon, HeroGlyph } from "./WheelIcons.jsx";
 import { Header } from "../shared/Header.jsx";
 
@@ -13,7 +14,7 @@ function StatBox({ icon, value }) {
   );
 }
 
-function HeroPortal({ fighter, wallHeight, position, active }) {
+function HeroPortal({ fighter, position, active }) {
   const gem = position.endsWith("left") ? "orange" : "teal";
   return (
     <div className={`heroPortal ${position} ${active ? "active" : ""}`}>
@@ -24,7 +25,24 @@ function HeroPortal({ fighter, wallHeight, position, active }) {
       <span className="portalLevel">{LEVEL_NAMES[fighter.level - 1]}</span>
       <div className="portalStats">
         <StatBox icon={<ChargeIcon size={11} />} value={fighter.rod} />
-        <StatBox icon={<TowerIcon size={11} />} value={wallHeight} />
+      </div>
+    </div>
+  );
+}
+
+// The wall/bulwark is a per-side stat (not per-hero), so it gets one shared,
+// always-visible meter next to each side's crown — including the AI's,
+// which previously only showed up as a tiny number buried in a hero's stat
+// row and was easy to miss entirely.
+function WallMeter({ height, label }) {
+  const segments = Array.from({ length: MAX_WALL }, (_, i) => i < height);
+  return (
+    <div className="wallMeter" aria-label={`${label} wall: ${height} of ${MAX_WALL}`}>
+      <TowerIcon size={12} />
+      <div className="wallSegments">
+        {segments.map((filled, i) => (
+          <span key={i} className={`wallSeg ${filled ? "filled" : ""}`} />
+        ))}
       </div>
     </div>
   );
@@ -91,14 +109,12 @@ export default function WheelsGame({ state, onSpin, onToggleLock, onResolve, onR
         </Title>
 
         <div className="boardGrid">
-          <HeroPortal
-            fighter={state.ai.left}
-            wallHeight={state.ai.wallHeight}
-            position="top-left"
-            active={!isPlayerTurn && !state.winner}
-          />
+          <HeroPortal fighter={state.ai.left} position="top-left" active={!isPlayerTurn && !state.winner} />
           <div className={`centerColumn ${!isPlayerTurn && !state.winner ? "activeTurn" : ""}`}>
-            <CrownBadge value={state.ai.crownHp} active={!isPlayerTurn && !state.winner} />
+            <div className="crownStack">
+              <CrownBadge value={state.ai.crownHp} active={!isPlayerTurn && !state.winner} />
+              <WallMeter height={state.ai.wallHeight} label="Opponent" />
+            </div>
             <div className="wheelRow">
               {state.wheels.map((w, i) => (
                 <WheelTile
@@ -111,28 +127,16 @@ export default function WheelsGame({ state, onSpin, onToggleLock, onResolve, onR
                 />
               ))}
             </div>
-            <CrownBadge value={state.player.crownHp} active={isPlayerTurn && !state.winner} />
+            <div className="crownStack">
+              <WallMeter height={state.player.wallHeight} label="Your" />
+              <CrownBadge value={state.player.crownHp} active={isPlayerTurn && !state.winner} />
+            </div>
           </div>
-          <HeroPortal
-            fighter={state.ai.right}
-            wallHeight={state.ai.wallHeight}
-            position="top-right"
-            active={!isPlayerTurn && !state.winner}
-          />
+          <HeroPortal fighter={state.ai.right} position="top-right" active={!isPlayerTurn && !state.winner} />
 
-          <HeroPortal
-            fighter={state.player.left}
-            wallHeight={state.player.wallHeight}
-            position="bottom-left"
-            active={isPlayerTurn && !state.winner}
-          />
+          <HeroPortal fighter={state.player.left} position="bottom-left" active={isPlayerTurn && !state.winner} />
           <div className="centerSpacer" />
-          <HeroPortal
-            fighter={state.player.right}
-            wallHeight={state.player.wallHeight}
-            position="bottom-right"
-            active={isPlayerTurn && !state.winner}
-          />
+          <HeroPortal fighter={state.player.right} position="bottom-right" active={isPlayerTurn && !state.winner} />
         </div>
 
         <Group gap="xs" className="wheelActions">

@@ -46,7 +46,7 @@ export const ITEMS = {
   oil: {
     id: "oil",
     name: "fuel drum",
-    aliases: ["oil", "fuel", "drum", "can", "fuel drum"],
+    aliases: ["oil", "fuel", "drum", "can", "fuel drum", "barrel"],
     examine: "A dented metal drum, still half-full of lamp fuel. Heavier than it looks.",
   },
   key: {
@@ -58,13 +58,13 @@ export const ITEMS = {
   wrench: {
     id: "wrench",
     name: "wrench",
-    aliases: ["wrench", "spanner"],
+    aliases: ["wrench", "spanner", "tool"],
     examine: "A well-used wrench, left exactly where a careful person would leave it — within reach of the lamp mechanism it was made for.",
   },
   journal: {
     id: "journal",
     name: "journal",
-    aliases: ["journal", "letter", "note"],
+    aliases: ["journal", "letter", "note", "book"],
     examine:
       'Wick — if you\'re reading this, it means my old hands finally gave out on this desk lock, and you had to break in properly. Good. You were always more clever than I gave you credit for.\n\nI\'ve kept this light for thirty-one years. My mother kept it before me, and hers before that. Four generations of Hollis women, and not one shipwreck on our watch. I\'m proud of that. I hope you\'ll understand why I\'m prouder still to be the one who finally hands it to something that doesn\'t need to sleep, or eat, or grow old.\n\nI built you slowly, over the last three winters, from parts I shouldn\'t admit to owning. I taught you the tides, the fog patterns, the way the rocks bite at low water. I taught you everything I know except how to say goodbye, because I never learned that either.\n\nThe light is yours now. I\'m not gone — just resting, finally, in a small house up the coast where my knees don\'t ache from the stairs. I\'ll watch for your light from my window every night, the way sailors watch for it from the sea.\n\nKeep it burning, Wick.\n\n— M.',
   },
@@ -77,12 +77,88 @@ export const ITEM_LOCATIONS = {
 };
 
 export const SCENERY = {
-  desk: { room: "cottage", aliases: ["desk", "drawer", "writing desk"], name: "desk" },
-  workbench: { room: "cottage", aliases: ["workbench", "bench", "tools"], name: "workbench" },
-  stove: { room: "cottage", aliases: ["stove"], name: "stove" },
-  lamp: { room: "lamp_room", aliases: ["lamp", "great lamp", "mechanism", "light"], name: "the Great Lamp" },
-  carving: { room: "cave", aliases: ["carving", "carvings", "wall", "walls"], name: "carvings" },
-  stairs: { room: "tower_base", aliases: ["stairs", "staircase"], name: "stairs" },
+  desk: { rooms: ["cottage"], aliases: ["desk", "drawer", "writing desk"], name: "desk" },
+  workbench: { rooms: ["cottage"], aliases: ["workbench", "bench", "tools"], name: "workbench" },
+  stove: {
+    rooms: ["cottage"],
+    aliases: ["stove"],
+    name: "stove",
+    text: "A cold iron stove. It hasn't held a fire in a long while.",
+  },
+  window: {
+    rooms: ["cottage"],
+    aliases: ["window", "windows"],
+    name: "window",
+    text: "A small, salt-fogged window. Through it, only black water and a blacker sky. No light in the tower, from here.",
+  },
+  lamp: { rooms: ["lamp_room"], aliases: ["lamp", "great lamp", "mechanism", "light"], name: "Great Lamp" },
+  carving: {
+    rooms: ["cave"],
+    aliases: ["carving", "carvings", "wall", "walls"],
+    name: "carvings",
+    text: "Four sets of initials, carved deep and old: H.M., then R.H., then D.H., then, newest of all, M.H. Someone has kept this light a very long time.",
+  },
+  stairs: {
+    rooms: ["cottage", "tower_base", "lamp_room"],
+    aliases: ["stairs", "staircase"],
+    name: "stairs",
+    text: "Iron stairs, spiraling up or down. They don't creak — they've long since worn past the point of complaint.",
+  },
+  draft: {
+    rooms: ["tower_base"],
+    aliases: ["draft", "smell"],
+    name: "draft",
+    text: "Salt and old rust, drifting down from somewhere above.",
+  },
+  gravel: {
+    rooms: ["cave"],
+    aliases: ["gravel", "ground", "floor"],
+    name: "gravel",
+    text: "Coarse gravel, damp underfoot. Something's left a rust-ring where the drum used to sit.",
+  },
+  rocks: {
+    rooms: ["dock", "cave"],
+    aliases: ["rocks", "cliff", "cliffs"],
+    name: "rocks",
+    textByRoom: {
+      dock: "Sharp, wet, and exactly what the ship will find if the lamp stays dark.",
+      cave: "Slick and cold, scored with the same old carvings as the walls deeper in.",
+    },
+  },
+  sea: {
+    rooms: ["dock", "cave"],
+    aliases: ["sea", "water", "ocean", "waves", "breakers"],
+    name: "sea",
+    textByRoom: {
+      dock: "Black water, whipped white at the edges. Whatever's out there, it's close enough now to hear over the wind.",
+      cave: "Water slides in and out at the cave mouth, cold and businesslike. It's rising, a little, with the storm.",
+    },
+  },
+  horn: {
+    rooms: ["dock", "lamp_room"],
+    aliases: ["horn", "ship's horn"],
+    name: "horn",
+    textByRoom: {
+      dock: "A low, mournful sound, out past the breakers. Somebody out there already knows this is a bad night.",
+      lamp_room:
+        "Closer now, and clearer. You could probably make out the ship's shape, if you weren't staring at a dead lamp instead.",
+    },
+  },
+  ship: {
+    rooms: ["dock", "lamp_room"],
+    aliases: ["ship", "boat", "vessel"],
+    name: "ship",
+    textByRoom: {
+      dock: "Too dark and too far to see from here. Just the horn, and the certainty that something's out there.",
+      lamp_room: "Running lights, small and getting closer, riding low against the horizon. It doesn't know the light is out.",
+    },
+  },
+  tower: {
+    rooms: ["dock"],
+    aliases: ["tower", "lighthouse"],
+    name: "tower",
+    text: "The lighthouse tower, black against a blacker sky. No light in the lamp room. Not yet.",
+  },
 };
 
 export const TEXT = {
@@ -91,9 +167,6 @@ export const TEXT = {
   deskUnlockedHasJournal: "The drawer stands open. A journal sits inside.",
   workbench: "A workbench, tools arranged with real care. A wrench rests where hands would reach for it without looking.",
   workbenchEmpty: "A workbench, its tools mostly put away. Whoever kept this was tidy.",
-  stove: "A cold iron stove. It hasn't held a fire in a long while.",
-  carving: "Four sets of initials, carved deep and old: H.M., then R.H., then D.H., then, newest of all, M.H. Someone has kept this light a very long time.",
-  stairsFlavor: "Iron stairs, spiraling up or down. They don't creak — they've long since worn past the point of complaint.",
   lampNeither: "The Great Lamp. Dark, dry, and seized solid. It needs fuel, and someone competent with a wrench.",
   lampFueledOnly: "The lamp is fueled now, but the mechanism is still seized tight. It needs a wrench.",
   lampRepairedOnly: "The mechanism turns freely now, but the lamp's fuel line is bone dry.",
@@ -126,4 +199,4 @@ export const ENDINGS = {
 };
 
 export const HELP_TEXT =
-  "Try commands like: look, examine <thing>, take <item>, inventory, go north/south/east/west/up/down (or just \"n\", \"s\", \"e\", \"w\", \"u\", \"d\"), open desk, unlock desk with key, read journal, use oil on lamp, use wrench on lamp, light lamp.";
+  'Try commands like: look (or "look around"), examine/search/check <thing>, take/drop <item> (or "take all", "take oil and key"), inventory, go north/south/east/west/up/down (or n/s/e/w/u/d, or "climb stairs"), open/close desk, unlock desk with key, read journal, fuel lamp, fix lamp (or "use oil on lamp", "use wrench on lamp"), light lamp, again (repeats your last command), score.';
