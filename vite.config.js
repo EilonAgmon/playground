@@ -28,6 +28,7 @@ export default defineConfig({
         crossing: resolve(__dirname, "crossing/index.html"),
         swarm: resolve(__dirname, "swarm/index.html"),
         roster: resolve(__dirname, "roster/index.html"),
+        shatter: resolve(__dirname, "shatter/index.html"),
       },
     },
   },

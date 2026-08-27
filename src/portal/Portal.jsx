@@ -20,6 +20,7 @@ import {
   PcaIcon,
   AboutIcon,
   RosterIcon,
+  ShatterIcon,
 } from "../shared/Icons.jsx";
 import "./portal.css";
 
@@ -52,6 +53,7 @@ const GAMES = [
   { href: "redline/", label: "Redline", desc: "A highway-combat homage — steer, shoot, survive the route.", Icon: RedlineIcon },
   { href: "crossing/", label: "Crossing", desc: "A road-and-river homage — hop across, ride the logs.", Icon: CrossingIcon },
   { href: "swarm/", label: "Swarm", desc: "A formation-shooter homage — anything can peel off and dive.", Icon: SwarmIcon },
+  { href: "shatter/", label: "Shatter", desc: "An Asteroids homage — split the rocks, survive the waves.", Icon: ShatterIcon },
   { href: "volfied/", label: "Volfied", desc: "A Taito homage — carve out territory, dodge the boss.", Icon: VolfiedIcon },
   { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
 ];

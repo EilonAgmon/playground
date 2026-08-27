@@ -207,6 +207,15 @@ export function BackofficeIcon({ size = 24 }) {
   );
 }
 
+export function ShatterIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M12 3l7 4.2v9.6L12 21l-7-4.2V7.2Z" />
+      <path d="M12 3v7M12 10l-5 2M12 10l5.5 1.5M12 10l-1 8" />
+    </svg>
+  );
+}
+
 export function RosterIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
