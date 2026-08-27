@@ -24,6 +24,7 @@ export default defineConfig({
         salvo: resolve(__dirname, "salvo/index.html"),
         wick: resolve(__dirname, "wick/index.html"),
         barrage: resolve(__dirname, "barrage/index.html"),
+        redline: resolve(__dirname, "redline/index.html"),
       },
     },
   },

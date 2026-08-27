@@ -165,6 +165,17 @@ export function BarrageIcon({ size = 24 }) {
   );
 }
 
+export function RedlineIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <rect x="9" y="4" width="6" height="14" rx="2" />
+      <path d="M9 8.5h6M9 13.5h6" />
+      <path d="M6.5 9v3M17.5 9v3" />
+      <path d="M12 20v1.5" />
+    </svg>
+  );
+}
+
 export function BackofficeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
