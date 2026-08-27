@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Header } from "../shared/Header.jsx";
-import { spinReels, evaluate, randomSymbol, BET, START_CREDITS, SYMBOLS } from "./engine.js";
+import { spinReels, evaluate, randomSymbol, computeMath, BET, START_CREDITS, SYMBOLS } from "./engine.js";
 import { SYMBOL_ICONS } from "./ReelSymbols.jsx";
 import "./reels.css";
 
@@ -19,8 +19,10 @@ export default function ReelsApp() {
   const [spinningReels, setSpinningReels] = useState([false, false, false]);
   const [message, setMessage] = useState("Spin to start harvesting.");
   const [win, setWin] = useState(false);
+  const [showMath, setShowMath] = useState(false);
   const timers = useRef([]);
   const spinning = spinningReels.some(Boolean);
+  const math = useMemo(() => computeMath(BET), []);
 
   useEffect(() => {
     localStorage.setItem(CREDITS_KEY, String(credits));
@@ -118,7 +120,12 @@ export default function ReelsApp() {
         </div>
 
         <div className="reels-paytable surface fade-up">
-          <p className="reels-paytable-title">Paytable — match 3 on the center line</p>
+          <div className="reels-paytable-head">
+            <p className="reels-paytable-title">Paytable — match 3 on the center line</p>
+            <button className="reels-math-toggle" onClick={() => setShowMath((v) => !v)}>
+              {showMath ? "Hide the math" : "Show the math"}
+            </button>
+          </div>
           <div className="reels-paytable-grid">
             {SYMBOLS.map((s) => {
               const Icon = SYMBOL_ICONS[s.key];
@@ -133,6 +140,61 @@ export default function ReelsApp() {
               );
             })}
           </div>
+
+          {showMath && (
+            <div className="reels-math fade-up">
+              <div className="reels-math-stats">
+                <div className="reels-math-stat">
+                  <span>RTP</span>
+                  <strong>{(math.rtp * 100).toFixed(1)}%</strong>
+                </div>
+                <div className="reels-math-stat">
+                  <span>House edge</span>
+                  <strong>{((1 - math.rtp) * 100).toFixed(1)}%</strong>
+                </div>
+                <div className="reels-math-stat">
+                  <span>Hit frequency</span>
+                  <strong>{(math.hitFrequency * 100).toFixed(1)}%</strong>
+                </div>
+              </div>
+
+              <div className="reels-math-table-wrap">
+                <table className="reels-math-table">
+                  <thead>
+                    <tr>
+                      <th>Symbol</th>
+                      <th>Reel odds</th>
+                      <th>3-match odds</th>
+                      <th>EV / bet</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {math.rows.map((r) => (
+                      <tr key={r.symbol.key}>
+                        <td>{r.symbol.name}</td>
+                        <td>{(r.probability * 100).toFixed(0)}%</td>
+                        <td>1 in {Math.round(r.oneInN).toLocaleString()}</td>
+                        <td>{r.evContribution.toFixed(4)}</td>
+                      </tr>
+                    ))}
+                    <tr className="reels-math-pair">
+                      <td>Any pair (2 of 3)</td>
+                      <td>—</td>
+                      <td>1 in {Math.round(1 / math.pairP).toLocaleString()}</td>
+                      <td>{math.pairEV.toFixed(4)}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p className="reels-math-note">
+                Computed live from the actual symbol weights and paytable above — not a hand-typed estimate. RTP
+                lands low on purpose: credits here are free and infinite, so there's no reason to run this machine
+                as generously as a regulated real-money floor (typically 85–98% RTP) — this is closer to a
+                social-casino curve, tuned for streaky, big-swing fun rather than a fair long-run return.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </>
