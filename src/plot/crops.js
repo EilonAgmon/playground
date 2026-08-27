@@ -12,6 +12,7 @@ export const CROPS = [
     harvestNH: "Jul–Sep",
     sowSH: "Sep–Nov",
     harvestSH: "Jan–Mar",
+    growSeconds: 70,
   },
   {
     key: "basil",
@@ -23,6 +24,7 @@ export const CROPS = [
     harvestNH: "Jun–Sep",
     sowSH: "Oct–Dec",
     harvestSH: "Dec–Mar",
+    growSeconds: 40,
   },
   {
     key: "carrot",
@@ -34,6 +36,7 @@ export const CROPS = [
     harvestNH: "Jun–Oct",
     sowSH: "Sep–Jan",
     harvestSH: "Dec–Apr",
+    growSeconds: 60,
   },
   {
     key: "onion",
@@ -45,6 +48,7 @@ export const CROPS = [
     harvestNH: "Aug–Sep",
     sowSH: "Sep–Oct",
     harvestSH: "Feb–Mar",
+    growSeconds: 55,
   },
   {
     key: "lettuce",
@@ -56,6 +60,7 @@ export const CROPS = [
     harvestNH: "May–Oct",
     sowSH: "Sep–Feb",
     harvestSH: "Nov–Apr",
+    growSeconds: 45,
   },
   {
     key: "beans",
@@ -67,6 +72,7 @@ export const CROPS = [
     harvestNH: "Jul–Sep",
     sowSH: "Nov–Dec",
     harvestSH: "Jan–Mar",
+    growSeconds: 75,
   },
   {
     key: "corn",
@@ -78,6 +84,7 @@ export const CROPS = [
     harvestNH: "Aug–Sep",
     sowSH: "Nov–Dec",
     harvestSH: "Feb–Mar",
+    growSeconds: 100,
   },
   {
     key: "squash",
@@ -89,6 +96,7 @@ export const CROPS = [
     harvestNH: "Aug–Oct",
     sowSH: "Nov–Dec",
     harvestSH: "Feb–Apr",
+    growSeconds: 110,
   },
   {
     key: "potato",
@@ -100,6 +108,7 @@ export const CROPS = [
     harvestNH: "Jun–Sep",
     sowSH: "Sep–Nov",
     harvestSH: "Dec–Mar",
+    growSeconds: 90,
   },
   {
     key: "pepper",
@@ -111,6 +120,7 @@ export const CROPS = [
     harvestNH: "Jul–Sep",
     sowSH: "Oct–Dec",
     harvestSH: "Jan–Mar",
+    growSeconds: 65,
   },
 ];
 

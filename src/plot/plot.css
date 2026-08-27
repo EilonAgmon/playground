@@ -80,6 +80,8 @@
 }
 
 .plot-cell {
+  position: relative;
+  overflow: hidden;
   aspect-ratio: 1;
   border-radius: 8px;
   border: 1px solid var(--line-strong);
@@ -99,6 +101,63 @@
 
 .plot-cell.status-bad {
   box-shadow: 0 0 0 2px #c0392b inset, 0 0 12px rgba(192, 57, 43, 0.45);
+}
+
+.plot-cell.ready {
+  box-shadow: 0 0 0 2px #fff8e8 inset, 0 0 14px var(--accent-glow);
+}
+
+.plot-cell-ring {
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(rgba(255, 255, 255, 0.9) calc(var(--progress, 0) * 360deg), rgba(0, 0, 0, 0.4) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+}
+
+.plot-cell-ready {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: plot-ready-pulse 1.1s ease-in-out infinite;
+}
+
+@keyframes plot-ready-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 2px rgba(255, 248, 232, 0.95); }
+  50% { box-shadow: inset 0 0 0 2px rgba(255, 248, 232, 0.25); }
+}
+
+.plot-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.plot-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.plot-stat strong {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--accent);
+}
+
+.plot-stat span {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-dim);
+}
+
+.plot-message {
+  font-size: 0.8rem;
+  color: var(--fg-dim);
+  opacity: 0.85;
 }
 
 .plot-side {
