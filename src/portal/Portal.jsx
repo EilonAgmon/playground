@@ -23,6 +23,7 @@ import {
   ShatterIcon,
   NibbleIcon,
   ComboIcon,
+  WaypointIcon,
 } from "../shared/Icons.jsx";
 import "./portal.css";
 
@@ -45,6 +46,7 @@ const FEATURED = [
 
 const GAMES = [
   { href: "wheels/", label: "Wheels", desc: "A tavern dice game, Sea of Stars style.", Icon: WheelsIcon },
+  { href: "waypoint/", label: "Waypoint", desc: "Dominoes, stamped with a passport instead of pips.", Icon: WaypointIcon },
   { href: "reels/", label: "Reels", desc: "An original harvest-themed slot machine.", Icon: ReelsIcon },
   { href: "roster/", label: "Roster", desc: "Branching manager conversations — 1:1s and hiring calls.", Icon: RosterIcon },
   { href: "pong/", label: "Pong", desc: "The original arcade classic.", Icon: PongIcon },

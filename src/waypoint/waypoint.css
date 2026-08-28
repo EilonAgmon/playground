@@ -1,0 +1,265 @@
+#waypoint {
+  min-height: calc(100vh - 52px);
+  min-height: calc(100dvh - 52px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.3rem;
+  padding: clamp(1.3rem, 4vh, 2.2rem) 1.1rem 3rem;
+  max-width: 40rem;
+  margin: 0 auto;
+}
+
+.wp-hero {
+  text-align: center;
+  max-width: 32rem;
+}
+
+.wp-title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 600;
+}
+
+.wp-sub {
+  color: var(--fg-dim);
+  font-size: 0.86rem;
+  margin-top: 0.4rem;
+}
+
+.wp-intro {
+  width: 100%;
+  padding: clamp(1.2rem, 4vw, 1.8rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-align: center;
+  color: var(--fg-dim);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.wp-btn {
+  align-self: center;
+  min-height: 46px;
+  padding: 0 1.6rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: linear-gradient(155deg, #6fa896, #3f7a68);
+  color: #05130f;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.wp-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px -8px rgba(111, 168, 150, 0.45);
+}
+
+.wp-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.wp-board {
+  width: 100%;
+  padding: clamp(1rem, 3.5vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.wp-status {
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--accent-2, #8fae7a);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.7rem;
+}
+
+.wp-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-faint);
+  flex-shrink: 0;
+  width: 4.5rem;
+}
+
+.wp-ai-row,
+.wp-hand-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.wp-facedown,
+.wp-hand {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.wp-count {
+  font-size: 0.75rem;
+  color: var(--fg-faint);
+  flex-shrink: 0;
+}
+
+/* ---------- Tiles ---------- */
+
+.wp-tile {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--line-strong);
+  background: #f4ecd8;
+  border-radius: 6px;
+  padding: 0;
+  cursor: default;
+  color: #2a2416;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.wp-tile.vertical {
+  flex-direction: column;
+  width: 30px;
+  height: 56px;
+}
+
+.wp-tile:not(.vertical) {
+  width: 56px;
+  height: 30px;
+}
+
+.wp-half {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wp-tile-div {
+  background: rgba(42, 36, 22, 0.35);
+}
+
+.wp-tile.vertical .wp-tile-div {
+  width: 70%;
+  height: 1px;
+}
+
+.wp-tile:not(.vertical) .wp-tile-div {
+  height: 70%;
+  width: 1px;
+}
+
+.wp-tile-back {
+  background: linear-gradient(155deg, #3f7a68, #2a5548);
+  border-color: rgba(111, 168, 150, 0.4);
+}
+
+.wp-tile-back.vertical {
+  width: 26px;
+  height: 40px;
+}
+
+button.wp-tile {
+  cursor: not-allowed;
+  opacity: 0.45;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+button.wp-tile.playable {
+  cursor: pointer;
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(111, 168, 150, 0.5);
+}
+
+button.wp-tile.playable:hover {
+  transform: translateY(-3px);
+}
+
+button.wp-tile.selected {
+  box-shadow: 0 0 0 2px #6fa896, 0 0 12px rgba(111, 168, 150, 0.5);
+  transform: translateY(-3px);
+}
+
+/* ---------- Chain ---------- */
+
+.wp-chain-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 0.7rem;
+}
+
+.wp-chain {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  overflow-x: auto;
+  padding: 0.2rem 0;
+  min-height: 34px;
+}
+
+.wp-chain-empty {
+  color: var(--fg-faint);
+  font-size: 0.78rem;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.wp-end {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px dashed var(--line-strong);
+  background: transparent;
+  color: var(--fg-faint);
+  cursor: not-allowed;
+}
+
+.wp-end.active {
+  border-color: #6fa896;
+  border-style: solid;
+  color: #6fa896;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(111, 168, 150, 0.4);
+}
+
+.wp-end::before {
+  content: "+";
+  font-size: 1.1rem;
+}
+
+.wp-boneyard {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--fg-faint);
+}
+
+.wp-hint {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #6fa896;
+}
+
+.wp-gameover {
+  text-align: center;
+  border-top: 1px solid var(--line);
+  padding-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  color: var(--fg-dim);
+  font-size: 0.85rem;
+}

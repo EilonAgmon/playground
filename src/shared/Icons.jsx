@@ -216,6 +216,17 @@ export function ShatterIcon({ size = 24 }) {
   );
 }
 
+export function WaypointIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <rect x="3" y="9" width="8" height="14" rx="1.3" transform="rotate(-8 7 16)" />
+      <rect x="13" y="2" width="8" height="14" rx="1.3" transform="rotate(-8 17 9)" />
+      <circle cx="6.6" cy="15.3" r="1" fill="currentColor" stroke="none" />
+      <circle cx="16.6" cy="8.3" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function ComboIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

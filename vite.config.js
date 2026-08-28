@@ -31,6 +31,7 @@ export default defineConfig({
         shatter: resolve(__dirname, "shatter/index.html"),
         nibble: resolve(__dirname, "nibble/index.html"),
         combo: resolve(__dirname, "combo/index.html"),
+        waypoint: resolve(__dirname, "waypoint/index.html"),
       },
     },
   },
