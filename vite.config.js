@@ -29,6 +29,7 @@ export default defineConfig({
         swarm: resolve(__dirname, "swarm/index.html"),
         roster: resolve(__dirname, "roster/index.html"),
         shatter: resolve(__dirname, "shatter/index.html"),
+        nibble: resolve(__dirname, "nibble/index.html"),
       },
     },
   },

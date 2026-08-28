@@ -216,6 +216,15 @@ export function ShatterIcon({ size = 24 }) {
   );
 }
 
+export function NibbleIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M12 3a9 9 0 1 0 9 9L12 12Z" />
+      <circle cx="12" cy="9" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function RosterIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
