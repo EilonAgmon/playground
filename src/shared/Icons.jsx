@@ -216,6 +216,14 @@ export function ShatterIcon({ size = 24 }) {
   );
 }
 
+export function ComboIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M4 11h5v5H4zM10 11h5v5h-5zM10 5h5v5h-5z" />
+    </svg>
+  );
+}
+
 export function NibbleIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

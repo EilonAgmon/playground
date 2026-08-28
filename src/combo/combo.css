@@ -1,0 +1,163 @@
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cbstage {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cbviewport {
+  position: relative;
+  line-height: 0;
+}
+
+#cbstage .cbglow {
+  color: #ffe9d0;
+  text-shadow: 0 0 12px rgba(224, 178, 60, 0.7), 0 0 28px rgba(224, 178, 60, 0.3);
+}
+
+#cbgame {
+  touch-action: none;
+  background: #05070f;
+  display: block;
+  outline: 2px solid rgba(224, 178, 60, 0.28);
+  outline-offset: -2px;
+  box-shadow: 0 0 30px rgba(224, 178, 60, 0.12);
+}
+
+.cboverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9em;
+  text-align: center;
+  background: rgba(5, 7, 15, 0.82);
+  cursor: pointer;
+  padding: 1em;
+  color: #fbeee0;
+}
+
+.cboverlay h1 {
+  font-size: clamp(1.4rem, 6vw, 2.6rem);
+  letter-spacing: 0.13em;
+}
+
+.cbbyline {
+  font-size: clamp(0.8rem, 3vw, 1rem);
+  opacity: 0.85;
+}
+
+.cbbyline a {
+  color: #e0b23c;
+}
+
+.cbprompt {
+  font-size: clamp(0.9rem, 3.2vw, 1.1rem);
+  animation: cb-blink 1.1s steps(1) infinite;
+}
+
+.cbprompt.score {
+  animation: none;
+  opacity: 0.85;
+  font-size: clamp(0.95rem, 3.4vw, 1.2rem);
+}
+
+.cbhint {
+  font-size: clamp(0.65rem, 2.4vw, 0.8rem);
+  opacity: 0.55;
+  max-width: 26em;
+}
+
+@keyframes cb-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
+}
+
+#cbidentity {
+  position: absolute;
+  bottom: 0.6em;
+  right: 0.8em;
+  font-size: 0.7rem;
+  opacity: 0.35;
+  z-index: 1;
+  color: #fbeee0;
+}
+
+/* ---------- Touch controls ---------- */
+
+.cbtouch {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 0 0.8rem 1rem;
+}
+
+.cbtouch button {
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.cbsteer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.cbbtn {
+  border: 1px solid rgba(224, 178, 60, 0.4);
+  background: rgba(20, 14, 8, 0.55);
+  backdrop-filter: blur(2px);
+  color: #ffe9d0;
+}
+
+.cbsteer .cbbtn {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+}
+
+.cbactions {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+
+.cbactions .cbbtn {
+  width: 66px;
+  height: 58px;
+  border-radius: 16px;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.cbbtn:active {
+  background: rgba(224, 178, 60, 0.28);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .cbtouch {
+    display: none;
+  }
+}
