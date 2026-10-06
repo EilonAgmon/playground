@@ -70,6 +70,9 @@ const TOOLS = [
   { href: "tickers/", label: "Tickers", desc: "Today's biggest NYSE & NASDAQ decliners, live.", Icon: TickersIcon },
 ];
 
+const TICKERS = TOOLS.find((app) => app.href === "tickers/");
+const WIP_APPS = [...FEATURED, ...GAMES, ...TOOLS.filter((app) => app.href !== "tickers/")];
+
 const TAGLINES = [
   "Engineering leader. Occasional game developer.",
   "18 years scaling teams that ship real products.",
@@ -130,6 +133,7 @@ function Section({ title, apps }) {
 
 export default function Portal() {
   const [taglineIndex, setTaglineIndex] = useState(0);
+  const [wipOpen, setWipOpen] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setTaglineIndex((i) => (i + 1) % TAGLINES.length), 3200);
@@ -156,14 +160,19 @@ export default function Portal() {
         </p>
       </div>
 
-      <div className="portal-featured fade-up">
-        {FEATURED.map((app) => (
-          <TiltCard key={app.href} {...app} className="featured" iconSize={36} />
-        ))}
-      </div>
+      <Section title="Tools" apps={[TICKERS]} />
 
-      <Section title="Games" apps={GAMES} />
-      <Section title="Tools" apps={TOOLS} />
+      <div className="portal-wip fade-up">
+        <button
+          type="button"
+          className="portal-wip-toggle"
+          onClick={() => setWipOpen((open) => !open)}
+          aria-expanded={wipOpen}
+        >
+          {wipOpen ? "Hide" : "WIP — don't judge"}
+        </button>
+        {wipOpen && <Section title="Everything else (parked for now)" apps={WIP_APPS} />}
+      </div>
 
       <div className="portal-footer fade-up">
         <a href="about/" className="portal-about-link">

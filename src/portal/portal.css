@@ -234,6 +234,42 @@
   text-align: left;
 }
 
+.portal-wip {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1rem;
+  margin: clamp(0.5rem, 2vh, 1.2rem) 0 clamp(1.6rem, 4vh, 2.2rem);
+}
+
+.portal-wip-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--fg-faint);
+  background: transparent;
+  text-decoration: none;
+  font-size: 0.72rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  border: 1px dashed var(--line);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.portal-wip-toggle:hover, .portal-wip-toggle:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.portal-wip > .portal-section {
+  width: 100%;
+}
+
 .portal-footer {
   position: relative;
   z-index: 1;
