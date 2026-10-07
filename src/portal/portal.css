@@ -106,6 +106,40 @@
   .portal-caret { animation: none; }
 }
 
+.portal-joke {
+  position: relative;
+  z-index: 1;
+  max-width: 30rem;
+  margin: 0 auto clamp(2rem, 5vh, 2.8rem);
+  padding: 1rem 1.3rem;
+  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.portal-joke-label {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+}
+
+.portal-joke-text {
+  font-size: 0.92rem;
+  color: var(--fg-dim);
+  line-height: 1.5;
+  min-height: 2.6em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: tagline-in 0.4s ease both;
+}
+
 /* ---------- Shared card + tilt mechanics ---------- */
 
 .portal-grid {

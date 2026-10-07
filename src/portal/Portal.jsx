@@ -116,6 +116,50 @@ function useTypewriter(lines, { typeMs = 45, deleteMs = 25, holdMs = 1800, pause
   return text;
 }
 
+const DAD_JOKE_REFRESH_MS = 10000;
+
+function DadJoke() {
+  const [joke, setJoke] = useState(null);
+  const [jokeKey, setJokeKey] = useState(0);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchJoke() {
+      try {
+        const res = await fetch("https://icanhazdadjoke.com/", {
+          headers: { Accept: "application/json" },
+        });
+        if (!res.ok) throw new Error("bad response");
+        const data = await res.json();
+        if (cancelled) return;
+        setJoke(data.joke);
+        setJokeKey((k) => k + 1);
+        setFailed(false);
+      } catch {
+        if (!cancelled) setFailed(true);
+      }
+    }
+
+    fetchJoke();
+    const interval = setInterval(fetchJoke, DAD_JOKE_REFRESH_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
+
+  return (
+    <div className="portal-joke fade-up">
+      <p className="portal-joke-label">Dad Joke</p>
+      <p key={jokeKey} className="portal-joke-text">
+        {joke ?? (failed ? "Couldn't fetch one — even the joke API needed a minute." : "Loading a terrible joke…")}
+      </p>
+    </div>
+  );
+}
+
 function TiltCard({ href, label, desc, Icon, className = "", badge, iconSize = 26 }) {
   const ref = useRef(null);
 
@@ -191,6 +235,8 @@ export default function Portal() {
           <span className="portal-caret" aria-hidden="true" />
         </p>
       </div>
+
+      <DadJoke />
 
       <Section title="Tools" apps={[TICKERS]} />
 
