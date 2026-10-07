@@ -77,6 +77,35 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+.portal-terminal {
+  font-family: "SF Mono", "Menlo", "Consolas", monospace;
+  font-size: clamp(0.78rem, 1.8vw, 0.88rem);
+  line-height: 1.6;
+}
+
+.portal-prompt {
+  color: var(--accent);
+}
+
+.portal-caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.05em;
+  background: var(--accent);
+  animation: caret-blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-caret { animation: none; }
+}
+
 /* ---------- Shared card + tilt mechanics ---------- */
 
 .portal-grid {
