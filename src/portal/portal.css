@@ -2,7 +2,7 @@
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;
-  padding: clamp(2.5rem, 8vh, 5rem) 1.25rem 4rem;
+  padding: clamp(3.5rem, 12vh, 7.5rem) 1.25rem 4rem;
   max-width: 1000px;
   margin: 0 auto;
 }
@@ -22,11 +22,11 @@
   position: relative;
   z-index: 1;
   text-align: center;
-  margin-bottom: clamp(2.2rem, 6vh, 3.5rem);
+  margin-bottom: clamp(3.2rem, 9vh, 5rem);
 }
 
 .portal-title {
-  font-size: clamp(2.1rem, 6.5vw, 3.4rem) !important;
+  font-size: clamp(2.3rem, 7.5vw, 3.9rem) !important;
   font-weight: 600 !important;
   letter-spacing: -0.01em;
   color: var(--fg) !important;
@@ -79,7 +79,7 @@
 
 .portal-terminal {
   font-family: "SF Mono", "Menlo", "Consolas", monospace;
-  font-size: clamp(0.78rem, 1.8vw, 0.88rem);
+  font-size: clamp(0.84rem, 2vw, 0.98rem);
   line-height: 1.6;
 }
 
@@ -109,35 +109,110 @@
 .portal-joke {
   position: relative;
   z-index: 1;
-  max-width: 30rem;
-  margin: 0 auto clamp(2rem, 5vh, 2.8rem);
-  padding: 1rem 1.3rem;
+  max-width: 32rem;
+  margin: 0 auto clamp(3.2rem, 8vh, 4.5rem);
   text-align: center;
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
 }
 
-.portal-joke-label {
+.portal-joke-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   font-family: var(--font-display);
   font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   color: var(--accent);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.95rem;
+}
+
+.portal-joke-head .icon {
+  color: var(--accent);
 }
 
 .portal-joke-text {
-  font-size: 0.92rem;
-  color: var(--fg-dim);
-  line-height: 1.5;
-  min-height: 2.6em;
+  min-height: 3.2em;
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: tagline-in 0.4s ease both;
+  padding: 0 0.2rem;
+}
+
+.portal-joke-quote {
+  position: relative;
+  display: inline;
+  font-family: var(--font-display);
+  font-size: clamp(1rem, 2.3vw, 1.15rem);
+  font-weight: 500;
+  color: var(--fg);
+  line-height: 1.55;
+  animation: joke-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.portal-joke-quote::before,
+.portal-joke-quote::after {
+  font-size: 1.3em;
+  color: var(--accent);
+  opacity: 0.55;
+}
+
+.portal-joke-quote::before { content: "\201C"; margin-right: 0.08em; }
+.portal-joke-quote::after { content: "\201D"; margin-left: 0.08em; }
+
+@keyframes joke-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-joke-quote { animation: none; }
+}
+
+.portal-feature {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  max-width: 26rem;
+  margin: 0 auto clamp(3.5rem, 9vh, 5rem);
+  padding: 0.5rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.portal-feature-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 4.2vw, 1.9rem);
+  font-weight: 600;
+  color: var(--fg);
+  transition: color 0.25s ease;
+}
+
+.portal-feature:hover .portal-feature-title,
+.portal-feature:focus-visible .portal-feature-title {
+  color: var(--accent);
+}
+
+.portal-feature-ornament {
+  color: var(--accent);
+  font-size: 0.55em;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+}
+
+.portal-feature:hover .portal-feature-ornament,
+.portal-feature:focus-visible .portal-feature-ornament {
+  transform: scale(1.4) rotate(90deg);
+}
+
+.portal-feature-desc {
+  font-size: 0.88rem;
+  color: var(--fg-dim);
+  line-height: 1.55;
 }
 
 /* ---------- Shared card + tilt mechanics ---------- */
@@ -304,7 +379,7 @@
   flex-direction: column;
   align-items: center;
   gap: 1.1rem;
-  margin: clamp(0.5rem, 2vh, 1.2rem) 0 clamp(1.6rem, 4vh, 2.2rem);
+  margin: 0 0 clamp(1.6rem, 4vh, 2.2rem);
 }
 
 .portal-wip-toggle {
@@ -340,7 +415,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.7rem;
-  margin-top: clamp(1.5rem, 4vh, 2.5rem);
+  margin-top: clamp(1.8rem, 5vh, 3rem);
 }
 
 .portal-about-link {

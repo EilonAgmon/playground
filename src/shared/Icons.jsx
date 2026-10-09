@@ -19,6 +19,15 @@ export function PongIcon({ size = 24 }) {
   );
 }
 
+export function JokeIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M4 6.5h16v9H10l-4 3.5v-3.5H4z" />
+      <path d="M8 10h8M8 12.5h5" />
+    </svg>
+  );
+}
+
 export function AboutIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

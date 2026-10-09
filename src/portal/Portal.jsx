@@ -19,6 +19,7 @@ import {
   TickersIcon,
   PcaIcon,
   AboutIcon,
+  JokeIcon,
   RosterIcon,
   ShatterIcon,
   NibbleIcon,
@@ -152,9 +153,12 @@ function DadJoke() {
 
   return (
     <div className="portal-joke fade-up">
-      <p className="portal-joke-label">Dad Joke</p>
+      <div className="portal-joke-head">
+        <JokeIcon size={14} />
+        <span>Dad Joke</span>
+      </div>
       <p key={jokeKey} className="portal-joke-text">
-        {joke ?? (failed ? "Couldn't fetch one — even the joke API needed a minute." : "Loading a terrible joke…")}
+        <span className="portal-joke-quote">{joke ?? (failed ? "Couldn't fetch one — even the joke API needed a minute." : "Loading a terrible joke…")}</span>
       </p>
     </div>
   );
@@ -238,7 +242,14 @@ export default function Portal() {
 
       <DadJoke />
 
-      <Section title="Tools" apps={[TICKERS]} />
+      <a href={TICKERS.href} className="portal-feature fade-up">
+        <span className="portal-feature-title">
+          <span className="portal-feature-ornament" aria-hidden="true">&#9670;</span>
+          {TICKERS.label}
+          <span className="portal-feature-ornament" aria-hidden="true">&#9670;</span>
+        </span>
+        <span className="portal-feature-desc">{TICKERS.desc}</span>
+      </a>
 
       <div className="portal-wip fade-up">
         <button
