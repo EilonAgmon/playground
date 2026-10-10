@@ -75,11 +75,9 @@ const TICKERS = TOOLS.find((app) => app.href === "tickers/");
 const WIP_APPS = [...FEATURED, ...GAMES, ...TOOLS.filter((app) => app.href !== "tickers/")];
 
 const STATUS_LINES = [
-  "currently growing tomatoes and an eng org",
   "shipped slot games for a living, now building toy ones",
   "eighteen years in, still debugging things that worked five minutes ago",
   "collecting passport stamps between sprints",
-  "grows a garden, grows a team, same instinct",
 ];
 
 function useTypewriter(lines, { typeMs = 45, deleteMs = 25, holdMs = 1800, pauseMs = 300 } = {}) {
