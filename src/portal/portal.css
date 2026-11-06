@@ -63,49 +63,6 @@
   to { background-position: -200% 0; }
 }
 
-.portal-tagline {
-  color: var(--fg-dim);
-  font-size: clamp(0.9rem, 2.2vw, 1.05rem);
-  max-width: 34rem;
-  margin: 0 auto;
-  min-height: 1.4em;
-  animation: tagline-in 0.5s ease both;
-}
-
-@keyframes tagline-in {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.portal-terminal {
-  font-family: "SF Mono", "Menlo", "Consolas", monospace;
-  font-size: clamp(0.84rem, 2vw, 0.98rem);
-  line-height: 1.6;
-}
-
-.portal-prompt {
-  color: var(--accent);
-}
-
-.portal-caret {
-  display: inline-block;
-  width: 0.5em;
-  height: 1em;
-  margin-left: 0.05em;
-  background: var(--accent);
-  animation: caret-blink 1s step-end infinite;
-  vertical-align: text-bottom;
-}
-
-@keyframes caret-blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .portal-caret { animation: none; }
-}
-
 .portal-joke {
   position: relative;
   z-index: 1;

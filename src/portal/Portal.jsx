@@ -74,47 +74,6 @@ const TOOLS = [
 const TICKERS = TOOLS.find((app) => app.href === "tickers/");
 const WIP_APPS = [...FEATURED, ...GAMES, ...TOOLS.filter((app) => app.href !== "tickers/")];
 
-const STATUS_LINES = [
-  "shipped slot games for a living, now building toy ones",
-  "eighteen years in, still debugging things that worked five minutes ago",
-  "collecting passport stamps between sprints",
-];
-
-function useTypewriter(lines, { typeMs = 45, deleteMs = 25, holdMs = 1800, pauseMs = 300 } = {}) {
-  const [lineIndex, setLineIndex] = useState(0);
-  const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
-  const reducedMotion = useRef(false);
-
-  useEffect(() => {
-    reducedMotion.current = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-    if (reducedMotion.current) setText(lines[0]);
-  }, [lines]);
-
-  useEffect(() => {
-    if (reducedMotion.current) return;
-    const current = lines[lineIndex];
-    const atFullLine = !deleting && text === current;
-    const atEmptyLine = deleting && text === "";
-    const delay = atFullLine ? holdMs : atEmptyLine ? pauseMs : deleting ? deleteMs : typeMs;
-
-    const timeout = setTimeout(() => {
-      if (atFullLine) {
-        setDeleting(true);
-      } else if (atEmptyLine) {
-        setDeleting(false);
-        setLineIndex((i) => (i + 1) % lines.length);
-      } else {
-        setText(deleting ? current.slice(0, text.length - 1) : current.slice(0, text.length + 1));
-      }
-    }, delay);
-
-    return () => clearTimeout(timeout);
-  }, [text, deleting, lineIndex, lines, typeMs, deleteMs, holdMs, pauseMs]);
-
-  return text;
-}
-
 const DAD_JOKE_REFRESH_MS = 10000;
 
 function DadJoke() {
@@ -215,7 +174,6 @@ function Section({ title, apps }) {
 
 export default function Portal() {
   const [wipOpen, setWipOpen] = useState(false);
-  const statusText = useTypewriter(STATUS_LINES);
 
   useEffect(() => {
     function handleMove(e) {
@@ -232,10 +190,6 @@ export default function Portal() {
         <h1 className="display-font portal-title">
           <span className="portal-title-glow">Eilon Agmon</span>
         </h1>
-        <p className="portal-tagline portal-terminal">
-          <span className="portal-prompt">&gt;</span> {statusText}
-          <span className="portal-caret" aria-hidden="true" />
-        </p>
       </div>
 
       <DadJoke />
