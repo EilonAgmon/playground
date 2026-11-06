@@ -18,7 +18,6 @@ import {
   GlobeIcon,
   TickersIcon,
   PcaIcon,
-  AboutIcon,
   JokeIcon,
   RosterIcon,
   ShatterIcon,
@@ -26,6 +25,7 @@ import {
   ComboIcon,
   WaypointIcon,
 } from "../shared/Icons.jsx";
+import { CONTACT } from "../about/resumeData.js";
 import "./portal.css";
 
 const FEATURED = [
@@ -72,7 +72,7 @@ const TOOLS = [
 ];
 
 const TICKERS = TOOLS.find((app) => app.href === "tickers/");
-const WIP_APPS = [...FEATURED, ...GAMES, ...TOOLS.filter((app) => app.href !== "tickers/")];
+const MORE_APPS = [...GAMES, ...TOOLS.filter((app) => app.href !== "tickers/")];
 
 const DAD_JOKE_REFRESH_MS = 10000;
 
@@ -159,21 +159,8 @@ function TiltCard({ href, label, desc, Icon, className = "", badge, iconSize = 2
   );
 }
 
-function Section({ title, apps }) {
-  return (
-    <div className="portal-section fade-up">
-      <p className="portal-section-title">{title}</p>
-      <div className="portal-grid">
-        {apps.map((app) => (
-          <TiltCard key={app.href} {...app} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function Portal() {
-  const [wipOpen, setWipOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
 
   useEffect(() => {
     function handleMove(e) {
@@ -190,6 +177,35 @@ export default function Portal() {
         <h1 className="display-font portal-title">
           <span className="portal-title-glow">Eilon Agmon</span>
         </h1>
+        <p className="portal-role">Director of Engineering, SciPlay — 18 years scaling gaming &amp; SaaS engineering orgs</p>
+        <div className="portal-cta-row">
+          <a href="about/" className="portal-cta portal-cta-primary">Résumé &amp; experience</a>
+          <a href={`mailto:${CONTACT.email}`} className="portal-cta portal-cta-secondary">Email me</a>
+        </div>
+      </div>
+
+      <div className="portal-showcase fade-up">
+        <p className="portal-showcase-label">Shipped for fun</p>
+        <div className="portal-featured">
+          {FEATURED.map((app) => (
+            <TiltCard key={app.href} {...app} className="featured" iconSize={32} />
+          ))}
+        </div>
+        <button
+          type="button"
+          className="portal-more-toggle"
+          onClick={() => setMoreOpen((open) => !open)}
+          aria-expanded={moreOpen}
+        >
+          {moreOpen ? "Show less" : `+ ${MORE_APPS.length} more small games & tools →`}
+        </button>
+        {moreOpen && (
+          <div className="portal-grid portal-more-grid">
+            {MORE_APPS.map((app) => (
+              <TiltCard key={app.href} {...app} />
+            ))}
+          </div>
+        )}
       </div>
 
       <DadJoke />
@@ -203,23 +219,7 @@ export default function Portal() {
         <span className="portal-feature-desc">{TICKERS.desc}</span>
       </a>
 
-      <div className="portal-wip fade-up">
-        <button
-          type="button"
-          className="portal-wip-toggle"
-          onClick={() => setWipOpen((open) => !open)}
-          aria-expanded={wipOpen}
-        >
-          {wipOpen ? "Hide" : "WIP — don't judge"}
-        </button>
-        {wipOpen && <Section title="Everything else (parked for now)" apps={WIP_APPS} />}
-      </div>
-
       <div className="portal-footer fade-up">
-        <a href="about/" className="portal-about-link">
-          <AboutIcon size={16} />
-          About &amp; resume
-        </a>
         <Anchor href="https://github.com/EilonAgmon" target="_blank" rel="noopener" id="identity" underline="hover">
           github.com/EilonAgmon
         </Anchor>
