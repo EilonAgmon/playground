@@ -20,6 +20,10 @@ export function milestoneFor(count) {
   return [...MILESTONES].reverse().find((m) => count >= m.min) || MILESTONES[0];
 }
 
+export function nextMilestoneFor(count) {
+  return MILESTONES.find((m) => m.min > count) || null;
+}
+
 const NAMES = [
   "Maya", "Noah", "Ravi", "Elena", "Omar", "Zoe", "Leo", "Aisha", "Sam", "Priya",
   "Jonas", "Mei", "Diego", "Ingrid", "Kwame", "Talia", "Yuki", "Nora", "Theo", "Sofia",

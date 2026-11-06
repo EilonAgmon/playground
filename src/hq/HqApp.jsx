@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Header } from "../shared/Header.jsx";
+import { CashIcon, MoraleIcon, VelocityIcon, QualityIcon, DauIcon } from "../shared/Icons.jsx";
 import {
   LEVELS,
   LEVEL_MAP,
   EVENTS,
   milestoneFor,
+  nextMilestoneFor,
   createInitialState,
   tick,
   hireEngineer,
@@ -18,6 +20,8 @@ import {
   STAT_HELP,
 } from "./engine.js";
 import "./hq.css";
+
+const LEVEL_TIER = { junior: 1, mid: 2, senior: 3, staff: 4 };
 
 const INTRO_SEEN_KEY = "hq_intro_seen_v1";
 
@@ -96,6 +100,10 @@ export default function HqApp() {
   }, [paused, state.gameOver]);
 
   const milestone = milestoneFor(state.engineers.length);
+  const nextMilestone = nextMilestoneFor(state.engineers.length);
+  const milestoneProgress = nextMilestone
+    ? Math.min(100, ((state.engineers.length - milestone.min) / (nextMilestone.min - milestone.min)) * 100)
+    : 100;
   const dau = Math.min(350000, state.reputation * 900);
 
   function dismissIntro() {
@@ -150,6 +158,16 @@ export default function HqApp() {
           <p className="hq-milestone">
             Week {state.week} · {milestone.title}
           </p>
+          {nextMilestone && (
+            <div className="hq-milestone-progress">
+              <div className="hq-milestone-bar">
+                <div className="hq-milestone-fill" style={{ width: `${milestoneProgress}%` }} />
+              </div>
+              <span className="hq-milestone-next">
+                Next: {nextMilestone.title} ({state.engineers.length}/{nextMilestone.min})
+              </span>
+            </div>
+          )}
           <button
             className="hq-pause-btn"
             onClick={() => setPaused((p) => !p)}
@@ -161,27 +179,36 @@ export default function HqApp() {
         </div>
 
         <div className="hq-stats fade-up">
-          <div className="hq-stat">
-            <span>Cash</span>
+          <div className="hq-stat tone-gold">
+            <div className="hq-stat-head">
+              <CashIcon size={16} />
+              <span>Cash</span>
+            </div>
             <strong className={`${state.cash < 20 ? "warn" : ""} ${cashFlash ? `flash-${cashFlash}` : ""}`}>
               ${Math.round(state.cash)}
             </strong>
             <small className="hq-stat-help">{STAT_HELP.cash}</small>
           </div>
-          <div className="hq-stat">
-            <span>Morale</span>
+          <div className="hq-stat tone-green">
+            <div className="hq-stat-head">
+              <MoraleIcon size={16} />
+              <span>Morale</span>
+            </div>
             <div className="hq-bar">
-              <div className="hq-bar-fill" style={{ width: `${state.morale}%`, background: "var(--accent-2)" }} />
+              <div className="hq-bar-fill tone-green" style={{ width: `${state.morale}%` }} />
             </div>
             <small className="hq-stat-help">
               {Math.round(state.morale)}/100 — {STAT_HELP.morale}
             </small>
           </div>
-          <div className="hq-stat">
-            <span>Velocity</span>
+          <div className="hq-stat tone-gold">
+            <div className="hq-stat-head">
+              <VelocityIcon size={16} />
+              <span>Velocity</span>
+            </div>
             <div className="hq-bar">
               <div
-                className="hq-bar-fill"
+                className="hq-bar-fill tone-gold"
                 style={{ width: `${Math.min(100, (state.velocity / SHIP_THRESHOLD) * 100)}%` }}
               />
             </div>
@@ -189,20 +216,23 @@ export default function HqApp() {
               {Math.round(state.velocity)}/{SHIP_THRESHOLD} — {STAT_HELP.velocity}
             </small>
           </div>
-          <div className="hq-stat">
-            <span>Quality</span>
+          <div className="hq-stat tone-green">
+            <div className="hq-stat-head">
+              <QualityIcon size={16} />
+              <span>Quality</span>
+            </div>
             <div className="hq-bar">
-              <div
-                className="hq-bar-fill"
-                style={{ width: `${state.quality}%`, background: "var(--accent-2)" }}
-              />
+              <div className="hq-bar-fill tone-green" style={{ width: `${state.quality}%` }} />
             </div>
             <small className="hq-stat-help">
               {Math.round(state.quality)}/100 — {STAT_HELP.quality}
             </small>
           </div>
-          <div className="hq-stat">
-            <span>~DAU</span>
+          <div className="hq-stat tone-blue">
+            <div className="hq-stat-head">
+              <DauIcon size={16} />
+              <span>~DAU</span>
+            </div>
             <strong>{dau.toLocaleString()}</strong>
             <small className="hq-stat-help">{STAT_HELP.dau}</small>
           </div>
@@ -215,9 +245,12 @@ export default function HqApp() {
             {state.engineers.length === 0 && <p className="hq-empty">No one left. Hire someone.</p>}
             {state.engineers.map((e) => (
               <div key={e.id} className="hq-engineer">
-                <div className="hq-engineer-info">
-                  <span className="hq-engineer-name">{e.name}</span>
-                  <span className="hq-engineer-level">{LEVEL_MAP[e.level].name}</span>
+                <div className="hq-engineer-who">
+                  <div className={`hq-avatar tier-${LEVEL_TIER[e.level]}`}>{e.name[0]}</div>
+                  <div className="hq-engineer-info">
+                    <span className="hq-engineer-name">{e.name}</span>
+                    <span className={`hq-engineer-level tier-${LEVEL_TIER[e.level]}`}>{LEVEL_MAP[e.level].name}</span>
+                  </div>
                 </div>
                 <div className="hq-engineer-actions">
                   <button
@@ -247,10 +280,13 @@ export default function HqApp() {
             {LEVELS.map((l) => (
               <button
                 key={l.key}
-                className="hq-hire-btn"
+                className={`hq-hire-btn tier-${LEVEL_TIER[l.key]}`}
                 disabled={state.cash < l.hireCost || state.gameOver}
                 onClick={() => handleHire(l.key)}
               >
+                <span className="hq-hire-tier" aria-hidden="true">
+                  {"●".repeat(LEVEL_TIER[l.key]).padEnd(4, "○")}
+                </span>
                 <span className="hq-hire-name">{l.name}</span>
                 <span className="hq-hire-cost">${l.hireCost}</span>
               </button>

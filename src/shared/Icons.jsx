@@ -19,6 +19,56 @@ export function PongIcon({ size = 24 }) {
   );
 }
 
+export function CashIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <circle cx="12" cy="12" r="8" />
+      <path d="M12 7.5v9M9.5 9.8c0-1.3 1.1-2 2.5-2s2.5.7 2.5 1.8c0 2.4-5 1.1-5 3.5 0 1.1 1.1 1.9 2.5 1.9s2.5-.7 2.5-1.9" />
+    </svg>
+  );
+}
+
+export function MoraleIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M8.5 14c.9 1.1 2.1 1.7 3.5 1.7s2.6-.6 3.5-1.7" />
+      <circle cx="9" cy="10" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="10" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function VelocityIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M4 15a8 8 0 0 1 16 0" />
+      <path d="M12 15 16 9.5" />
+      <circle cx="12" cy="15" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function QualityIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <path d="M12 3.5l7 2.6v5.4c0 4.6-3 7.9-7 9-4-1.1-7-4.4-7-9V6.1z" />
+      <path d="M9 12.3l2 2 4-4.3" />
+    </svg>
+  );
+}
+
+export function DauIcon({ size = 24 }) {
+  return (
+    <svg {...BASE} width={size} height={size}>
+      <circle cx="9" cy="8.5" r="2.6" />
+      <path d="M3.8 19c.7-3 2.6-4.6 5.2-4.6s4.5 1.6 5.2 4.6" />
+      <circle cx="16.5" cy="9.5" r="2.1" />
+      <path d="M15 14.6c2.1.2 3.5 1.6 4.1 4" />
+    </svg>
+  );
+}
+
 export function JokeIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>
