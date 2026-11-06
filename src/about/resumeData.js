@@ -2,7 +2,7 @@ export const CONTACT = {
   phone: "+972-50-4266667",
   email: "agmoneilon@gmail.com",
   location: "Tel-Aviv, Israel",
-  linkedin: "LinkedIn",
+  linkedin: "https://il.linkedin.com/in/eilonagmon",
 };
 
 export const SUMMARY =

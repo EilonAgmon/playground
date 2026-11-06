@@ -181,6 +181,7 @@ export default function Portal() {
         <div className="portal-cta-row">
           <a href="about/" className="portal-cta portal-cta-primary">Résumé &amp; experience</a>
           <a href={`mailto:${CONTACT.email}`} className="portal-cta portal-cta-secondary">Email me</a>
+          <a href={CONTACT.linkedin} target="_blank" rel="noopener" className="portal-cta portal-cta-secondary">LinkedIn</a>
         </div>
       </div>
 

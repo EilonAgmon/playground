@@ -47,9 +47,9 @@ export default function AboutApp() {
             <Text size="sm">&middot;</Text>
             <Text size="sm">{CONTACT.location}</Text>
             <Text size="sm">&middot;</Text>
-            <Text size="sm" c="dimmed">
-              {CONTACT.linkedin}
-            </Text>
+            <Anchor size="sm" href={CONTACT.linkedin} target="_blank" rel="noopener">
+              LinkedIn
+            </Anchor>
           </Group>
         </Stack>
 
