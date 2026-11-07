@@ -39,7 +39,7 @@ const FEATURED = [
   {
     href: "wheels/",
     label: "Wheels",
-    desc: "I loved the dice game in Sea of Stars, so I built my own homage to it.",
+    desc: "I loved a mini-game in Sea of Stars, so I built my own tavern wheel homage to it.",
     Icon: WheelsIcon,
   },
 ];
