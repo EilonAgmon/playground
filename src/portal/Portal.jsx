@@ -37,15 +37,15 @@ const FEATURED = [
     badge: "Newest",
   },
   {
-    href: "reels/",
-    label: "Reels",
-    desc: "An original slot machine, soup to nuts — the kind of game I ship for a living, built here just for fun.",
-    Icon: ReelsIcon,
+    href: "wheels/",
+    label: "Wheels",
+    desc: "I loved the dice game in Sea of Stars, so I built my own homage to it.",
+    Icon: WheelsIcon,
   },
 ];
 
 const GAMES = [
-  { href: "wheels/", label: "Wheels", desc: "A tavern dice game, Sea of Stars style.", Icon: WheelsIcon },
+  { href: "reels/", label: "Reels", desc: "An original harvest-themed slot machine.", Icon: ReelsIcon },
   { href: "waypoint/", label: "Waypoint", desc: "Dominoes, stamped with a passport instead of pips.", Icon: WaypointIcon },
   { href: "hq/", label: "HQ", desc: "Run your own engineering org from a 2-person startup toward 45 engineers — hire, ship, weather the incidents.", Icon: HqIcon },
   { href: "roster/", label: "Roster", desc: "Branching manager conversations — 1:1s and hiring calls.", Icon: RosterIcon },
