@@ -42,10 +42,21 @@ const FEATURED = [
     desc: "I loved a mini-game in Sea of Stars, so I built my own tavern wheel homage to it.",
     Icon: WheelsIcon,
   },
+  {
+    href: "reels/",
+    label: "Reels",
+    desc: "An original slot machine, soup to nuts — the kind of game I ship for a living, built here just for fun.",
+    Icon: ReelsIcon,
+  },
+  {
+    href: "volfied/",
+    label: "Volfied",
+    desc: "A tribute to the 1989 Taito arcade classic — carve out the field, dodge the boss, don't get cut off mid-line.",
+    Icon: VolfiedIcon,
+  },
 ];
 
 const GAMES = [
-  { href: "reels/", label: "Reels", desc: "An original harvest-themed slot machine.", Icon: ReelsIcon },
   { href: "waypoint/", label: "Waypoint", desc: "Dominoes, stamped with a passport instead of pips.", Icon: WaypointIcon },
   { href: "hq/", label: "HQ", desc: "Run your own engineering org from a 2-person startup toward 45 engineers — hire, ship, weather the incidents.", Icon: HqIcon },
   { href: "roster/", label: "Roster", desc: "Branching manager conversations — 1:1s and hiring calls.", Icon: RosterIcon },
@@ -60,7 +71,6 @@ const GAMES = [
   { href: "shatter/", label: "Shatter", desc: "An Asteroids homage — split the rocks, survive the waves.", Icon: ShatterIcon },
   { href: "nibble/", label: "Nibble", desc: "A Pac-Man homage — four ghosts, four very different plans.", Icon: NibbleIcon },
   { href: "combo/", label: "Combo", desc: "A Tetris homage — seven fast-food pieces, clear the lines.", Icon: ComboIcon },
-  { href: "volfied/", label: "Volfied", desc: "A Taito homage — carve out territory, dodge the boss.", Icon: VolfiedIcon },
   { href: "pca/", label: "PCA", desc: "A point-and-click adventure, in progress.", Icon: PcaIcon },
 ];
 
