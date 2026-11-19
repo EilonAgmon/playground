@@ -29,6 +29,14 @@ CREATE TABLE IF NOT EXISTS sessions (
   expires_at TEXT NOT NULL
 );
 
+-- Deliberately separate from `sessions` (site admin): a nuts_b_day token
+-- must never double as backoffice admin access.
+CREATE TABLE IF NOT EXISTS nuts_sessions (
+  token TEXT PRIMARY KEY,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  expires_at TEXT NOT NULL
+);
+
 -- Orphaned: the Travel app and its worker routes were removed, but this
 -- table's data (real user-submitted saved-place lists) is intentionally
 -- left in place rather than dropped. Safe to delete for real if that

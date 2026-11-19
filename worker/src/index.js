@@ -155,6 +155,77 @@ async function handleLogin(request, env, origin) {
   return json({ token }, 200, origin);
 }
 
+async function isValidNutsToken(token, env) {
+  if (!token) return false;
+  const row = await env.DB.prepare(
+    "SELECT token FROM nuts_sessions WHERE token = ? AND expires_at > datetime('now')"
+  )
+    .bind(token)
+    .first();
+  return !!row;
+}
+
+async function getNutsSessionToken(request, env) {
+  const auth = request.headers.get("Authorization") || "";
+  const match = auth.match(/^Bearer (.+)$/);
+  const token = match ? match[1] : null;
+  return (await isValidNutsToken(token, env)) ? token : null;
+}
+
+// setKey scopes a photo set within the shared bucket by R2 key prefix
+// (e.g. "early-pictures/"), so future nuts_b_day apps can each get their
+// own set without a new bucket or binding.
+async function handleNutsPhotoList(request, env, origin, setKey) {
+  const token = await getNutsSessionToken(request, env);
+  if (!token) return json({ error: "Unauthorized" }, 401, origin);
+
+  const listed = await env.NUTS_PHOTOS.list({ prefix: `${setKey}/` });
+  const photos = listed.objects.map((o) => o.key.slice(setKey.length + 1)).sort();
+  return json({ photos }, 200, origin);
+}
+
+// <img src> can't send an Authorization header, so this one takes the
+// token as a query param instead — validated the same way either path.
+async function handleNutsPhotoGet(request, env, origin, setKey, filename) {
+  const url = new URL(request.url);
+  const token = url.searchParams.get("token");
+  if (!(await isValidNutsToken(token, env))) {
+    return new Response("Unauthorized", { status: 401, headers: corsHeaders(origin) });
+  }
+
+  const obj = await env.NUTS_PHOTOS.get(`${setKey}/${filename}`);
+  if (!obj) return new Response("Not found", { status: 404, headers: corsHeaders(origin) });
+
+  return new Response(obj.body, {
+    headers: {
+      "Content-Type": obj.httpMetadata?.contentType || "application/octet-stream",
+      "Cache-Control": "private, max-age=3600",
+      ...corsHeaders(origin),
+    },
+  });
+}
+
+async function handleNutsLogin(request, env, origin) {
+  const body = await request.json().catch(() => ({}));
+  const password = typeof body.password === "string" ? body.password : "";
+
+  // Small fixed delay to blunt brute-force guessing.
+  await new Promise((r) => setTimeout(r, 300));
+
+  if (!env.NUTS_PASSWORD || !timingSafeEqual(password, env.NUTS_PASSWORD)) {
+    return json({ error: "Invalid password" }, 401, origin);
+  }
+
+  const token = await randomToken();
+  await env.DB.prepare(
+    "INSERT INTO nuts_sessions (token, expires_at) VALUES (?, datetime('now', '+180 days'))"
+  )
+    .bind(token)
+    .run();
+
+  return json({ token }, 200, origin);
+}
+
 async function handleLogout(request, env, origin) {
   const token = await getSessionToken(request, env);
   if (token) {
@@ -408,6 +479,26 @@ export default {
 
       if (request.method === "POST" && url.pathname === "/api/login") {
         return await handleLogin(request, env, origin);
+      }
+
+      if (request.method === "POST" && url.pathname === "/api/nuts-login") {
+        return await handleNutsLogin(request, env, origin);
+      }
+
+      const nutsPhotoListMatch = url.pathname.match(/^\/api\/nuts\/photos\/([a-z0-9-]+)$/);
+      if (request.method === "GET" && nutsPhotoListMatch) {
+        return await handleNutsPhotoList(request, env, origin, nutsPhotoListMatch[1]);
+      }
+
+      const nutsPhotoGetMatch = url.pathname.match(/^\/api\/nuts\/photo\/([a-z0-9-]+)\/(.+)$/);
+      if (request.method === "GET" && nutsPhotoGetMatch) {
+        return await handleNutsPhotoGet(
+          request,
+          env,
+          origin,
+          nutsPhotoGetMatch[1],
+          decodeURIComponent(nutsPhotoGetMatch[2])
+        );
       }
 
       if (request.method === "POST" && url.pathname === "/api/logout") {

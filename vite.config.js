@@ -32,6 +32,7 @@ export default defineConfig({
         nibble: resolve(__dirname, "nibble/index.html"),
         combo: resolve(__dirname, "combo/index.html"),
         waypoint: resolve(__dirname, "waypoint/index.html"),
+        nuts_b_day: resolve(__dirname, "nuts_b_day/index.html"),
       },
     },
   },

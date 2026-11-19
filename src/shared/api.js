@@ -29,6 +29,17 @@ export const api = {
   login(password) {
     return request("/api/login", { method: "POST", body: JSON.stringify({ password }) });
   },
+  nutsLogin(password) {
+    return request("/api/nuts-login", { method: "POST", body: JSON.stringify({ password }) });
+  },
+  nutsPhotoList(setKey, token) {
+    return request(`/api/nuts/photos/${setKey}`, { headers: { Authorization: `Bearer ${token}` } }).then((r) =>
+      r.ok ? r.json() : { photos: [] }
+    );
+  },
+  nutsPhotoUrl(setKey, filename, token) {
+    return `${API_BASE}/api/nuts/photo/${setKey}/${encodeURIComponent(filename)}?token=${encodeURIComponent(token)}`;
+  },
   logout(token) {
     return request("/api/logout", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
   },

@@ -1,0 +1,210 @@
+body {
+  padding: 2rem 1.25rem 4rem;
+}
+
+#nutsGate {
+  min-height: calc(100vh - 52px);
+  min-height: calc(100dvh - 52px);
+  text-align: center;
+}
+
+.nuts-lock {
+  font-size: 2.2rem;
+  opacity: 0.8;
+}
+
+#nutsLauncher {
+  min-height: calc(100vh - 52px);
+  min-height: calc(100dvh - 52px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.nuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  width: 100%;
+}
+
+.nuts-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+  padding: 1.3rem 1.2rem;
+  background: var(--surface);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--fg);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.nuts-card:hover, .nuts-card:focus-visible {
+  border-color: var(--line-strong);
+  background: var(--surface-hover);
+  transform: translateY(-2px);
+}
+
+.nuts-card-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.nuts-card-desc {
+  font-size: 0.82rem;
+  color: var(--fg-dim);
+}
+
+.nuts-app-screen {
+  max-width: 60rem;
+  margin: 0 auto;
+}
+
+.nuts-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1.2rem;
+  color: var(--fg-dim);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.4rem 0.9rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.nuts-back:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nuts-loading {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--fg-faint);
+  font-size: 0.85rem;
+}
+
+.nuts-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--fg-dim);
+}
+
+.nuts-empty-hint {
+  font-size: 0.82rem;
+  color: var(--fg-faint);
+  margin-top: 0.4rem;
+}
+
+.nuts-empty-hint code {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.78rem;
+}
+
+.nuts-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.7rem;
+}
+
+.nuts-thumb {
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface);
+  cursor: pointer;
+  aspect-ratio: 1;
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.nuts-thumb:hover, .nuts-thumb:focus-visible {
+  border-color: var(--accent);
+  transform: scale(1.02);
+}
+
+.nuts-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.nuts-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8, 8, 10, 0.9);
+  backdrop-filter: blur(6px);
+  padding: 1.5rem;
+}
+
+.nuts-lightbox-img {
+  max-width: min(90vw, 56rem);
+  max-height: 85vh;
+  border-radius: 10px;
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.7);
+}
+
+.nuts-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fg);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.nuts-lightbox-nav:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.nuts-lightbox-nav.prev { left: 1rem; }
+.nuts-lightbox-nav.next { right: 1rem; }
+
+.nuts-lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--fg);
+  font-size: 1.3rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.nuts-lightbox-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
