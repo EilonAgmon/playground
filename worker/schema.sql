@@ -37,6 +37,20 @@ CREATE TABLE IF NOT EXISTS nuts_sessions (
   expires_at TEXT NOT NULL
 );
 
+-- Photo bytes for nuts_b_day apps, stored here instead of R2 — enabling
+-- R2 now requires a card on file, D1 didn't. set_key scopes a photo set
+-- by app (e.g. "early-pictures"), so future apps can each get their own
+-- set without new infra. D1 caps a single value at 2MB, so images get
+-- resized before insert.
+CREATE TABLE IF NOT EXISTS nuts_photos (
+  set_key TEXT NOT NULL,
+  filename TEXT NOT NULL,
+  content_type TEXT NOT NULL,
+  data BLOB NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (datetime('now')),
+  PRIMARY KEY (set_key, filename)
+);
+
 -- Orphaned: the Travel app and its worker routes were removed, but this
 -- table's data (real user-submitted saved-place lists) is intentionally
 -- left in place rather than dropped. Safe to delete for real if that

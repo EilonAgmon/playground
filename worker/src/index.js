@@ -179,8 +179,10 @@ async function handleNutsPhotoList(request, env, origin, setKey) {
   const token = await getNutsSessionToken(request, env);
   if (!token) return json({ error: "Unauthorized" }, 401, origin);
 
-  const listed = await env.NUTS_PHOTOS.list({ prefix: `${setKey}/` });
-  const photos = listed.objects.map((o) => o.key.slice(setKey.length + 1)).sort();
+  const rows = await env.DB.prepare("SELECT filename FROM nuts_photos WHERE set_key = ? ORDER BY filename")
+    .bind(setKey)
+    .all();
+  const photos = rows.results.map((r) => r.filename);
   return json({ photos }, 200, origin);
 }
 
@@ -193,12 +195,16 @@ async function handleNutsPhotoGet(request, env, origin, setKey, filename) {
     return new Response("Unauthorized", { status: 401, headers: corsHeaders(origin) });
   }
 
-  const obj = await env.NUTS_PHOTOS.get(`${setKey}/${filename}`);
-  if (!obj) return new Response("Not found", { status: 404, headers: corsHeaders(origin) });
+  const row = await env.DB.prepare(
+    "SELECT content_type, data FROM nuts_photos WHERE set_key = ? AND filename = ?"
+  )
+    .bind(setKey, filename)
+    .first();
+  if (!row) return new Response("Not found", { status: 404, headers: corsHeaders(origin) });
 
-  return new Response(obj.body, {
+  return new Response(row.data, {
     headers: {
-      "Content-Type": obj.httpMetadata?.contentType || "application/octet-stream",
+      "Content-Type": row.content_type || "application/octet-stream",
       "Cache-Control": "private, max-age=3600",
       ...corsHeaders(origin),
     },
