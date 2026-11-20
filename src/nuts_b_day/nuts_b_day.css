@@ -3,6 +3,115 @@ body {
 }
 
 .nuts-page {
-  max-width: 60rem;
+  max-width: 68rem;
   margin: 0 auto;
+}
+
+/* ---------- Main page: the big print, then the apps ---------- */
+
+.nuts-home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2.2rem, 6vh, 3.2rem);
+}
+
+.nuts-feature {
+  width: min(100%, 32rem);
+  margin: 0;
+  padding: 0.8rem 0.8rem 2.4rem;
+  background: #faf3e4;
+  border-radius: 4px;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7), 0 4px 10px rgba(0, 0, 0, 0.3);
+  transform: rotate(-1.2deg);
+}
+
+.nuts-feature-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  background: #e8dcc6;
+}
+
+.nuts-apps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  animation-delay: 0.12s;
+}
+
+.nuts-app {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+  width: min(100%, 24rem);
+  padding: 1.1rem 1.4rem 1.1rem 1.2rem;
+  text-align: left;
+  color: #f6ead6;
+  background:
+    radial-gradient(420px circle at 0% 0%, rgba(201, 138, 75, 0.18), transparent 60%),
+    linear-gradient(180deg, #2a1d12, #1c130c);
+  border: 1px solid rgba(201, 138, 75, 0.25);
+  border-radius: 18px;
+  box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.nuts-app:hover,
+.nuts-app:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(201, 138, 75, 0.55);
+}
+
+/* Three little prints fanned out like a stack on a table. */
+.nuts-app-covers {
+  position: relative;
+  flex: none;
+  width: 84px;
+  height: 92px;
+}
+
+.nuts-app-covers img {
+  position: absolute;
+  inset: 8px 12px;
+  width: 60px;
+  height: 72px;
+  object-fit: cover;
+  padding: 3px 3px 9px;
+  background: #faf3e4;
+  border-radius: 2px;
+  box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.6);
+  transform: rotate(calc((var(--i) - 1) * 9deg)) translateX(calc((var(--i) - 1) * 6px));
+  transition: transform 0.25s ease;
+}
+
+.nuts-app:hover .nuts-app-covers img {
+  transform: rotate(calc((var(--i) - 1) * 14deg)) translateX(calc((var(--i) - 1) * 10px));
+}
+
+.nuts-app-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.nuts-app-label {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.nuts-app-desc {
+  font-size: 0.85rem;
+  color: #c9b79a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nuts-app,
+  .nuts-app-covers img {
+    transition: none;
+  }
 }

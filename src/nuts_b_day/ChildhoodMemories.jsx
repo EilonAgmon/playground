@@ -63,10 +63,6 @@ export default function ChildhoodMemories() {
 
   return (
     <div className="cm-page">
-      <figure className="cm-feature fade-up">
-        <img src={api.nutsPhotoUrl("nuts-hero", "nut.jpg")} alt="" className="cm-feature-img" />
-      </figure>
-
       <div className="cm-hero fade-up">
         <p className="cm-eyebrow">a look back</p>
         <h1 className="cm-title display-font">Childhood Memories</h1>
