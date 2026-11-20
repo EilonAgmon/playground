@@ -1,0 +1,167 @@
+/* ---------- Gifts: folder boxes ---------- */
+
+.gf-folders {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+  gap: clamp(0.8rem, 2.5vw, 1.5rem);
+}
+
+@media (min-width: 640px) {
+  .gf-folders {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+@media (max-width: 639px) {
+  .gf-folder-text {
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.7rem 0.8rem 0.8rem;
+  }
+
+  .gf-folder-title {
+    font-size: 1rem;
+  }
+}
+
+.gf-folder {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  text-align: left;
+  color: #f6ead6;
+  background: #2a1d12;
+  border: 1px solid rgba(201, 138, 75, 0.25);
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 16px 30px -18px rgba(0, 0, 0, 0.7);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.gf-folder:hover,
+.gf-folder:focus-visible {
+  transform: translateY(-3px);
+  border-color: rgba(201, 138, 75, 0.6);
+}
+
+.gf-folder-cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 3;
+  background: #3a2817;
+}
+
+.gf-folder-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* A ribbon tied across the cover, like a wrapped present. */
+.gf-ribbon,
+.gf-ribbon::after {
+  position: absolute;
+  background: rgba(192, 64, 52, 0.82);
+  box-shadow: 0 0 0 1px rgba(255, 220, 190, 0.18);
+}
+
+.gf-ribbon {
+  top: 0;
+  bottom: 0;
+  left: calc(50% - 7px);
+  width: 14px;
+  transition: opacity 0.25s ease;
+}
+
+.gf-ribbon::after {
+  content: "";
+  left: calc(-50vw);
+  width: 100vw;
+  top: calc(50% - 7px);
+  height: 14px;
+}
+
+.gf-folder-cover {
+  overflow: hidden;
+}
+
+.gf-folder:hover .gf-ribbon,
+.gf-folder:focus-visible .gf-ribbon {
+  opacity: 0;
+}
+
+.gf-folder-text {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem 0.95rem;
+}
+
+.gf-folder-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.gf-folder-count {
+  flex: none;
+  font-size: 0.78rem;
+  color: #c9b79a;
+}
+
+/* ---------- Gifts: items in one folder ---------- */
+
+.gf-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: clamp(1.2rem, 3vw, 1.8rem);
+}
+
+.gf-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  padding: 0.6rem 0.6rem 0.9rem;
+  background: #faf3e4;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 14px 26px -14px rgba(0, 0, 0, 0.7);
+  transition: transform 0.2s ease;
+}
+
+.gf-item:hover,
+.gf-item:focus-visible {
+  transform: translateY(-3px) rotate(-0.6deg);
+}
+
+.gf-item-photo {
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #e8dcc6;
+}
+
+.gf-item-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.gf-item-caption {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #3a2817;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gf-folder,
+  .gf-item,
+  .gf-ribbon {
+    transition: none;
+  }
+}

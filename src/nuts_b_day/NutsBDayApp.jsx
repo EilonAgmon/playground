@@ -1,42 +1,64 @@
 import { useEffect, useState } from "react";
 import { api } from "../shared/api.js";
 import ChildhoodMemories from "./ChildhoodMemories.jsx";
+import { GIFT_FOLDERS, GiftFolder, GiftsHome } from "./Gifts.jsx";
 import "./nuts_b_day.css";
 
-// Each app is opened via the URL hash (#childhood-memories), so the
-// browser's own Back returns to the main page. There are deliberately no
-// links or back buttons anywhere on this page.
+// Every screen is addressed by the URL hash (#gifts, #gifts/lego, ...), so
+// the browser's own Back steps up a level. There are deliberately no links
+// or back buttons anywhere on this page.
 const APPS = [
   {
     key: "childhood-memories",
     label: "Childhood Memories",
     desc: "A look back.",
-    covers: ["01-donut-girl.jpg", "07-mother-daughter.jpg", "22-window-trio.jpg"],
-    render: () => <ChildhoodMemories />,
+    covers: [
+      ["childhood-memories", "01-donut-girl.jpg"],
+      ["childhood-memories", "07-mother-daughter.jpg"],
+      ["childhood-memories", "22-window-trio.jpg"],
+    ],
+  },
+  {
+    key: "gifts",
+    label: "Gifts",
+    desc: "Wrapped with love.",
+    covers: [
+      ["gifts-records", "Nutcracker Record.jpg"],
+      ["gifts-partnership", "Waterman 1.jpg"],
+      ["gifts-clayface", "ClayFace And Batman.jpg"],
+    ],
   },
 ];
 
-function currentScreen() {
-  const key = window.location.hash.slice(1);
-  return APPS.some((a) => a.key === key) ? key : null;
+function readRoute() {
+  const [app, sub] = window.location.hash.slice(1).split("/");
+  if (app === "childhood-memories") return { app };
+  if (app === "gifts") {
+    return GIFT_FOLDERS.some((f) => f.slug === sub) ? { app, sub } : { app };
+  }
+  return { app: null };
+}
+
+function renderRoute(route) {
+  if (route.app === "childhood-memories") return <ChildhoodMemories />;
+  if (route.app === "gifts") return route.sub ? <GiftFolder slug={route.sub} /> : <GiftsHome />;
+  return null;
 }
 
 export default function NutsBDayApp() {
-  const [screen, setScreen] = useState(currentScreen);
+  const [route, setRoute] = useState(readRoute);
 
   useEffect(() => {
     const onHash = () => {
-      setScreen(currentScreen());
+      setRoute(readRoute());
       window.scrollTo(0, 0);
     };
     window.addEventListener("hashchange", onHash);
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  const activeApp = APPS.find((a) => a.key === screen);
-
-  if (activeApp) {
-    return <main className="nuts-page">{activeApp.render()}</main>;
+  if (route.app) {
+    return <main className="nuts-page">{renderRoute(route)}</main>;
   }
 
   return (
@@ -55,8 +77,8 @@ export default function NutsBDayApp() {
             }}
           >
             <span className="nuts-app-covers" aria-hidden="true">
-              {a.covers.map((name, i) => (
-                <img key={name} src={api.nutsPhotoUrl(a.key, name)} alt="" style={{ "--i": i }} />
+              {a.covers.map(([set, name], i) => (
+                <img key={name} src={api.nutsPhotoUrl(set, name)} alt="" style={{ "--i": i }} />
               ))}
             </span>
             <span className="nuts-app-text">

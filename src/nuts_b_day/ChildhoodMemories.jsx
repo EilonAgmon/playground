@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../shared/api.js";
+import Lightbox from "./Lightbox.jsx";
 import "./childhood-memories.css";
 
 const SET_KEY = "childhood-memories";
@@ -18,7 +19,6 @@ const TILT = (i) => `${(((i * 53) % 9) - 4) * 0.7}deg`;
 export default function ChildhoodMemories() {
   const [filenames, setFilenames] = useState(null);
   const [openIndex, setOpenIndex] = useState(null);
-  const touchStartX = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -29,31 +29,6 @@ export default function ChildhoodMemories() {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (openIndex === null || !filenames) return;
-    function onKey(e) {
-      if (e.key === "Escape") setOpenIndex(null);
-      if (e.key === "ArrowRight") setOpenIndex((i) => (i + 1) % filenames.length);
-      if (e.key === "ArrowLeft") setOpenIndex((i) => (i - 1 + filenames.length) % filenames.length);
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [openIndex, filenames]);
-
-  function handleTouchStart(e) {
-    touchStartX.current = e.touches[0].clientX;
-  }
-
-  function handleTouchEnd(e) {
-    if (touchStartX.current == null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 40) {
-      if (dx < 0) setOpenIndex((i) => (i + 1) % filenames.length);
-      else setOpenIndex((i) => (i - 1 + filenames.length) % filenames.length);
-    }
-    touchStartX.current = null;
-  }
 
   if (filenames === null) {
     return <p className="cm-loading">Loading memories…</p>;
@@ -93,62 +68,12 @@ export default function ChildhoodMemories() {
       </div>
 
       {openIndex !== null && (
-        <div
-          className="cm-lightbox"
-          onClick={() => setOpenIndex(null)}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-        >
-          <button
-            className="cm-nav prev"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenIndex((i) => (i - 1 + filenames.length) % filenames.length);
-            }}
-            aria-label="Previous photo"
-          >
-            &#8249;
-          </button>
-
-          <div className="cm-lightbox-frame" onClick={(e) => e.stopPropagation()}>
-            <img
-              key={openIndex}
-              src={api.nutsPhotoUrl(SET_KEY, filenames[openIndex])}
-              alt=""
-              className="cm-lightbox-img"
-            />
-            <p className="cm-counter">
-              {openIndex + 1} / {filenames.length}
-            </p>
-          </div>
-
-          <button
-            className="cm-nav next"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenIndex((i) => (i + 1) % filenames.length);
-            }}
-            aria-label="Next photo"
-          >
-            &#8250;
-          </button>
-
-          <button className="cm-close" onClick={() => setOpenIndex(null)} aria-label="Close">
-            &times;
-          </button>
-
-          <div className="cm-filmstrip" onClick={(e) => e.stopPropagation()}>
-            {filenames.map((name, i) => (
-              <button
-                key={name}
-                className={`cm-filmstrip-thumb ${i === openIndex ? "active" : ""}`}
-                onClick={() => setOpenIndex(i)}
-              >
-                <img src={api.nutsPhotoUrl(SET_KEY, name)} alt="" />
-              </button>
-            ))}
-          </div>
-        </div>
+        <Lightbox
+          photos={filenames.map((name) => ({ src: api.nutsPhotoUrl(SET_KEY, name) }))}
+          index={openIndex}
+          onIndex={setOpenIndex}
+          onClose={() => setOpenIndex(null)}
+        />
       )}
     </div>
   );
