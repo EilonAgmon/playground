@@ -202,7 +202,7 @@ async function handleNutsPhotoGet(request, env, origin, setKey, filename) {
     .first();
   if (!row) return new Response("Not found", { status: 404, headers: corsHeaders(origin) });
 
-  return new Response(row.data, {
+  return new Response(new Uint8Array(row.data), {
     headers: {
       "Content-Type": row.content_type || "application/octet-stream",
       "Cache-Control": "private, max-age=3600",

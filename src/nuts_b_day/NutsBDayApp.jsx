@@ -2,17 +2,17 @@ import { useState } from "react";
 import { PasswordInput, Button, Stack, Text } from "@mantine/core";
 import { api } from "../shared/api.js";
 import { Header } from "../shared/Header.jsx";
-import EarlyPictures from "./EarlyPictures.jsx";
+import ChildhoodMemories from "./ChildhoodMemories.jsx";
 import "./nuts_b_day.css";
 
 const TOKEN_KEY = "nuts_bday_token";
 
 const APPS = [
   {
-    key: "early-pictures",
-    label: "Early Pictures",
+    key: "childhood-memories",
+    label: "Childhood Memories",
     desc: "A look back.",
-    render: (token) => <EarlyPictures token={token} />,
+    render: (token) => <ChildhoodMemories token={token} />,
   },
 ];
 
