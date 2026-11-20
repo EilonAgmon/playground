@@ -1,11 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import "./childhood-memories.css";
 
 // Full-screen photo viewer shared by every nuts_b_day gallery.
 // photos: [{ src }]. Closing only dismisses the viewer; nothing
-// here navigates away from the page.
+// here navigates away from the page. There is deliberately no swipe:
+// on phones it fired while pinch-zooming, so moving between photos is
+// done with the arrow buttons (or the keyboard, or the filmstrip).
 export default function Lightbox({ photos, index, onIndex, onClose }) {
-  const touchStartX = useRef(null);
   const count = photos.length;
   const next = () => onIndex((index + 1) % count);
   const prev = () => onIndex((index - 1 + count) % count);
@@ -20,21 +21,10 @@ export default function Lightbox({ photos, index, onIndex, onClose }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [index, count, onIndex, onClose]);
 
-  function handleTouchStart(e) {
-    touchStartX.current = e.touches[0].clientX;
-  }
-
-  function handleTouchEnd(e) {
-    if (touchStartX.current == null) return;
-    const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
-    touchStartX.current = null;
-  }
-
   const photo = photos[index];
 
   return (
-    <div className="cm-lightbox" onClick={onClose} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+    <div className="cm-lightbox" onClick={onClose}>
       {count > 1 && (
         <button
           className="cm-nav prev"
