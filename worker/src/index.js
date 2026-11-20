@@ -34,42 +34,10 @@ function json(data, status, origin) {
   });
 }
 
-async function randomToken() {
-  const bytes = crypto.getRandomValues(new Uint8Array(32));
-  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
-}
-
-function timingSafeEqual(a, b) {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
-
-async function isValidNutsToken(token, env) {
-  if (!token) return false;
-  const row = await env.DB.prepare(
-    "SELECT token FROM nuts_sessions WHERE token = ? AND expires_at > datetime('now')"
-  )
-    .bind(token)
-    .first();
-  return !!row;
-}
-
-async function getNutsSessionToken(request, env) {
-  const auth = request.headers.get("Authorization") || "";
-  const match = auth.match(/^Bearer (.+)$/);
-  const token = match ? match[1] : null;
-  return (await isValidNutsToken(token, env)) ? token : null;
-}
-
-// setKey scopes a photo set within the shared bucket by R2 key prefix
-// (e.g. "early-pictures/"), so future nuts_b_day apps can each get their
-// own set without a new bucket or binding.
+// setKey scopes a photo set in the nuts_photos table (e.g.
+// "childhood-memories"), so future nuts_b_day apps can each get their own
+// set without new infra.
 async function handleNutsPhotoList(request, env, origin, setKey) {
-  const token = await getNutsSessionToken(request, env);
-  if (!token) return json({ error: "Unauthorized" }, 401, origin);
-
   const rows = await env.DB.prepare("SELECT filename FROM nuts_photos WHERE set_key = ? ORDER BY filename")
     .bind(setKey)
     .all();
@@ -77,15 +45,7 @@ async function handleNutsPhotoList(request, env, origin, setKey) {
   return json({ photos }, 200, origin);
 }
 
-// <img src> can't send an Authorization header, so this one takes the
-// token as a query param instead — validated the same way either path.
 async function handleNutsPhotoGet(request, env, origin, setKey, filename) {
-  const url = new URL(request.url);
-  const token = url.searchParams.get("token");
-  if (!(await isValidNutsToken(token, env))) {
-    return new Response("Unauthorized", { status: 401, headers: corsHeaders(origin) });
-  }
-
   const row = await env.DB.prepare(
     "SELECT content_type, data FROM nuts_photos WHERE set_key = ? AND filename = ?"
   )
@@ -96,31 +56,10 @@ async function handleNutsPhotoGet(request, env, origin, setKey, filename) {
   return new Response(new Uint8Array(row.data), {
     headers: {
       "Content-Type": row.content_type || "application/octet-stream",
-      "Cache-Control": "private, max-age=3600",
+      "Cache-Control": "public, max-age=3600",
       ...corsHeaders(origin),
     },
   });
-}
-
-async function handleNutsLogin(request, env, origin) {
-  const body = await request.json().catch(() => ({}));
-  const password = typeof body.password === "string" ? body.password : "";
-
-  // Small fixed delay to blunt brute-force guessing.
-  await new Promise((r) => setTimeout(r, 300));
-
-  if (!env.NUTS_PASSWORD || !timingSafeEqual(password, env.NUTS_PASSWORD)) {
-    return json({ error: "Invalid password" }, 401, origin);
-  }
-
-  const token = await randomToken();
-  await env.DB.prepare(
-    "INSERT INTO nuts_sessions (token, expires_at) VALUES (?, datetime('now', '+180 days'))"
-  )
-    .bind(token)
-    .run();
-
-  return json({ token }, 200, origin);
 }
 
 // ---------- Tickers: NYSE + NASDAQ biggest-losers, categorized by name keywords ----------
@@ -309,10 +248,6 @@ export default {
     }
 
     try {
-      if (request.method === "POST" && url.pathname === "/api/nuts-login") {
-        return await handleNutsLogin(request, env, origin);
-      }
-
       const nutsPhotoListMatch = url.pathname.match(/^\/api\/nuts\/photos\/([a-z0-9-]+)$/);
       if (request.method === "GET" && nutsPhotoListMatch) {
         return await handleNutsPhotoList(request, env, origin, nutsPhotoListMatch[1]);

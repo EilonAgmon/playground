@@ -7,20 +7,20 @@ const SET_KEY = "childhood-memories";
 // photos on a table rather than a rigid grid, without jittering on re-render.
 const TILT = (i) => `${(((i * 53) % 9) - 4) * 0.7}deg`;
 
-export default function ChildhoodMemories({ token }) {
+export default function ChildhoodMemories() {
   const [filenames, setFilenames] = useState(null);
   const [openIndex, setOpenIndex] = useState(null);
   const touchStartX = useRef(null);
 
   useEffect(() => {
     let cancelled = false;
-    api.nutsPhotoList(SET_KEY, token).then((data) => {
+    api.nutsPhotoList(SET_KEY).then((data) => {
       if (!cancelled) setFilenames(data.photos || []);
     });
     return () => {
       cancelled = true;
     };
-  }, [token]);
+  }, []);
 
   useEffect(() => {
     if (openIndex === null || !filenames) return;
@@ -78,7 +78,7 @@ export default function ChildhoodMemories({ token }) {
             onClick={() => setOpenIndex(i)}
           >
             <span className="cm-polaroid-photo">
-              <img src={api.nutsPhotoUrl(SET_KEY, name, token)} alt="" />
+              <img src={api.nutsPhotoUrl(SET_KEY, name)} alt="" />
             </span>
           </button>
         ))}
@@ -105,7 +105,7 @@ export default function ChildhoodMemories({ token }) {
           <div className="cm-lightbox-frame" onClick={(e) => e.stopPropagation()}>
             <img
               key={openIndex}
-              src={api.nutsPhotoUrl(SET_KEY, filenames[openIndex], token)}
+              src={api.nutsPhotoUrl(SET_KEY, filenames[openIndex])}
               alt=""
               className="cm-lightbox-img"
             />
@@ -136,7 +136,7 @@ export default function ChildhoodMemories({ token }) {
                 className={`cm-filmstrip-thumb ${i === openIndex ? "active" : ""}`}
                 onClick={() => setOpenIndex(i)}
               >
-                <img src={api.nutsPhotoUrl(SET_KEY, name, token)} alt="" />
+                <img src={api.nutsPhotoUrl(SET_KEY, name)} alt="" />
               </button>
             ))}
           </div>

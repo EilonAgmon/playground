@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS sessions (
   expires_at TEXT NOT NULL
 );
 
--- Login sessions for the password-protected nuts_b_day area.
+-- Orphaned: nuts_b_day login sessions. The password gate was removed;
+-- existing rows are left in place, not dropped.
 CREATE TABLE IF NOT EXISTS nuts_sessions (
   token TEXT PRIMARY KEY,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),

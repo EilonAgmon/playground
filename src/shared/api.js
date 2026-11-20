@@ -18,16 +18,13 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  nutsLogin(password) {
-    return request("/api/nuts-login", { method: "POST", body: JSON.stringify({ password }) });
-  },
-  nutsPhotoList(setKey, token) {
-    return request(`/api/nuts/photos/${setKey}`, { headers: { Authorization: `Bearer ${token}` } }).then((r) =>
+  nutsPhotoList(setKey) {
+    return request(`/api/nuts/photos/${setKey}`).then((r) =>
       r.ok ? r.json() : { photos: [] }
     );
   },
-  nutsPhotoUrl(setKey, filename, token) {
-    return `${API_BASE}/api/nuts/photo/${setKey}/${encodeURIComponent(filename)}?token=${encodeURIComponent(token)}`;
+  nutsPhotoUrl(setKey, filename) {
+    return `${API_BASE}/api/nuts/photo/${setKey}/${encodeURIComponent(filename)}`;
   },
   tickers(window = "today") {
     const params = window !== "today" ? `?window=${window}` : "";
