@@ -1,3 +1,5 @@
+-- Orphaned: Pong play tracking and the Backoffice dashboard that read it
+-- were removed. Existing rows are left in place, not dropped.
 CREATE TABLE IF NOT EXISTS plays (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -23,14 +25,15 @@ CREATE TABLE IF NOT EXISTS plays (
 
 CREATE INDEX IF NOT EXISTS idx_plays_created_at ON plays (created_at);
 
+-- Orphaned: Backoffice admin login sessions. The admin login was removed;
+-- existing rows are left in place, not dropped.
 CREATE TABLE IF NOT EXISTS sessions (
   token TEXT PRIMARY KEY,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   expires_at TEXT NOT NULL
 );
 
--- Deliberately separate from `sessions` (site admin): a nuts_b_day token
--- must never double as backoffice admin access.
+-- Login sessions for the password-protected nuts_b_day area.
 CREATE TABLE IF NOT EXISTS nuts_sessions (
   token TEXT PRIMARY KEY,
   created_at TEXT NOT NULL DEFAULT (datetime('now')),

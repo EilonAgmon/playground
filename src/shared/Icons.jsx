@@ -256,16 +256,6 @@ export function SwarmIcon({ size = 24 }) {
   );
 }
 
-export function BackofficeIcon({ size = 24 }) {
-  return (
-    <svg {...BASE} width={size} height={size}>
-      <rect x="3.5" y="4" width="17" height="12" rx="2" />
-      <path d="M8 20h8M12 16v4" />
-      <path d="M7 12l2.5-3L12 11l2.5-4L17 10" />
-    </svg>
-  );
-}
-
 export function ShatterIcon({ size = 24 }) {
   return (
     <svg {...BASE} width={size} height={size}>

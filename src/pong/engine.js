@@ -1,4 +1,3 @@
-import { api } from "../shared/api.js";
 import { createParticleSystem, createScreenShake } from "../shared/gameJuice.js";
 
 // Ported near-verbatim from the original vanilla game.js. The only real change
@@ -6,28 +5,6 @@ import { createParticleSystem, createScreenShake } from "../shared/gameJuice.js"
 // of directly toggling DOM elements, so React can render the overlays.
 export function createPongEngine(canvas, { onState }) {
   const ctx = canvas.getContext("2d");
-
-  let currentPlayId = null;
-
-  function trackPlayStart() {
-    currentPlayId = null;
-    api
-      .trackStart({
-        referrer: document.referrer,
-        language: navigator.language,
-        screen: { w: window.screen.width, h: window.screen.height },
-      })
-      .then((data) => {
-        if (data) currentPlayId = data.id;
-      });
-  }
-
-  function trackPlayEnd(outcome) {
-    if (currentPlayId == null) return;
-    const id = currentPlayId;
-    currentPlayId = null;
-    api.trackEnd(id, { outcome, playerScore, aiScore }).catch(() => {});
-  }
 
   const LOGICAL_W = 800;
   const LOGICAL_H = 500;
@@ -171,13 +148,11 @@ export function createPongEngine(canvas, { onState }) {
     if (state === "title") {
       setState("playing");
       serve(Math.random() < 0.5 ? -1 : 1);
-      trackPlayStart();
     } else if (state === "gameover") {
       playerScore = 0;
       aiScore = 0;
       setState("playing");
       serve(Math.random() < 0.5 ? -1 : 1);
-      trackPlayStart();
     }
   }
 
@@ -296,7 +271,6 @@ export function createPongEngine(canvas, { onState }) {
     if (playerScore >= WIN_SCORE || aiScore >= WIN_SCORE) {
       const playerWon = playerScore > aiScore;
       setState("gameover", { text: playerWon ? "YOU WIN" : "YOU LOSE" });
-      trackPlayEnd(playerWon ? "win" : "loss");
     } else {
       serve(ball.vx > 0 ? -1 : 1);
     }

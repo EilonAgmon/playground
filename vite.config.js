@@ -9,7 +9,6 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, "index.html"),
         pong: resolve(__dirname, "pong/index.html"),
-        backoffice: resolve(__dirname, "backoffice/index.html"),
         pca: resolve(__dirname, "pca/index.html"),
         about: resolve(__dirname, "about/index.html"),
         wheels: resolve(__dirname, "wheels/index.html"),
