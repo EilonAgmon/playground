@@ -6,59 +6,56 @@ import "./gifts.css";
 
 // One entry per folder in the original "gifts" folder. title is the folder
 // name exactly; photos live in the nuts_photos table under "gifts-<slug>",
-// shown in filename order. Photos have no captions; only folders are named.
+// shown in filename order. Folders are drawn as wrapped presents (no photo);
+// wrap is the paper colour and ribbon the ribbon colour.
 export const GIFT_FOLDERS = [
-  { slug: "clayface", title: "Clayface", cover: "ClayFace And Batman.jpg" },
-  { slug: "grandparents-gifts", title: "Grandparents gifts", cover: "Pug Santa Swearshirt.jpg" },
-  { slug: "lego", title: "Lego", cover: "Disney Lego.jpg" },
-  { slug: "nautical-knowledge", title: "Nautical Knowledge", cover: "Reef Fish.jpg" },
-  { slug: "partnership", title: "Partnership", cover: "Waterman 1.jpg" },
-  { slug: "records", title: "Records", cover: "Nutcracker Record.jpg" },
+  { slug: "clayface", title: "Clayface", wrap: "#8f2d2a", ribbon: "#e9c46a" },
+  { slug: "grandparents-gifts", title: "Grandparents gifts", wrap: "#2f5d46", ribbon: "#f1e3c6" },
+  { slug: "lego", title: "Lego", wrap: "#2b4a7a", ribbon: "#e76f51" },
+  { slug: "nautical-knowledge", title: "Nautical Knowledge", wrap: "#1f6f78", ribbon: "#f4d9a6" },
+  { slug: "partnership", title: "Partnership", wrap: "#5b3a6b", ribbon: "#e9c46a" },
+  { slug: "records", title: "Records", wrap: "#a8572a", ribbon: "#f6ead6" },
 ];
 
 const setKey = (slug) => `gifts-${slug}`;
-const plural = (n) => `${n} ${n === 1 ? "gift" : "gifts"}`;
+
+function Bow({ color }) {
+  return (
+    <svg className="gf-bow" viewBox="0 0 80 40" aria-hidden="true">
+      <path d="M40 28 C30 8, 6 2, 6 18 C6 30, 26 30, 40 28 Z" fill={color} />
+      <path d="M40 28 C50 8, 74 2, 74 18 C74 30, 54 30, 40 28 Z" fill={color} />
+      <path d="M40 28 L30 40 L34 40 L40 32 Z M40 28 L50 40 L46 40 L40 32 Z" fill={color} />
+      <path d="M14 16 C18 10, 28 12, 34 22" stroke="rgba(0,0,0,0.18)" strokeWidth="2" fill="none" />
+      <path d="M66 16 C62 10, 52 12, 46 22" stroke="rgba(0,0,0,0.18)" strokeWidth="2" fill="none" />
+      <ellipse cx="40" cy="27" rx="6" ry="5" fill={color} stroke="rgba(0,0,0,0.2)" strokeWidth="1.5" />
+    </svg>
+  );
+}
 
 export function GiftsHome() {
-  const [counts, setCounts] = useState({});
-
-  useEffect(() => {
-    let cancelled = false;
-    GIFT_FOLDERS.forEach((f) => {
-      api.nutsPhotoList(setKey(f.slug)).then((data) => {
-        if (!cancelled) setCounts((c) => ({ ...c, [f.slug]: (data.photos || []).length }));
-      });
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
   return (
     <div className="cm-page">
       <div className="cm-hero fade-up">
         <p className="cm-eyebrow">wrapped with love</p>
         <h1 className="cm-title display-font">Gifts</h1>
-        <p className="cm-subtitle">Pick a box to open it.</p>
+        <p className="cm-subtitle">Pick a present to open it.</p>
       </div>
 
       <div className="gf-folders fade-up">
         {GIFT_FOLDERS.map((f) => (
           <button
             key={f.slug}
-            className="gf-folder"
+            className="gf-present"
+            style={{ "--wrap": f.wrap, "--ribbon": f.ribbon }}
             onClick={() => {
               window.location.hash = `gifts/${f.slug}`;
             }}
           >
-            <span className="gf-folder-cover">
-              <img src={api.nutsPhotoUrl(setKey(f.slug), f.cover)} alt="" loading="lazy" />
-              <span className="gf-ribbon" aria-hidden="true" />
+            <span className="gf-present-box" aria-hidden="true">
+              <Bow color={f.ribbon} />
+              <span className="gf-present-lid" />
             </span>
-            <span className="gf-folder-text">
-              <span className="gf-folder-title display-font">{f.title}</span>
-              {counts[f.slug] != null && <span className="gf-folder-count">{plural(counts[f.slug])}</span>}
-            </span>
+            <span className="gf-present-name display-font">{f.title}</span>
           </button>
         ))}
       </div>
@@ -87,9 +84,7 @@ export function GiftFolder({ slug }) {
   return (
     <div className="cm-page">
       <div className="cm-hero fade-up">
-        <p className="cm-eyebrow">gifts</p>
         <h1 className="cm-title display-font">{folder.title}</h1>
-        {filenames && <p className="cm-subtitle">{plural(filenames.length)}</p>}
       </div>
 
       {filenames === null ? (

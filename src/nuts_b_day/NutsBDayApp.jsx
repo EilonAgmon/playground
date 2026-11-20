@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../shared/api.js";
 import ChildhoodMemories from "./ChildhoodMemories.jsx";
+import Crown from "./Crown.jsx";
 import { GIFT_FOLDERS, GiftFolder, GiftsHome } from "./Gifts.jsx";
 import "./nuts_b_day.css";
 
@@ -64,7 +65,10 @@ export default function NutsBDayApp() {
   return (
     <main className="nuts-page nuts-home">
       <figure className="nuts-feature fade-up">
-        <img src={api.nutsPhotoUrl("nuts-hero", "nut.jpg")} alt="" className="nuts-feature-img" />
+        <span className="nuts-feature-photo">
+          <img src={api.nutsPhotoUrl("nuts-hero", "nut.jpg")} alt="" className="nuts-feature-img" />
+          <Crown className="nuts-crown" />
+        </span>
       </figure>
 
       <div className="nuts-apps fade-up">
