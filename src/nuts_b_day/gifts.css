@@ -122,8 +122,7 @@
 .gf-item {
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
-  padding: 0.6rem 0.6rem 0.9rem;
+  padding: 0.6rem 0.6rem 1.4rem;
   background: #faf3e4;
   border-radius: 6px;
   cursor: pointer;
@@ -149,13 +148,6 @@
   height: 100%;
   object-fit: cover;
   display: block;
-}
-
-.gf-item-caption {
-  font-size: 1.02rem;
-  font-weight: 600;
-  color: #3a2817;
-  text-align: center;
 }
 
 @media (prefers-reduced-motion: reduce) {

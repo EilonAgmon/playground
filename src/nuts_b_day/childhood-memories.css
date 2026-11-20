@@ -136,13 +136,6 @@
   to { opacity: 1; transform: scale(1); }
 }
 
-.cm-caption {
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #f6ead6;
-  text-align: center;
-}
-
 .cm-counter {
   font-size: 0.78rem;
   letter-spacing: 0.08em;

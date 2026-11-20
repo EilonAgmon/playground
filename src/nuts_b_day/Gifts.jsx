@@ -6,7 +6,7 @@ import "./gifts.css";
 
 // One entry per folder in the original "gifts" folder. title is the folder
 // name exactly; photos live in the nuts_photos table under "gifts-<slug>",
-// and each photo's caption is its filename without the extension.
+// shown in filename order. Photos have no captions; only folders are named.
 export const GIFT_FOLDERS = [
   { slug: "clayface", title: "Clayface", cover: "ClayFace And Batman.jpg" },
   { slug: "grandparents-gifts", title: "Grandparents gifts", cover: "Pug Santa Swearshirt.jpg" },
@@ -17,17 +17,6 @@ export const GIFT_FOLDERS = [
 ];
 
 const setKey = (slug) => `gifts-${slug}`;
-// Spelling fixes for captions whose file names have typos. The stored file
-// names stay as they are; only the text shown changes.
-const CAPTION_FIXES = {
-  "Pug Santa Swearshirt": "Pug Santa Sweatshirt",
-  "Disney Holday Record": "Disney Holiday Record",
-  "Carribean Cook Book": "Caribbean Cook Book",
-};
-const caption = (filename) => {
-  const name = filename.replace(/\.[a-z0-9]+$/i, "");
-  return CAPTION_FIXES[name] || name;
-};
 const plural = (n) => `${n} ${n === 1 ? "gift" : "gifts"}`;
 
 export function GiftsHome() {
@@ -93,10 +82,7 @@ export function GiftFolder({ slug }) {
     };
   }, [slug]);
 
-  const photos = (filenames || []).map((name) => ({
-    src: api.nutsPhotoUrl(setKey(slug), name),
-    caption: caption(name),
-  }));
+  const photos = (filenames || []).map((name) => ({ src: api.nutsPhotoUrl(setKey(slug), name) }));
 
   return (
     <div className="cm-page">
@@ -115,7 +101,6 @@ export function GiftFolder({ slug }) {
               <span className="gf-item-photo">
                 <img src={p.src} alt="" loading="lazy" />
               </span>
-              <span className="gf-item-caption display-font">{p.caption}</span>
             </button>
           ))}
         </div>

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import "./childhood-memories.css";
 
 // Full-screen photo viewer shared by every nuts_b_day gallery.
-// photos: [{ src, caption? }]. Closing only dismisses the viewer; nothing
+// photos: [{ src }]. Closing only dismisses the viewer; nothing
 // here navigates away from the page.
 export default function Lightbox({ photos, index, onIndex, onClose }) {
   const touchStartX = useRef(null);
@@ -49,8 +49,7 @@ export default function Lightbox({ photos, index, onIndex, onClose }) {
       )}
 
       <div className="cm-lightbox-frame" onClick={(e) => e.stopPropagation()}>
-        <img key={index} src={photo.src} alt={photo.caption || ""} className="cm-lightbox-img" />
-        {photo.caption && <p className="cm-caption display-font">{photo.caption}</p>}
+        <img key={index} src={photo.src} alt="" className="cm-lightbox-img" />
         {count > 1 && (
           <p className="cm-counter">
             {index + 1} / {count}
