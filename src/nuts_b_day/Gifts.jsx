@@ -36,9 +36,7 @@ export function GiftsHome() {
   return (
     <div className="cm-page">
       <div className="cm-hero fade-up">
-        <p className="cm-eyebrow">wrapped with love</p>
         <h1 className="cm-title display-font">Gifts</h1>
-        <p className="cm-subtitle">Pick a present to open it.</p>
       </div>
 
       <div className="gf-folders fade-up">
