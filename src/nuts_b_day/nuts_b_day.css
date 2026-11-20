@@ -8,6 +8,10 @@ body {
   text-align: center;
 }
 
+.nuts-gate-form {
+  width: min(100%, 22rem);
+}
+
 .nuts-lock {
   font-size: 2.2rem;
   opacity: 0.8;

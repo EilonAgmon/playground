@@ -47,16 +47,17 @@ export default function NutsBDayApp() {
           <span className="nuts-lock" aria-hidden="true">
             &#128274;
           </span>
-          <form onSubmit={handleLogin}>
-            <Stack gap="xs" align="center">
+          <form onSubmit={handleLogin} className="nuts-gate-form">
+            <Stack gap="sm">
               <PasswordInput
+                size="lg"
                 placeholder="password"
                 autoComplete="current-password"
                 autoFocus
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-              <Button type="submit" fullWidth loading={loading}>
+              <Button type="submit" size="lg" fullWidth loading={loading}>
                 enter
               </Button>
             </Stack>
