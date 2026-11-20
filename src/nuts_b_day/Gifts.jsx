@@ -17,7 +17,17 @@ export const GIFT_FOLDERS = [
 ];
 
 const setKey = (slug) => `gifts-${slug}`;
-const caption = (filename) => filename.replace(/\.[a-z0-9]+$/i, "");
+// Spelling fixes for captions whose file names have typos. The stored file
+// names stay as they are; only the text shown changes.
+const CAPTION_FIXES = {
+  "Pug Santa Swearshirt": "Pug Santa Sweatshirt",
+  "Disney Holday Record": "Disney Holiday Record",
+  "Carribean Cook Book": "Caribbean Cook Book",
+};
+const caption = (filename) => {
+  const name = filename.replace(/\.[a-z0-9]+$/i, "");
+  return CAPTION_FIXES[name] || name;
+};
 const plural = (n) => `${n} ${n === 1 ? "gift" : "gifts"}`;
 
 export function GiftsHome() {
